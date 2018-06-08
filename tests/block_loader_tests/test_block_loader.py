@@ -10,10 +10,12 @@ from repository.graph.graph_specifications import GraphSpecifications
 
 class TestBlockLoader(unittest.TestCase):
 
+    test_block_dir = "C:/Users/micha/OneDrive/Dokumenter/Projects/Mindblocks2.0/test_blocks/"
+
     def test_loads_canvases(self):
         controller = Controller()
         controller.load_default_component_types()
-        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        test_block_file = self.test_block_dir + "debug_print.xml"
         controller.load_block_file(test_block_file)
 
         self.assertGreater(len(controller.canvas_repository.elements), 0)
@@ -22,7 +24,7 @@ class TestBlockLoader(unittest.TestCase):
     def test_loads_canvases_with_names(self):
         controller = Controller()
         controller.load_default_component_types()
-        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        test_block_file = self.test_block_dir + "debug_print.xml"
         controller.load_block_file(test_block_file)
 
         specs = CanvasSpecifications()
@@ -39,7 +41,7 @@ class TestBlockLoader(unittest.TestCase):
     def test_loads_components(self):
         controller = Controller()
         controller.load_default_component_types()
-        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        test_block_file = self.test_block_dir + "debug_print.xml"
         controller.load_block_file(test_block_file)
 
         self.assertGreater(len(controller.component_repository.elements), 0)
@@ -48,7 +50,7 @@ class TestBlockLoader(unittest.TestCase):
     def test_loads_components_and_assigns_correct_canvas(self):
         controller = Controller()
         controller.load_default_component_types()
-        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        test_block_file = self.test_block_dir + "debug_print.xml"
         controller.load_block_file(test_block_file)
 
         component_specification = ComponentSpecifications()
@@ -67,7 +69,7 @@ class TestBlockLoader(unittest.TestCase):
     def test_loads_components_and_assigns_correct_types(self):
         controller = Controller()
         controller.load_default_component_types()
-        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        test_block_file = self.test_block_dir + "debug_print.xml"
         controller.load_block_file(test_block_file)
 
         component_specification = ComponentSpecifications()
@@ -86,7 +88,7 @@ class TestBlockLoader(unittest.TestCase):
     def test_loads_values(self):
         controller = Controller()
         controller.load_default_component_types()
-        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        test_block_file = self.test_block_dir + "debug_print.xml"
         controller.load_block_file(test_block_file)
 
         component_specification = ComponentSpecifications()
@@ -100,7 +102,7 @@ class TestBlockLoader(unittest.TestCase):
     def test_loads_edges(self):
         controller = Controller()
         controller.load_default_component_types()
-        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/print_constant.xml"
+        test_block_file = self.test_block_dir + "print_constant.xml"
         controller.load_block_file(test_block_file)
 
         component_specification = ComponentSpecifications()

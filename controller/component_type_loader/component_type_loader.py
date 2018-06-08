@@ -21,8 +21,10 @@ class ComponentTypeLoader:
         for f in absolute_subitems:
             if not os.path.isdir(f):
                 f_string = ""
-                for line in open(f, 'r'):
+                class_file = open(f, 'r')
+                for line in class_file:
                     f_string += line
+                class_file.close()
                 class_name_end_index = f_string.index("(ComponentTypeModel)")
                 class_name = f_string[:class_name_end_index].split(" ")[-1]
 

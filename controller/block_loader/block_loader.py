@@ -6,9 +6,11 @@ class BlockLoader:
 
     def load(self, filename):
         file_lines = ""
-        for line in open(filename):
+        block_file = open(filename, 'r')
+        for line in block_file:
             line = line.strip()
             file_lines += line
+        block_file.close()
 
         pointer = 0
         next_symbol = self.xml_helper.read_symbol(file_lines, start_index=pointer)

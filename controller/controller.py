@@ -24,7 +24,7 @@ class Controller:
 
     session_model = None
     canvas_repository = None
-    default_component_type_folder = "/home/michael/Projects/Mindblocks2.0/component_types"
+    default_component_type_folder = "C:/Users/micha/OneDrive/Dokumenter/Projects/Mindblocks2.0/component_types"
 
     def __init__(self):
         identifier_repository = IdentifierRepository()

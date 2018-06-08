@@ -1,0 +1,31 @@
+<block>
+    <canvas name="main">
+        <component name="data_loader" type="CsvLoader">
+            <path type="string">C:/Users/micha/OneDrive/Dokumenter/Projects/Mindblocks2.0/data/iris.data</path>
+            <separator>,</separator>
+        </component>
+        <component name="data_splitter" type="DataSplitter">
+            <left_columns>0,1,2,3</left_columns>
+            <right_columns>4</right_columns>
+        </component>
+        <edge>
+                <source_socket component_name="data_loader">output</source_socket>
+                <target_socket component_name="data_splitter">input</target_socket>
+        </edge>
+
+        <component name="printer_1" type="DebugPrint">
+            <text>left: $input</text>
+        </component>
+        <component name="printer_2" type="DebugPrint">
+            <text>right: $input</text>
+        </component>
+        <edge cast="array:float">
+                <source_socket component_name="data_splitter">left_output</source_socket>
+                <target_socket component_name="printer_1">input</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="data_splitter">right_output</source_socket>
+                <target_socket component_name="printer_2">input</target_socket>
+        </edge>
+    </canvas>
+</block>

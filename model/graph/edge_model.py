@@ -1,8 +1,11 @@
+import numpy as np
+
 class Edge:
 
     satisfied = None
     source = None
     target = None
+    cast_to = None
 
     def __init__(self, source, target):
         self.satisfied = False
@@ -25,4 +28,7 @@ class Edge:
         self.value = value
 
     def get_value(self):
+        if self.cast_to == "array:float":
+            return np.array(self.value, dtype=np.float32)
+        
         return self.value

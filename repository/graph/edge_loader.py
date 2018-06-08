@@ -10,6 +10,12 @@ class EdgeLoader:
 
     def load_edge(self, text, pointer):
         next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
+
+        if "cast" in dict(attributes):
+            cast_to = dict(attributes)["cast"]
+        else:
+            cast_to = None
+
         next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 
         source = None
@@ -43,6 +49,7 @@ class EdgeLoader:
 
             next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 
-        self.graph_repository.create_edge(source, source_socket_id, target, target_socket_id)
+        edge = self.graph_repository.create_edge(source, source_socket_id, target, target_socket_id)
+        edge.cast_to = cast_to
 
         return None, pointer

@@ -24,6 +24,12 @@ class AbstractRepository:
 
             return return_vals
 
+    def get_by_id(self, identifier):
+        if identifier in self.id_map:
+            return self.id_map[identifier]
+        else:
+            return None
+
     def __create__(self, element):
         self.elements.append(element)
         self.id_map[element.identifier] = element

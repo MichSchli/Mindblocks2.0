@@ -5,6 +5,8 @@ from model.component.component_value_model import ComponentValueModel
 class Constant(ComponentTypeModel):
 
     name = "Constant"
+    in_socket_names = []
+    out_socket_names = ["output"]
 
     def __init__(self):
         pass
@@ -15,11 +17,6 @@ class Constant(ComponentTypeModel):
     def execute(self, value):
         print(value.text)
 
-    def in_degree(self):
-        return 0
-
-    def out_degree(self):
-        return 1
 
 class ConstantValue(ComponentValueModel):
 

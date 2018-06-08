@@ -5,6 +5,8 @@ from model.component.component_value_model import ComponentValueModel
 class DebugPrint(ComponentTypeModel):
 
     name = "DebugPrint"
+    in_socket_names = ["input"]
+    out_socket_names = []
 
     def __init__(self):
         pass
@@ -14,12 +16,6 @@ class DebugPrint(ComponentTypeModel):
 
     def execute(self, value):
         print(value.text)
-
-    def in_degree(self):
-        return 0
-
-    def out_degree(self):
-        return 0
 
 class DebugPrintValue(ComponentValueModel):
 

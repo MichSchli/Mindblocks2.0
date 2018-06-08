@@ -8,6 +8,8 @@ class ComponentSpecifications:
     component_type_name = None
     component_type_id = None
 
+    graph_id = None
+
     def add(self, key, value):
         if key == "name":
             self.name = value

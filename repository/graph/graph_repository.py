@@ -1,7 +1,9 @@
 from model.component.component_model import ComponentModel
+from model.graph.edge_model import Edge
 from model.graph.graph_model import GraphModel
 from repository.abstract_repository import AbstractRepository
 from repository.canvas.canvas_specifications import CanvasSpecifications
+from repository.graph.graph_specifications import GraphSpecifications
 
 
 class GraphRepository(AbstractRepository):
@@ -43,3 +45,21 @@ class GraphRepository(AbstractRepository):
             canvas = self.canvas_repository.get(canvas_specifications)[0]
 
             canvas.graphs.remove(graph_2)
+
+    def create_edge(self, component_1, component_1_socket_id, component_2, component_2_socket_id):
+        edge = Edge()
+        graph = self.get_by_id(component_1.graph_id)
+
+        if component_1.graph_id != component_2.graph_id:
+            graph_2 = self.get_by_id(component_2.graph_id)
+            self.join_graphs(graph, graph_2)
+
+        graph.edges.append(edge)
+
+        component_1.out_sockets[component_1_socket_id] = edge
+        component_2.in_sockets[component_2_socket_id] = edge
+
+        return edge
+
+
+

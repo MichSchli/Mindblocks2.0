@@ -16,3 +16,9 @@ class ComponentTypeModel:
 
     def get_new_value(self):
         return ComponentValueModel()
+
+    def in_degree(self):
+        return len(self.in_socket_names)
+
+    def out_degree(self):
+        return len(self.out_socket_names)

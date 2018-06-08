@@ -40,10 +40,15 @@ class ComponentRepository(AbstractRepository):
             component.component_type = self.component_type_repository.get(component_type_specifications)[0]
 
             component.value = component.component_type.get_new_value()
+            component.in_sockets = [None] * component.component_type.in_degree()
+            component.out_sockets = [None] * component.component_type.out_degree()
 
-        graph = self.graph_repository.create(graph_specifications)
-        graph.add_component(component)
-        component.graph_id = graph.identifier
+        if specifications.graph_id is None:
+            graph = self.graph_repository.create(graph_specifications)
+            graph.add_component(component)
+            component.graph_id = graph.identifier
+        else:
+            component.graph_id = specifications.graph_id
 
         self.__create__(component)
 

@@ -13,3 +13,10 @@ class ComponentTypeRepository(AbstractRepository):
         self.__create__(model)
 
         return model
+
+    def add(self, model):
+        if model.identifier is None:
+            model.identifier = self.identifier_repository.create()
+
+        self.__create__(model)
+        return model

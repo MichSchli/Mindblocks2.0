@@ -1,5 +1,8 @@
 from view.headless_view.observers.add_element_observer import AddElementObserver
+from view.headless_view.observers.describe_element_observer import DescribeElementObserver
 from view.headless_view.observers.list_element_observer import ListElementObserver
+from view.headless_view.observers.load_file_observer import LoadFileObserver
+from view.headless_view.observers.run_graph_observer import RunGraphObserver
 
 
 class HeadlessView:
@@ -10,7 +13,10 @@ class HeadlessView:
         self.session_model = session_model
 
         self.observers = [AddElementObserver(controller),
-                          ListElementObserver(controller)]
+                          ListElementObserver(controller),
+                          LoadFileObserver(controller),
+                          DescribeElementObserver(controller),
+                          RunGraphObserver(controller)]
 
     def run(self):
         while True:

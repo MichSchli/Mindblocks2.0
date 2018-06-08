@@ -1,3 +1,6 @@
+from model.component.component_value_model import ComponentValueModel
+
+
 class ComponentTypeModel:
 
     name = None
@@ -10,3 +13,6 @@ class ComponentTypeModel:
 
     def get_name(self):
         return self.name
+
+    def get_new_value(self):
+        return ComponentValueModel()

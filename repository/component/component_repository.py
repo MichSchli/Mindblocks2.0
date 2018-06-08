@@ -39,6 +39,8 @@ class ComponentRepository(AbstractRepository):
             component_type_specifications.identifier = specifications.component_type_id
             component.component_type = self.component_type_repository.get(component_type_specifications)[0]
 
+            component.value = component.component_type.get_new_value()
+
         graph = self.graph_repository.create(graph_specifications)
         graph.add_component(component)
         component.graph_id = graph.identifier

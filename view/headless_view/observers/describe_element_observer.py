@@ -1,10 +1,10 @@
 from view.headless_view.observers.input_text_observer import InputTextObserver
 
 
-class ListElementObserver(InputTextObserver):
+class DescribeElementObserver(InputTextObserver):
 
     def accept(self, text):
-        return text.startswith("list")
+        return text.startswith("describe")
 
     def process(self, text):
         text = text.strip()
@@ -19,8 +19,6 @@ class ListElementObserver(InputTextObserver):
             elements = self.controller.get_components(spec_dict)
         elif parts[1] == "graph":
             elements = self.controller.get_graphs(spec_dict)
-        elif parts[1] == "component_type":
-            elements = self.controller.get_component_types(spec_dict)
 
         for element in elements:
-            print(element)
+            print(element.describe())

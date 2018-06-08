@@ -1,0 +1,12 @@
+<block>
+    <canvas name="main">
+        <component name="main_print" type="DebugPrint">
+            <text>test message</text>
+        </component>
+    </canvas>
+    <canvas name="secondary">
+        <component name="secondary_print" type="DebugPrint">
+            <text>test message 2</text>
+        </component>
+    </canvas>
+</block>

@@ -1,0 +1,97 @@
+import unittest
+
+from controller.block_loader.block_loader import BlockLoader
+from controller.controller import Controller
+from helpers.xml.xml_helper import XmlHelper
+from repository.canvas.canvas_specifications import CanvasSpecifications
+from repository.component.component_specifications import ComponentSpecifications
+
+
+class TestBlockLoader(unittest.TestCase):
+
+    def test_loads_canvases(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        controller.load_block_file(test_block_file)
+
+        self.assertGreater(len(controller.canvas_repository.elements), 0)
+        self.assertEqual(len(controller.canvas_repository.elements), 2)
+
+    def test_loads_canvases_with_names(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        controller.load_block_file(test_block_file)
+
+        specs = CanvasSpecifications()
+        specs.name="main"
+        canvases_1 = controller.canvas_repository.get(specs)
+        self.assertEqual(len(canvases_1), 1)
+
+        specs.name="secondary"
+        canvases_2 = controller.canvas_repository.get(specs)
+        self.assertEqual(len(canvases_2), 1)
+
+        self.assertNotEqual(canvases_1[0].identifier, canvases_2[0].identifier)
+
+    def test_loads_components(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        controller.load_block_file(test_block_file)
+
+        self.assertGreater(len(controller.component_repository.elements), 0)
+        self.assertEqual(len(controller.component_repository.elements), 2)
+
+    def test_loads_components_and_assigns_correct_canvas(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        controller.load_block_file(test_block_file)
+
+        component_specification = ComponentSpecifications()
+        component_specification.name = "main_print"
+        components = controller.component_repository.get(component_specification)
+
+        self.assertEqual(len(components), 1)
+        self.assertEqual(components[0].canvas_name, "main")
+
+        component_specification.name = "secondary_print"
+        components = controller.component_repository.get(component_specification)
+
+        self.assertEqual(len(components), 1)
+        self.assertEqual(components[0].canvas_name, "secondary")
+
+    def test_loads_components_and_assigns_correct_types(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        controller.load_block_file(test_block_file)
+
+        component_specification = ComponentSpecifications()
+        component_specification.name = "main_print"
+        components = controller.component_repository.get(component_specification)
+
+        self.assertIsNotNone(components[0].component_type.name)
+        self.assertEqual(components[0].component_type.name, "DebugPrint")
+
+        component_specification.name = "secondary_print"
+        components = controller.component_repository.get(component_specification)
+
+        self.assertIsNotNone(components[0].component_type.name)
+        self.assertEqual(components[0].component_type.name, "DebugPrint")
+
+    def test_loads_values(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = "/home/michael/Projects/Mindblocks2.0/test_blocks/debug_print.xml"
+        controller.load_block_file(test_block_file)
+
+        component_specification = ComponentSpecifications()
+        component_specification.name = "main_print"
+        component = controller.component_repository.get(component_specification)[0]
+
+        self.assertIsNotNone(component.value)
+        self.assertIsNotNone(component.value.text)
+        self.assertEqual(component.value.text, "test message")

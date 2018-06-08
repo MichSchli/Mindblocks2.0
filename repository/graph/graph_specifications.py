@@ -1,3 +1,6 @@
+import uuid
+
+
 class GraphSpecifications:
 
     name = None
@@ -15,6 +18,8 @@ class GraphSpecifications:
             self.canvas_id = value
         elif key == "canvas_name":
             self.canvas_name = value
+        elif key == "id":
+            self.identifier = value
 
     def matches(self, element):
         if self.identifier is not None and self.identifier != element.identifier:

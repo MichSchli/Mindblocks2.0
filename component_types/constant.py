@@ -2,15 +2,15 @@ from model.component.component_type.component_type_model import ComponentTypeMod
 from model.component.component_value_model import ComponentValueModel
 
 
-class DebugPrint(ComponentTypeModel):
+class Constant(ComponentTypeModel):
 
-    name = "DebugPrint"
+    name = "Constant"
 
     def __init__(self):
         pass
 
     def get_new_value(self):
-        return DebugPrintValue()
+        return ConstantValue()
 
     def execute(self, value):
         print(value.text)
@@ -19,18 +19,18 @@ class DebugPrint(ComponentTypeModel):
         return 0
 
     def out_degree(self):
-        return 0
+        return 1
 
-class DebugPrintValue(ComponentValueModel):
+class ConstantValue(ComponentValueModel):
 
-    text = None
+    value = None
 
     def __init__(self):
-        self.text = ""
+        self.value = 0.0
 
     def load(self, value_lines):
         if "text" in value_lines:
             self.text = value_lines["text"][0][0]
 
     def describe(self):
-        return "text=\""+self.text+"\""
+        return "value=\""+self.text+"\""

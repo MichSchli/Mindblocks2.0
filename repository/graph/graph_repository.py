@@ -47,7 +47,7 @@ class GraphRepository(AbstractRepository):
             canvas.graphs.remove(graph_2)
 
     def create_edge(self, component_1, component_1_socket_id, component_2, component_2_socket_id):
-        edge = Edge()
+        edge = Edge(component_1, component_2)
         graph = self.get_by_id(component_1.graph_id)
 
         if component_1.graph_id != component_2.graph_id:

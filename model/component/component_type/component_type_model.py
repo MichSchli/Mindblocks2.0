@@ -5,8 +5,9 @@ class ComponentTypeModel:
 
     name = None
     identifier = None
-    ingoing_sockets = None
-    outgoung_sockets = None
+
+    in_socket_names = []
+    out_socket_names = []
 
     def compile(self, value):
         pass
@@ -22,3 +23,17 @@ class ComponentTypeModel:
 
     def out_degree(self):
         return len(self.out_socket_names)
+
+    def get_in_socket_id(self, socket_name):
+        for i, name in enumerate(self.in_socket_names):
+            if socket_name == name:
+                return i
+
+        return None
+
+    def get_out_socket_id(self, socket_name):
+        for i, name in enumerate(self.out_socket_names):
+            if socket_name == name:
+                return i
+
+        return None

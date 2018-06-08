@@ -34,8 +34,8 @@ class GraphModel:
             # Propagate forward in the graph:
             for out_edge in next_vertex.matched_out_sockets():
                 out_edge.mark_satisfied(True)
-                if out_edge.get_destination().all_in_edges_satisfied():
-                    S.append(out_edge.get_destination())
+                if out_edge.get_target().all_in_edges_satisfied():
+                    S.append(out_edge.get_target())
 
             #if not (components_only and next_vertex.is_socket()):
             yield next_vertex

@@ -1,3 +1,4 @@
 class ComponentValueModel:
 
-    pass
+    def load(self, value_line):
+        pass

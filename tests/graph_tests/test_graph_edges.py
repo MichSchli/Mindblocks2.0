@@ -10,6 +10,27 @@ from repository.identifier.identifier_repository import IdentifierRepository
 
 class TestGraphEdges(unittest.TestCase):
 
+    def test_add_edge_has_correct_source_and_target(self):
+        identifier_repository = IdentifierRepository()
+        repository = GraphRepository(identifier_repository, None)
+        specifications = GraphSpecifications()
+        graph = repository.create(specifications)
+
+        component_type_repository = ComponentTypeRepository(identifier_repository)
+        component_repository = ComponentRepository(identifier_repository, None, repository, component_type_repository)
+        specifications = ComponentSpecifications()
+        specifications.graph_id = graph.identifier
+        component_1 = component_repository.create(specifications)
+        component_2 = component_repository.create(specifications)
+
+        component_1.out_sockets = [None]
+        component_2.in_sockets = [None]
+
+        edge = repository.create_edge(component_1, 0, component_2, 0)
+
+        self.assertEqual(edge.source, component_1)
+        self.assertEqual(edge.target, component_2)
+
     def test_add_within_graph_creates_edge(self):
         identifier_repository = IdentifierRepository()
         repository = GraphRepository(identifier_repository, None)

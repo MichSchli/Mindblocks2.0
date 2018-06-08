@@ -17,12 +17,16 @@ class ComponentModel:
         return str(self.name)
 
     def run_python(self):
-        self.component_type.execute(self.value)
+        component_output = self.component_type.execute(self.in_sockets, self.value)
+
+        for output, socket in zip(component_output, self.out_sockets):
+            if socket is not None:
+                socket.put_value(output)
 
     def all_in_edges_satisfied(self):
         count = 0
         for socket in self.in_sockets:
-            if socket is not None and socket.is_satisfied():
+            if socket is not None and not socket.is_satisfied():
                 count += 1
 
         return count == 0

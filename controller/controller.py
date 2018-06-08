@@ -14,6 +14,7 @@ from repository.component.component_repository import ComponentRepository
 from repository.component.component_specifications import ComponentSpecifications
 from repository.component.component_type.component_type_repository import ComponentTypeRepository
 from repository.component.component_type.component_type_specifications import ComponentTypeSpecifications
+from repository.graph.edge_loader import EdgeLoader
 from repository.graph.graph_repository import GraphRepository
 from repository.graph.graph_specifications import GraphSpecifications
 from repository.identifier.identifier_repository import IdentifierRepository
@@ -34,8 +35,9 @@ class Controller:
         self.component_repository = ComponentRepository(identifier_repository, self.canvas_repository, self.graph_repository, self.component_type_repository)
 
         xml_helper = XmlHelper()
+        edge_loader = EdgeLoader(xml_helper, self.component_repository, self.graph_repository)
         component_loader = ComponentLoader(xml_helper, self.component_repository)
-        canvas_loader = CanvasLoader(xml_helper, self.canvas_repository, component_loader)
+        canvas_loader = CanvasLoader(xml_helper, edge_loader, self.canvas_repository, component_loader)
         self.block_loader = BlockLoader(xml_helper, canvas_loader)
 
     def initialize_model(self):

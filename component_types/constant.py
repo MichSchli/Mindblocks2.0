@@ -14,8 +14,8 @@ class Constant(ComponentTypeModel):
     def get_new_value(self):
         return ConstantValue()
 
-    def execute(self, value):
-        print(value.text)
+    def execute(self, in_sockets, value):
+        return [value.value]
 
 
 class ConstantValue(ComponentValueModel):
@@ -26,8 +26,8 @@ class ConstantValue(ComponentValueModel):
         self.value = 0.0
 
     def load(self, value_lines):
-        if "text" in value_lines:
-            self.text = value_lines["text"][0][0]
+        if "value" in value_lines:
+            self.value = float(value_lines["value"][0][0])
 
     def describe(self):
-        return "value=\""+self.text+"\""
+        return "value=\""+self.value+"\""

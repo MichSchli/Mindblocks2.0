@@ -14,8 +14,15 @@ class DebugPrint(ComponentTypeModel):
     def get_new_value(self):
         return DebugPrintValue()
 
-    def execute(self, value):
-        print(value.text)
+    def execute(self, in_sockets, value):
+        debug_text = value.text
+
+        if in_sockets[0] is not None:
+            debug_text = debug_text.replace("$input", str(in_sockets[0].get_value()))
+
+        print(debug_text)
+
+        return []
 
 class DebugPrintValue(ComponentValueModel):
 

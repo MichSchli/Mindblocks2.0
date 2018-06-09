@@ -35,5 +35,10 @@ class DebugPrintValue(ComponentValueModel):
         if "text" in value_lines:
             self.text = value_lines["text"][0][0]
 
+    def copy(self):
+        copy = DebugPrintValue()
+        copy.text = self.text
+        return copy
+
     def describe(self):
         return "text=\""+self.text+"\""

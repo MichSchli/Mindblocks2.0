@@ -6,6 +6,7 @@ class Add(ComponentTypeModel):
     name = "Add"
     in_socket_names = ["left", "right"]
     out_socket_names = ["output"]
+    available_languages = ["python", "tensorflow"]
 
     def __init__(self):
         pass

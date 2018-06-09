@@ -1,8 +1,12 @@
 import unittest
 
 from model.component.component_model import ComponentModel
+from model.component.component_value_model import ComponentValueModel
 from repository.canvas.canvas_repository import CanvasRepository
 from repository.canvas.canvas_specifications import CanvasSpecifications
+from repository.component.component_repository import ComponentRepository
+from repository.component.component_specifications import ComponentSpecifications
+from repository.component.component_type.component_type_repository import ComponentTypeRepository
 from repository.graph.graph_repository import GraphRepository
 from repository.graph.graph_specifications import GraphSpecifications
 from repository.identifier.identifier_repository import IdentifierRepository
@@ -191,3 +195,71 @@ class TestGraphRepository(unittest.TestCase):
 
         self.assertEqual(len(canvas.graphs), 1)
         self.assertEqual(canvas.graphs[0], graph_1)
+
+    def test_make_copy_correct_vertices_and_edges(self):
+        identifier_repository = IdentifierRepository()
+        repository = GraphRepository(identifier_repository, None)
+        specifications = GraphSpecifications()
+        graph = repository.create(specifications)
+
+        component_type_repository = ComponentTypeRepository(identifier_repository)
+        component_repository = ComponentRepository(identifier_repository, None, repository, component_type_repository)
+        specifications = ComponentSpecifications()
+        specifications.graph_id = graph.identifier
+        component_1 = component_repository.create(specifications)
+        component_2 = component_repository.create(specifications)
+
+        component_1.value = ComponentValueModel()
+        component_2.value = ComponentValueModel()
+
+        component_1.out_sockets = [None]
+        component_2.in_sockets = [None]
+        component_1.in_sockets = []
+        component_2.out_sockets = []
+
+        edge = repository.create_edge(component_1, 0, component_2, 0)
+
+        copy = graph.copy()
+
+        self.assertEqual(len(copy.vertices), 2)
+        self.assertEqual(len(copy.edges), 1)
+
+        self.assertNotEqual(component_1.graph_id, copy.identifier)
+        self.assertNotEqual(component_2.graph_id, copy.identifier)
+
+        self.assertNotIn(component_1, copy.vertices)
+        self.assertNotIn(component_2, copy.vertices)
+        self.assertNotIn(edge, copy.edges)
+
+    def test_make_copy_component_values_copied(self):
+        identifier_repository = IdentifierRepository()
+        repository = GraphRepository(identifier_repository, None)
+        specifications = GraphSpecifications()
+        graph = repository.create(specifications)
+
+        component_type_repository = ComponentTypeRepository(identifier_repository)
+        component_repository = ComponentRepository(identifier_repository, None, repository, component_type_repository)
+        specifications = ComponentSpecifications()
+        specifications.graph_id = graph.identifier
+        component_1 = component_repository.create(specifications)
+        component_2 = component_repository.create(specifications)
+
+        component_1.out_sockets = [None]
+        component_2.in_sockets = [None]
+        component_1.in_sockets = []
+        component_2.out_sockets = []
+
+        component_1.value = ComponentValueModel()
+        component_2.value = ComponentValueModel()
+
+        edge = repository.create_edge(component_1, 0, component_2, 0)
+
+        copy = graph.copy()
+
+        component_values = [component.value for component in copy.vertices]
+
+        self.assertEqual(len(component_values), 2)
+        self.assertIsNotNone(component_values[0])
+        self.assertIsNotNone(component_values[1])
+        self.assertNotIn(component_1.value, component_values)
+        self.assertNotIn(component_2.value, component_values)

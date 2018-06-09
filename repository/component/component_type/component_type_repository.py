@@ -10,6 +10,9 @@ class ComponentTypeRepository(AbstractRepository):
         model.name = specifications.name
         model.identifier = self.identifier_repository.create()
 
+        if specifications.available_languages is not None:
+            model.available_languages = specifications.available_languages
+
         self.__create__(model)
 
         return model

@@ -13,6 +13,20 @@ class ComponentModel:
     in_sockets = None
     out_sockets = None
 
+    language = None
+
+    def copy(self):
+        copy = ComponentModel()
+
+        copy.in_sockets = [None] * len(self.in_sockets)
+        copy.out_sockets = [None] * len(self.out_sockets)
+
+        copy.component_type = self.component_type
+        copy.language = self.language
+        copy.value = self.value.copy()
+
+        return copy
+
     def get_name(self):
         return str(self.name)
 

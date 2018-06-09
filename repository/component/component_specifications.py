@@ -9,6 +9,7 @@ class ComponentSpecifications:
     component_type_id = None
 
     graph_id = None
+    language = None
 
     def add(self, key, value):
         if key == "name":
@@ -21,6 +22,8 @@ class ComponentSpecifications:
             self.component_type_name = value
         elif key == "type_id":
             self.component_type_id = value
+        elif key == "language":
+            self.language = value
 
     def matches(self, element):
         if self.identifier is not None and self.identifier != element.identifier:

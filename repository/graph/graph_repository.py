@@ -48,6 +48,8 @@ class GraphRepository(AbstractRepository):
 
     def create_edge(self, component_1, component_1_socket_id, component_2, component_2_socket_id):
         edge = Edge(component_1, component_2)
+        edge.source_socket = component_1_socket_id
+        edge.target_socket = component_2_socket_id
         graph = self.get_by_id(component_1.graph_id)
 
         if component_1.graph_id != component_2.graph_id:

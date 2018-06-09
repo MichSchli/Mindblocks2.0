@@ -47,5 +47,11 @@ class CsvLoaderValue(ComponentValueModel):
         if "separator" in value_lines:
             self.separator = value_lines["separator"][0][0]
 
+    def copy(self):
+        copy = CsvLoaderValue()
+        copy.path = self.path
+        copy.separator = self.separator
+        return copy
+
     def describe(self):
         return "path=\""+self.path+"\""

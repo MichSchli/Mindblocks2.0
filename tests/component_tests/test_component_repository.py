@@ -215,3 +215,37 @@ class TestComponentRepository(unittest.TestCase):
 
         self.assertIsNotNone(component.component_type)
         self.assertEqual(component_type.identifier, component.component_type.identifier)
+
+    def test_creates_with_component_type_sets_language(self):
+        identifier_repository = IdentifierRepository()
+        graph_repository = GraphRepository(identifier_repository, None)
+        component_type_repository = ComponentTypeRepository(identifier_repository)
+        specs = ComponentTypeSpecifications()
+        specs.name = "test_type"
+        specs.available_languages = ["test_language"]
+        component_type = component_type_repository.create(specs)
+
+        repository = ComponentRepository(identifier_repository, None, graph_repository, component_type_repository)
+        specifications = ComponentSpecifications()
+        specifications.component_type_name = specs.name
+        component = repository.create(specifications)
+
+        self.assertIsNotNone(component.language)
+        self.assertEqual(component.language, "test_language")
+
+
+    def test_creates_with_component_type_default_language_is_python(self):
+        identifier_repository = IdentifierRepository()
+        graph_repository = GraphRepository(identifier_repository, None)
+        component_type_repository = ComponentTypeRepository(identifier_repository)
+        specs = ComponentTypeSpecifications()
+        specs.name = "test_type"
+        component_type = component_type_repository.create(specs)
+
+        repository = ComponentRepository(identifier_repository, None, graph_repository, component_type_repository)
+        specifications = ComponentSpecifications()
+        specifications.component_type_name = specs.name
+        component = repository.create(specifications)
+
+        self.assertIsNotNone(component.language)
+        self.assertEqual(component.language, "python")

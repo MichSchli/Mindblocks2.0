@@ -2,6 +2,7 @@ class ComponentTypeSpecifications:
 
     name = None
     identifier = None
+    available_languages = None
 
     def matches(self, element):
         if self.identifier is not None and self.identifier != element.identifier:

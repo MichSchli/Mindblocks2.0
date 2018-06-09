@@ -39,6 +39,11 @@ class ComponentRepository(AbstractRepository):
             component_type_specifications.identifier = specifications.component_type_id
             component.component_type = self.component_type_repository.get(component_type_specifications)[0]
 
+            if specifications.language is not None and specifications.language in component.component_type.available_languages:
+                component.language = specifications.language
+            else:
+                component.language = component.component_type.available_languages[0]
+
             component.value = component.component_type.get_new_value()
             component.in_sockets = [None] * component.component_type.in_degree()
             component.out_sockets = [None] * component.component_type.out_degree()
@@ -48,7 +53,9 @@ class ComponentRepository(AbstractRepository):
             graph.add_component(component)
             component.graph_id = graph.identifier
         else:
+            graph = self.graph_repository.get(graph_specifications)[0]
             component.graph_id = specifications.graph_id
+            graph.add_component(component)
 
         self.__create__(component)
 

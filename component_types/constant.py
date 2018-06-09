@@ -7,6 +7,7 @@ class Constant(ComponentTypeModel):
     name = "Constant"
     in_socket_names = []
     out_socket_names = ["output"]
+    available_languages = ["python", "tensorflow"]
 
     def __init__(self):
         pass
@@ -28,6 +29,11 @@ class ConstantValue(ComponentValueModel):
     def load(self, value_lines):
         if "value" in value_lines:
             self.value = float(value_lines["value"][0][0])
+
+    def copy(self):
+        copy = ConstantValue()
+        copy.value = self.value
+        return copy
 
     def describe(self):
         return "value=\""+self.value+"\""

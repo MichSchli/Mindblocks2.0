@@ -1,0 +1,28 @@
+<block>
+    <canvas name="main">
+        <component name="constant_1" type="Constant">
+            <value type="float">5.17</value>
+        </component>
+        <component name="constant_2" language="tensorflow" type="Constant">
+            <value type="float">2.98</value>
+        </component>
+        <component name="adder" language="tensorflow" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="constant_1">output</source_socket>
+                <target_socket component_name="adder">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="constant_2">output</source_socket>
+                <target_socket component_name="adder">right</target_socket>
+        </edge>
+
+        <component name="printer" type="DebugPrint">
+            <text>value: $input</text>
+        </component>
+        <edge>
+                <source_socket component_name="adder">output</source_socket>
+                <target_socket component_name="printer">input</target_socket>
+        </edge>
+    </canvas>
+</block>

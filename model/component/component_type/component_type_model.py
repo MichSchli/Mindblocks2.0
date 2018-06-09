@@ -9,6 +9,8 @@ class ComponentTypeModel:
     in_socket_names = []
     out_socket_names = []
 
+    available_languages = ["python"]
+
     def compile(self, value):
         pass
 

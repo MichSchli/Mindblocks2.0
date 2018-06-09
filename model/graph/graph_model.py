@@ -12,11 +12,48 @@ class GraphModel:
         self.vertices = []
         self.edges = []
 
+    def copy(self):
+        copy = GraphModel()
+        copy.name = self.name
+
+        unfilled_edges = {}
+        for component in self.topological_walk():
+            component_copy = component.copy()
+
+            for edge in component.out_sockets:
+                edge_copy = edge.copy()
+                copy.add_edge(edge_copy)
+
+                component_copy.out_sockets[edge.source_socket] = edge_copy
+                edge_copy.source = component_copy
+
+                target_id = edge.target.identifier
+                target_socket = edge.target_socket
+
+                key = str(target_id) + str(target_socket)
+
+                unfilled_edges[key] = edge_copy
+
+            for i in range(len(component.in_sockets)):
+                key = str(component.identifier) + str(i)
+                if key in unfilled_edges:
+                    edge_copy = unfilled_edges[key]
+                    component_copy.in_sockets[i] = edge_copy
+                    edge_copy.target = component_copy
+
+            copy.add_component(component_copy)
+
+        return copy
+
+
     def get_name(self):
         return self.name
 
     def add_component(self, component):
         self.vertices.append(component)
+
+    def add_edge(self, edge):
+        self.edges.append(edge)
 
     def __str__(self):
         return "Graph: "+str(self.name)+"|"+str(self.identifier) + " [" + " ".join([c.get_name() for c in self.vertices]) + "]"

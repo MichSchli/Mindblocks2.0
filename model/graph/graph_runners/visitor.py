@@ -1,8 +1,11 @@
 class Visitor:
 
     def run_visit(self, graph, function, arguments={}):
+        outputs = []
         for vertex in graph.topological_walk():
-            function(vertex, arguments=arguments)
+            vertex_output = function(vertex, arguments=arguments)
+            outputs.extend(vertex_output)
+        return vertex_output
 
     def yield_visit(self, graph, function, arguments={}):
         for vertex in graph.topological_walk():

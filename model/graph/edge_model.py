@@ -22,6 +22,9 @@ class Edge:
 
         return copy
 
+    def __str__(self):
+        return "( " + self.source.get_name() + " -> " + self.target.get_name() + " )"
+
     def is_satisfied(self):
         return self.satisfied
 

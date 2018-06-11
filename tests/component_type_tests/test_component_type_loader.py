@@ -6,7 +6,7 @@ from controller.controller import Controller
 
 class TestComponentTypeLoader(unittest.TestCase):
 
-    default_component_type_folder = "C:/Users/micha/OneDrive/Dokumenter/Projects/Mindblocks2.0/component_types"
+    default_component_type_folder = "/home/michael/Projects/Mindblocks2.0/component_types"
 
     def test_loads_folder(self):
         component_type_loader = ComponentTypeLoader()

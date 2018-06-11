@@ -46,7 +46,7 @@ class ComponentRepository(AbstractRepository):
 
             component.value = component.component_type.get_new_value()
             component.in_sockets = [None] * component.component_type.in_degree()
-            component.out_sockets = [None] * component.component_type.out_degree()
+            component.out_sockets = [[] for _ in range(component.component_type.out_degree())]
 
         if specifications.graph_id is None:
             graph = self.graph_repository.create(graph_specifications)

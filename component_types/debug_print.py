@@ -18,7 +18,7 @@ class DebugPrint(ComponentTypeModel):
         debug_text = value.text
 
         if in_sockets[0] is not None:
-            debug_text = debug_text.replace("$input", str(in_sockets[0].get_value()))
+            debug_text = debug_text.replace("$input", str(in_sockets[0]))
 
         print(debug_text)
 

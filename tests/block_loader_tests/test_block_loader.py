@@ -10,7 +10,7 @@ from repository.graph.graph_specifications import GraphSpecifications
 
 class TestBlockLoader(unittest.TestCase):
 
-    test_block_dir = "C:/Users/micha/OneDrive/Dokumenter/Projects/Mindblocks2.0/test_blocks/"
+    test_block_dir = "/home/michael/Projects/Mindblocks2.0/test_blocks/"
 
     def test_loads_canvases(self):
         controller = Controller()
@@ -123,5 +123,54 @@ class TestBlockLoader(unittest.TestCase):
         graph = controller.graph_repository.get(graph_spec)[0]
 
         self.assertEqual(len(graph.edges), 1)
-        self.assertEqual(graph.edges[0], component.out_sockets[0])
+        self.assertEqual(graph.edges[0], component.out_sockets[0][0])
         self.assertEqual(graph.edges[0], component_2.in_sockets[0])
+
+    def test_loads_many_edges(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = self.test_block_dir + "add_constants.xml"
+        controller.load_block_file(test_block_file)
+
+        component_specification = ComponentSpecifications()
+        component_specification.name = "constant_1"
+        constant_1 = controller.component_repository.get(component_specification)[0]
+
+        self.assertIsNotNone(constant_1.out_sockets)
+        self.assertEqual(len(constant_1.out_sockets), 1)
+
+        component_specification = ComponentSpecifications()
+        component_specification.name = "constant_2"
+        constant_2 = controller.component_repository.get(component_specification)[0]
+
+        self.assertIsNotNone(constant_2.out_sockets)
+        self.assertEqual(len(constant_2.out_sockets), 1)
+
+        component_specification = ComponentSpecifications()
+        component_specification.name = "adder"
+        adder = controller.component_repository.get(component_specification)[0]
+
+        self.assertIsNotNone(adder.in_sockets)
+        self.assertEqual(len(adder.in_sockets), 2)
+        self.assertIsNotNone(adder.out_sockets)
+        self.assertEqual(len(adder.out_sockets), 1)
+
+        component_specification = ComponentSpecifications()
+        component_specification.name = "printer"
+        printer = controller.component_repository.get(component_specification)[0]
+
+        self.assertIsNotNone(printer.in_sockets)
+        self.assertEqual(len(printer.in_sockets), 1)
+
+        graph_spec = GraphSpecifications()
+        graph_spec.identifier = printer.graph_id
+        graph = controller.graph_repository.get(graph_spec)[0]
+
+        self.assertEqual(len(graph.edges), 3)
+        self.assertIn(constant_1.out_sockets[0][0], graph.edges)
+        self.assertIn(constant_2.out_sockets[0][0], graph.edges)
+        self.assertIn(adder.out_sockets[0][0], graph.edges)
+
+        self.assertEqual(constant_1.out_sockets[0][0], adder.in_sockets[0])
+        self.assertEqual(constant_2.out_sockets[0][0], adder.in_sockets[1])
+        self.assertEqual(adder.out_sockets[0][0], printer.in_sockets[0])

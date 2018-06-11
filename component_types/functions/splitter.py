@@ -12,7 +12,7 @@ class DataSplitter(ComponentTypeModel):
         return DataSplitterValue()
 
     def execute(self, in_sockets, value):
-        return [value.get_left_outputs(in_sockets[0].value), value.get_right_outputs(in_sockets[0].value)]
+        return [value.get_left_outputs(in_sockets[0]), value.get_right_outputs(in_sockets[0])]
 
 
 class DataSplitterValue(ComponentValueModel):

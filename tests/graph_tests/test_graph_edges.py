@@ -23,7 +23,7 @@ class TestGraphEdges(unittest.TestCase):
         component_1 = component_repository.create(specifications)
         component_2 = component_repository.create(specifications)
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
 
         edge = repository.create_edge(component_1, 0, component_2, 0)
@@ -44,7 +44,7 @@ class TestGraphEdges(unittest.TestCase):
         component_1 = component_repository.create(specifications)
         component_2 = component_repository.create(specifications)
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
 
         repository.create_edge(component_1, 0, component_2, 0)
@@ -65,7 +65,7 @@ class TestGraphEdges(unittest.TestCase):
         component_1 = component_repository.create(specifications)
         component_2 = component_repository.create(specifications)
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
 
         repository.create_edge(component_1, 0, component_2, 0)
@@ -74,7 +74,7 @@ class TestGraphEdges(unittest.TestCase):
         self.assertIsNotNone(component_2.in_sockets[0])
 
         edge = graph.edges[0]
-        self.assertEqual(component_1.out_sockets[0], edge)
+        self.assertEqual(component_1.out_sockets[0], [edge])
         self.assertEqual(component_2.in_sockets[0], edge)
 
     def test_add_between_graphs_joins_graphs(self):
@@ -87,7 +87,7 @@ class TestGraphEdges(unittest.TestCase):
         component_1 = component_repository.create(specifications)
         component_2 = component_repository.create(specifications)
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
 
         self.assertEqual(len(repository.elements), 2)
@@ -113,7 +113,7 @@ class TestGraphEdges(unittest.TestCase):
         component_1 = component_repository.create(specifications)
         component_2 = component_repository.create(specifications)
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
 
         repository.create_edge(component_1, 0, component_2, 0)
@@ -135,7 +135,7 @@ class TestGraphEdges(unittest.TestCase):
         component_1 = component_repository.create(specifications)
         component_2 = component_repository.create(specifications)
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
 
         repository.create_edge(component_1, 0, component_2, 0)
@@ -148,5 +148,5 @@ class TestGraphEdges(unittest.TestCase):
         graph = repository.get(specifications)[0]
         edge = graph.edges[0]
 
-        self.assertEqual(component_1.out_sockets[0], edge)
+        self.assertEqual(component_1.out_sockets[0], [edge])
         self.assertEqual(component_2.in_sockets[0], edge)

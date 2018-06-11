@@ -212,7 +212,7 @@ class TestGraphRepository(unittest.TestCase):
         component_1.value = ComponentValueModel()
         component_2.value = ComponentValueModel()
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
         component_1.in_sockets = []
         component_2.out_sockets = []
@@ -244,7 +244,7 @@ class TestGraphRepository(unittest.TestCase):
         component_1 = component_repository.create(specifications)
         component_2 = component_repository.create(specifications)
 
-        component_1.out_sockets = [None]
+        component_1.out_sockets = [[]]
         component_2.in_sockets = [None]
         component_1.in_sockets = []
         component_2.out_sockets = []

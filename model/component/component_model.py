@@ -15,11 +15,14 @@ class ComponentModel:
 
     language = None
 
+    def __init__(self):
+        self.out_sockets = []
+
     def copy(self):
         copy = ComponentModel()
 
         copy.in_sockets = [None] * len(self.in_sockets)
-        copy.out_sockets = [None] * len(self.out_sockets)
+        copy.out_sockets = [[]] * len(self.out_sockets)
 
         copy.component_type = self.component_type
         copy.language = self.language
@@ -30,12 +33,21 @@ class ComponentModel:
     def get_name(self):
         return str(self.name)
 
-    def run_python(self):
-        component_output = self.component_type.execute(self.in_sockets, self.value)
+    def run(self, language="python"):
+        component_output = self.component_type.execute([s.get_value() for s in self.in_sockets], self.value)
 
-        for output, socket in zip(component_output, self.out_sockets):
-            if socket is not None:
-                socket.put_value(output)
+        outputs = []
+
+        print(component_output)
+        print(self.out_sockets)
+
+        for i in range(len(self.out_sockets)):
+            for edge in self.out_sockets[i]:
+                edge.put_value(component_output[i])
+            if len(self.out_sockets[i]) == 0:
+                outputs.append(component_output[i])
+
+        return outputs
 
     def all_in_edges_satisfied(self):
         count = 0
@@ -46,10 +58,10 @@ class ComponentModel:
         return count == 0
 
     def matched_out_sockets(self):
-        return [s for s in self.out_sockets if s is not None]
+        return [s for s in self.out_sockets if s is not []]
 
     def __str__(self):
-        return "Component: "+str(self.name)+ " (" + (str(self.component_type.name) if self.component_type is not None else "None") + ") |"+str(self.identifier) +" canvas_name="+str(self.canvas_name)
+        return "Component: "+str(self.get_name())+ " (" + (str(self.component_type.name) if self.component_type is not None else "None") + ") |"+str(self.identifier) +" canvas_name="+str(self.canvas_name)
 
     def describe(self):
         description = "Component: "+str(self.name)+ " (" + (str(self.component_type.name) if self.component_type is not None else "None") + ") |"+str(self.identifier) + "\n"

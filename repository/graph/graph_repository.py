@@ -36,6 +36,9 @@ class GraphRepository(AbstractRepository):
             component.graph_id = graph_1.identifier
             graph_1.add_component(component)
 
+        for edge in graph_2.edges:
+            graph_1.add_edge(edge)
+
         self.elements.remove(graph_2)
 
         if graph_2.canvas_id is not None or graph_2.canvas_name is not None:
@@ -58,7 +61,7 @@ class GraphRepository(AbstractRepository):
 
         graph.edges.append(edge)
 
-        component_1.out_sockets[component_1_socket_id] = edge
+        component_1.out_sockets[component_1_socket_id].append(edge)
         component_2.in_sockets[component_2_socket_id] = edge
 
         return edge

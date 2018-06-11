@@ -12,4 +12,4 @@ class Add(ComponentTypeModel):
         pass
 
     def execute(self, in_sockets, value):
-        return [in_sockets[0].get_value() + in_sockets[1].get_value()]
+        return [in_sockets[0] + in_sockets[1]]

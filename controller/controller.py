@@ -24,7 +24,7 @@ class Controller:
 
     session_model = None
     canvas_repository = None
-    default_component_type_folder = "C:/Users/micha/OneDrive/Dokumenter/Projects/Mindblocks2.0/component_types"
+    default_component_type_folder = "/home/michael/Projects/Mindblocks2.0/component_types"
 
     def __init__(self):
         identifier_repository = IdentifierRepository()
@@ -109,10 +109,12 @@ class Controller:
     def load_block_file(self, filename):
         return self.block_loader.load(filename)
 
-    def run_graphs(self, specifications_dict={}):
+    def run_graphs(self, specifications_dict={}, compile=True):
         graph_runner = GraphRunner()
         graphs = self.get_graphs(specifications_dict)
         output = []
         for graph in graphs:
+            if compile:
+                graph = graph.get_compiled_copy()
             output.append(graph_runner.run(graph, {}))
         return output

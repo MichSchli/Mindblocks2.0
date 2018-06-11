@@ -1,0 +1,108 @@
+<block>
+    <canvas name="main">
+        <component name="constant_1" type="Constant">
+            <value type="float">1</value>
+        </component>
+        <component name="constant_2" type="Constant">
+            <value type="float">2</value>
+        </component>
+        <component name="constant_3" type="Constant">
+            <value type="float">3</value>
+        </component>
+
+        <component name="adder_1_1" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="constant_1">output</source_socket>
+                <target_socket component_name="adder_1_1">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="constant_2">output</source_socket>
+                <target_socket component_name="adder_1_1">right</target_socket>
+        </edge>
+        <component name="adder_1_2" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="constant_2">output</source_socket>
+                <target_socket component_name="adder_1_2">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="constant_3">output</source_socket>
+                <target_socket component_name="adder_1_2">right</target_socket>
+        </edge>
+
+        <component name="adder_2_1" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="adder_1_1">output</source_socket>
+                <target_socket component_name="adder_2_1">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="constant_2">output</source_socket>
+                <target_socket component_name="adder_2_1">right</target_socket>
+        </edge>
+        <component name="adder_2_2" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="adder_1_2">output</source_socket>
+                <target_socket component_name="adder_2_2">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="constant_2">output</source_socket>
+                <target_socket component_name="adder_2_2">right</target_socket>
+        </edge>
+
+        <component name="adder_3_1" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="adder_2_1">output</source_socket>
+                <target_socket component_name="adder_3_1">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="constant_1">output</source_socket>
+                <target_socket component_name="adder_3_1">right</target_socket>
+        </edge>
+        <component name="adder_3_2" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="constant_3">output</source_socket>
+                <target_socket component_name="adder_3_2">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="adder_2_2">output</source_socket>
+                <target_socket component_name="adder_3_2">right</target_socket>
+        </edge>
+
+        <component name="adder_4_1" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="adder_3_1">output</source_socket>
+                <target_socket component_name="adder_4_1">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="constant_2">output</source_socket>
+                <target_socket component_name="adder_4_1">right</target_socket>
+        </edge>
+        <component name="adder_4_2" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="constant_2">output</source_socket>
+                <target_socket component_name="adder_4_2">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="adder_3_2">output</source_socket>
+                <target_socket component_name="adder_4_2">right</target_socket>
+        </edge>
+
+        <component name="adder_5" type="Add">
+        </component>
+        <edge>
+                <source_socket component_name="adder_4_1">output</source_socket>
+                <target_socket component_name="adder_5">left</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="adder_4_2">output</source_socket>
+                <target_socket component_name="adder_5">right</target_socket>
+        </edge>
+    </canvas>
+</block>

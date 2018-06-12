@@ -14,15 +14,17 @@ class ComponentModel:
     out_sockets = None
 
     language = None
+    out_value_types = None
 
     def __init__(self):
         self.out_sockets = []
 
     def copy(self):
         copy = ComponentModel()
+        copy.name = self.name
 
         copy.in_sockets = [None] * len(self.in_sockets)
-        copy.out_sockets = [[]] * len(self.out_sockets)
+        copy.out_sockets = [[] for _ in range(len(self.out_sockets))]
 
         copy.component_type = self.component_type
         copy.language = self.language
@@ -33,13 +35,13 @@ class ComponentModel:
     def get_name(self):
         return str(self.name)
 
+    def initialize(self):
+        self.value.initialize()
+
     def run(self, language="python"):
-        component_output = self.component_type.execute([s.get_value() for s in self.in_sockets], self.value)
+        component_output = self.component_type.execute([s.get_value() for s in self.in_sockets], self.value, language=language)
 
         outputs = []
-
-        print(component_output)
-        print(self.out_sockets)
 
         for i in range(len(self.out_sockets)):
             for edge in self.out_sockets[i]:
@@ -48,6 +50,11 @@ class ComponentModel:
                 outputs.append(component_output[i])
 
         return outputs
+
+    def get_out_value_types(self):
+        if self.out_value_types is None:
+            self.out_value_types = self.component_type.evaluate_value_type([e.get_value_type() for e in self.in_sockets], self.value)
+        return self.out_value_types
 
     def all_in_edges_satisfied(self):
         count = 0

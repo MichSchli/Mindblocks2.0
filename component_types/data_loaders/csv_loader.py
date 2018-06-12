@@ -1,5 +1,6 @@
 from model.component.component_type.component_type_model import ComponentTypeModel
 from model.component.component_value_model import ComponentValueModel
+from model.graph.value_type_model import ValueTypeModel
 
 
 class CsvLoader(ComponentTypeModel):
@@ -14,8 +15,13 @@ class CsvLoader(ComponentTypeModel):
     def get_new_value(self):
         return CsvLoaderValue()
 
-    def execute(self, in_sockets, value):
+    def execute(self, in_sockets, value, language="python"):
         return [value.read_array()]
+
+    def evaluate_value_type(self, in_types, value):
+        array = value.read_array()
+        shape = [None, len(array[0])]
+        return [ValueTypeModel("string", shape)]
 
 
 class CsvLoaderValue(ComponentValueModel):
@@ -27,6 +33,9 @@ class CsvLoaderValue(ComponentValueModel):
     def __init__(self):
         self.path = ""
         self.separator = "\t"
+
+    def initialize(self):
+        self.read_array()
 
     def read_array(self):
         if self.array is None:

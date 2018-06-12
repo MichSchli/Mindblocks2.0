@@ -5,12 +5,19 @@ class TensorflowWrapperComponentTypeModel(ComponentTypeModel):
 
     name = "__tensorflow_wrapper__"
 
-    def execute(self, in_sockets, value):
+    def execute(self, in_sockets, value, language="python"):
+        if value.graph is None:
+            value.compile_graph()
+
         feed_dict = {}
         for i in range(len(in_sockets)):
-            feed_dict[value.inner_component.in_sockets[i]] = in_sockets[i]
+            feed_dict[value.get_variables()[i]] = in_sockets[i]
 
         with tf.Session() as sess:
-            output = sess.run(value.inner_component.graph, feed_dict)
+            sess.run(tf.initialize_all_variables())
+            output = sess.run(value.graph, feed_dict)
 
         return output
+
+    def evaluate_value_type(self, in_types, value):
+        return value.get_out_value_types()

@@ -1,7 +1,7 @@
 <block>
     <canvas name="main">
         <component name="data_loader" type="CsvLoader">
-            <path type="string">C:/Users/micha/OneDrive/Dokumenter/Projects/Mindblocks2.0/data/iris.data</path>
+            <path type="string">data/iris.data</path>
             <separator>,</separator>
         </component>
         <component name="data_splitter" type="DataSplitter">

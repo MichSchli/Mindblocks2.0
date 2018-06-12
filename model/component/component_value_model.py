@@ -5,3 +5,6 @@ class ComponentValueModel:
 
     def copy(self):
         return ComponentValueModel()
+
+    def initialize(self):
+        pass

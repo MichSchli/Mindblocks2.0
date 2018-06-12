@@ -13,9 +13,17 @@ class GraphModel:
     canvas_id = None
     canvas_name = None
 
+    mirror = None
+
     def __init__(self):
         self.vertices = []
         self.edges = []
+
+    def get_mirror(self):
+        if self.mirror is None:
+            self.mirror = self.copy()
+
+        return self.mirror
 
     def copy(self):
         copy = GraphModel()
@@ -51,7 +59,6 @@ class GraphModel:
 
         return copy
 
-
     def get_name(self):
         return self.name
 
@@ -71,7 +78,11 @@ class GraphModel:
         #TODO: Print edges
         return "Graph: "+str(self.name)+"|"+str(self.identifier) + " [" + " ".join([c.get_name() for c in self.vertices]) + "]"
 
-    def topological_walk(self, components_only=False):
+    def initialize(self):
+        for vertex in self.topological_walk():
+            vertex.initialize()
+
+    def topological_walk(self):
         S = [vertex for vertex in self.vertices if vertex.all_in_edges_satisfied()]
 
         while len(S) > 0:
@@ -104,10 +115,15 @@ class GraphModel:
             self.contract(edge)
             edge = self.find_internal_tensorflow_edge()
 
+        replacers = []
+
         for component in self.vertices:
             if component.language == "tensorflow":
                 tensorflow_wrapper = TensorflowWrapperComponentModel(component)
-                self.replace(component, tensorflow_wrapper)
+                replacers.append((component, tensorflow_wrapper))
+
+        for component, replacer in replacers:
+            self.replace(component, replacer)
 
     def get_compiled_copy(self):
         copy = self.copy()
@@ -116,7 +132,7 @@ class GraphModel:
 
     def replace(self, component, other_component):
         self.vertices.remove(component)
-        self.add_component(component)
+        self.add_component(other_component)
 
         other_component.out_sockets = component.out_sockets
         other_component.in_sockets = component.in_sockets

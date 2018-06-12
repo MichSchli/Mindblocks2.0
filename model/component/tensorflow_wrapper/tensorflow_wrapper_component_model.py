@@ -9,4 +9,7 @@ class TensorflowWrapperComponentModel(ComponentModel):
 
     def __init__(self, inner_component):
         self.value = TensorflowWrapperComponentValueModel(inner_component)
-        self.type = TensorflowWrapperComponentTypeModel()
+        self.component_type = TensorflowWrapperComponentTypeModel()
+
+    def get_name(self):
+        return "[TF]: " + self.value.inner_component.get_name()

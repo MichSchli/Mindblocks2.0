@@ -1,0 +1,65 @@
+<block>
+    <canvas name="main">
+        <component name="data_loader" type="CsvLoader">
+            <path type="string">data/iris.data</path>
+            <separator>,</separator>
+        </component>
+        <component name="data_splitter" type="DataSplitter">
+            <left_columns>0,1,2,3</left_columns>
+            <right_columns>4</right_columns>
+        </component>
+        <edge>
+                <source_socket component_name="data_loader">output</source_socket>
+                <target_socket component_name="data_splitter">input</target_socket>
+        </edge>
+
+        <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
+            <dimensions>4,20,20,3</dimensions>
+        </component>
+        <edge cast="array:float">
+                <source_socket component_name="data_splitter">left_output</source_socket>
+                <target_socket component_name="mlp">input</target_socket>
+        </edge>
+        <component name="softmax" type="Softmax" language="tensorflow">
+        </component>
+        <edge>
+                <source_socket component_name="mlp">output</source_socket>
+                <target_socket component_name="softmax">input</target_socket>
+        </edge>
+
+
+        <component name="indexer" type="ExplicitIndexer">
+            <index>Iris-setosa</index>
+            <index>Iris-versicolor</index>
+            <index>Iris-virginica</index>
+        </component>
+        <edge>
+                <source_socket component_name="data_splitter">right_output</source_socket>
+                <target_socket component_name="indexer">input</target_socket>
+        </edge>
+        <component name="argmax" type="ArgMax" language="python">
+        </component>
+        <edge>
+                <source_socket component_name="softmax">output</source_socket>
+                <target_socket component_name="argmax">input</target_socket>
+        </edge>
+        <component name="accuracy" type="Accuracy" language="python">
+        </component>
+        <edge>
+                <source_socket component_name="argmax">output</source_socket>
+                <target_socket component_name="accuracy">predictions</target_socket>
+        </edge>
+        <edge>
+                <source_socket component_name="indexer">output</source_socket>
+                <target_socket component_name="accuracy">labels</target_socket>
+        </edge>
+
+        <component name="printer" type="DebugPrint">
+            <text>output: $input</text>
+        </component>
+        <edge>
+                <source_socket component_name="accuracy">output</source_socket>
+                <target_socket component_name="printer">input</target_socket>
+        </edge>
+    </canvas>
+</block>

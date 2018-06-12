@@ -1,5 +1,8 @@
 import numpy as np
 
+from model.graph.value_type_model import ValueTypeModel
+
+
 class Edge:
 
     satisfied = None
@@ -22,8 +25,12 @@ class Edge:
 
         return copy
 
+    def get_value_type(self):
+        source_value_type = self.source.get_out_value_types()[self.source_socket]
+        return ValueTypeModel(source_value_type.type if self.cast_to is None else self.cast_to, source_value_type.dim)
+
     def __str__(self):
-        return "( " + self.source.get_name() + " -> " + self.target.get_name() + " )"
+        return "( " + self.source.get_name() + " [" + str(self.source_socket) + "] -> " + self.target.get_name() + " [" + str(self.target_socket) + "] )"
 
     def is_satisfied(self):
         return self.satisfied

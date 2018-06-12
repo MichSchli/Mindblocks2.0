@@ -38,4 +38,22 @@ class TestTensorflowRunner(unittest.TestCase):
         controller.load_block_file(test_block_file)
 
         output = controller.run_graphs(compile=True)
-        self.assertEqual(output[0][0], 8.15)
+        self.assertAlmostEqual(output[0][0], 8.15, places=6)
+
+    def test_tensorflow_grid_add(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = self.test_block_dir + "grid_add_tensorflow_unit_test.xml"
+        controller.load_block_file(test_block_file)
+
+        output = controller.run_graphs(compile=True)
+        self.assertAlmostEqual(output[0][0], 40, places=6)
+
+    def test_tensorflow_grid_add_multiple_parts(self):
+        controller = Controller()
+        controller.load_default_component_types()
+        test_block_file = self.test_block_dir + "grid_add_multiple_parts_tensorflow_unit_test.xml"
+        controller.load_block_file(test_block_file)
+
+        output = controller.run_graphs(compile=True)
+        self.assertAlmostEqual(output[0][0], 40, places=6)

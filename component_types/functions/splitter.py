@@ -1,5 +1,6 @@
 from model.component.component_type.component_type_model import ComponentTypeModel
 from model.component.component_value_model import ComponentValueModel
+from model.graph.value_type_model import ValueTypeModel
 
 
 class DataSplitter(ComponentTypeModel):
@@ -11,9 +12,22 @@ class DataSplitter(ComponentTypeModel):
     def get_new_value(self):
         return DataSplitterValue()
 
-    def execute(self, in_sockets, value):
+    def execute(self, in_sockets, value, language="python"):
         return [value.get_left_outputs(in_sockets[0]), value.get_right_outputs(in_sockets[0])]
 
+    def evaluate_value_type(self, in_types, value):
+        data_type = in_types[0].type
+        data_shape_left = [None]*len(in_types[0].dim)
+        data_shape_right = [None]*len(in_types[0].dim)
+
+        for i in range(len(in_types[0].dim)):
+            data_shape_left[i] = in_types[0].dim[i]
+            data_shape_right[i] = in_types[0].dim[i]
+
+        data_shape_left[-1] = len(value.left_columns)
+        data_shape_right[-1] = len(value.right_columns)
+
+        return [ValueTypeModel(data_type, data_shape_left), ValueTypeModel(data_type, data_shape_right)]
 
 class DataSplitterValue(ComponentValueModel):
 
@@ -34,3 +48,9 @@ class DataSplitterValue(ComponentValueModel):
 
     def describe(self):
         return "value=\""+self.value+"\""
+
+    def copy(self):
+        copy = DataSplitterValue()
+        copy.left_columns = self.left_columns
+        copy.right_columns = self.right_columns
+        return copy

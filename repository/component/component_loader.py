@@ -28,7 +28,8 @@ class ComponentLoader:
         while next_symbol != "/component":
             if current_value_line_id is None:
                 current_value_line_id = next_symbol
-                value_lines[current_value_line_id] = []
+                if not current_value_line_id in value_lines:
+                    value_lines[current_value_line_id] = []
             elif next_symbol == "/" + current_value_line_id:
                 current_value_line_id = None
             else:

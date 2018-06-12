@@ -2,10 +2,10 @@ from model.component.component_type.component_type_model import ComponentTypeMod
 from model.component.component_value_model import ComponentValueModel
 
 
-class DebugPrint(ComponentTypeModel):
+class MlHandler(ComponentTypeModel):
 
-    name = "DebugPrint"
-    in_socket_names = ["input"]
+    name = "MlHandler"
+    in_socket_names = ["loss", "prediction", "evaluation"]
     out_socket_names = []
 
     def __init__(self):

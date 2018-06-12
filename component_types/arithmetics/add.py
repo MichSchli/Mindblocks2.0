@@ -1,4 +1,5 @@
 from model.component.component_type.component_type_model import ComponentTypeModel
+from model.graph.value_type_model import ValueTypeModel
 
 
 class Add(ComponentTypeModel):
@@ -11,5 +12,8 @@ class Add(ComponentTypeModel):
     def __init__(self):
         pass
 
-    def execute(self, in_sockets, value):
+    def execute(self, in_sockets, value, language="python"):
         return [in_sockets[0] + in_sockets[1]]
+
+    def evaluate_value_type(self, in_types, value):
+        return [ValueTypeModel(in_types[0].type, in_types[0].dim)]

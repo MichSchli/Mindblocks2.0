@@ -5,9 +5,13 @@ controller = Controller()
 controller.load_default_component_types()
 session_model = controller.initialize_model()
 
-controller.load_block_file("test_blocks/add_constants_tensorflow.xml")
-controller.run_graphs()
+controller.load_block_file("test_blocks/predict_iris_data.xml")
+graph = controller.get_graphs()[0]
 
-view = HeadlessView(session_model, controller)
-view.run()
+controller.train(graph)
+controller.predict(graph)
+controller.evaluate(graph)
+
+#view = HeadlessView(session_model, controller)
+#view.run()
 

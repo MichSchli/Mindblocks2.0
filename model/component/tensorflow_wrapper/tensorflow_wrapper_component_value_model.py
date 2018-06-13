@@ -1,8 +1,9 @@
 from model.component.component_model import ComponentModel
+from model.component.component_value_model import ComponentValueModel
 from model.component.tensorflow_wrapper.tensorflow_placeholder_socket import TensorflowPlaceholderSocket
 
 
-class TensorflowWrapperComponentValueModel(ComponentModel):
+class TensorflowWrapperComponentValueModel(ComponentValueModel):
 
     inner_component = None
     graph = None
@@ -26,3 +27,6 @@ class TensorflowWrapperComponentValueModel(ComponentModel):
 
     def get_out_value_types(self):
         return self.inner_component.get_out_value_types()
+
+    def initialize(self):
+        self.inner_component.initialize()

@@ -2,7 +2,7 @@ import uuid
 
 from controller.block_loader.block_loader import BlockLoader
 from controller.component_type_loader.component_type_loader import ComponentTypeLoader
-from controller.ml_controller.ml_controller import MlController
+from experiment_runner.experiment_builder import ExperimentBuilder
 from helpers.xml.xml_helper import XmlHelper
 from model.canvas.canvas_model import CanvasModel
 from model.graph.graph_runners.python_graph_runner import GraphRunner
@@ -41,7 +41,7 @@ class Controller:
         canvas_loader = CanvasLoader(xml_helper, edge_loader, self.canvas_repository, component_loader)
         self.block_loader = BlockLoader(xml_helper, canvas_loader)
 
-        self.ml_controller = MlController()
+        self.experiment_builder = ExperimentBuilder()
 
     def train(self, graph):
         mirror_graph = graph.get_mirror()
@@ -124,5 +124,6 @@ class Controller:
         for graph in graphs:
             if compile:
                 graph = graph.get_compiled_copy()
+            graph.initialize()
             output.append(graph_runner.run(graph, {}))
         return output

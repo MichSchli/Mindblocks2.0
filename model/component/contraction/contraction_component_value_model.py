@@ -13,6 +13,10 @@ class ContractionComponentValueModel(ComponentValueModel):
     def __init__(self):
         self.source_outputs = []
 
+    def initialize(self):
+        self.source_component.initialize()
+        self.target_component.initialize()
+
     def copy(self):
         copy = ContractionComponentValueModel()
         copy.source_sockets = self.source_sockets

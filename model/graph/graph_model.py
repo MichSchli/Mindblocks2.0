@@ -71,6 +71,13 @@ class GraphModel:
     def has_edges(self):
         return len(self.edges) > 0
 
+    def get_components(self, component_type_name):
+        l = []
+        for component in self.vertices:
+            if component.component_type.name == component_type_name:
+                l.append(component)
+        return l
+
     def __str__(self):
         return "Graph: "+str(self.name)+"|"+str(self.identifier) + " [" + " ".join([c.get_name() for c in self.vertices]) + "]"
 

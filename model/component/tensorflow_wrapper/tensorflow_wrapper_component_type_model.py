@@ -4,6 +4,7 @@ import tensorflow as tf
 class TensorflowWrapperComponentTypeModel(ComponentTypeModel):
 
     name = "__tensorflow_wrapper__"
+    session = None
 
     def execute(self, in_sockets, value, language="python"):
         if value.graph is None:
@@ -13,9 +14,11 @@ class TensorflowWrapperComponentTypeModel(ComponentTypeModel):
         for i in range(len(in_sockets)):
             feed_dict[value.get_variables()[i]] = in_sockets[i]
 
-        with tf.Session() as sess:
-            sess.run(tf.initialize_all_variables())
-            output = sess.run(value.graph, feed_dict)
+        if self.session is None:
+            self.session = tf.Session()
+            self.session.run(tf.initialize_all_variables())
+
+        output = self.session.run(value.graph, feed_dict)
 
         return output
 

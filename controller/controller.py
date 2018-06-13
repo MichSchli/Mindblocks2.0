@@ -126,4 +126,9 @@ class Controller:
                 graph = graph.get_compiled_copy()
             graph.initialize()
             output.append(graph_runner.run(graph, {}))
+            output.append(graph_runner.run(graph, {}))
+            output.append(graph_runner.run(graph, {}))
+            output.append(graph_runner.run(graph, {}))
+            output.append(graph_runner.run(graph, {}))
+            output.append(graph_runner.run(graph, {}))
         return output

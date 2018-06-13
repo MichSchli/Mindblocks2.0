@@ -72,7 +72,7 @@
                 <source_socket component_name="data_splitter">right_output</source_socket>
                 <target_socket component_name="indexer_onehot">input</target_socket>
         </edge>
-        <component name="loss" type="CrossEntropy" language="Python">
+        <component name="loss" type="CrossEntropy" language="tensorflow">
         </component>
         <edge>
                 <source_socket component_name="mlp">output</source_socket>
@@ -83,11 +83,18 @@
                 <target_socket component_name="loss">labels</target_socket>
         </edge>
 
-        <component name="printer_2" type="DebugPrint">
-            <text>output: $input</text>
+        <component name="ml_trainer" type="MlTrainer" language="tensorflow">
         </component>
         <edge>
                 <source_socket component_name="loss">output</source_socket>
+                <target_socket component_name="ml_trainer">loss</target_socket>
+        </edge>
+
+        <component name="printer_2" type="DebugPrint">
+            <text>loss: $input</text>
+        </component>
+        <edge>
+                <source_socket component_name="ml_trainer">loss</source_socket>
                 <target_socket component_name="printer_2">input</target_socket>
         </edge>
     </canvas>

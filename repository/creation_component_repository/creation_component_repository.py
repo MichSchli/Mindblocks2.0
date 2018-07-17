@@ -21,6 +21,10 @@ class CreationComponentRepository(AbstractRepository):
 
         self.assign_component_type(model, specifications)
 
+        model.component_value = {}
+        if model.component_type is not None:
+            model.component_type.assign_default_value(model.component_value)
+
         return model
 
     def assign_component_type(self, model, specifications):

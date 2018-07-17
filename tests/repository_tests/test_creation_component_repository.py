@@ -70,3 +70,21 @@ class TestCreationComponentRepository(unittest.TestCase):
         self.assertIsNotNone(element.component_type)
         self.assertEqual(component_type, element.component_type)
         self.assertEqual("TestType", element.get_component_type_name())
+
+    def testCreateWithComponentTypeAssignsDefaultValue(self):
+        type_specs = ComponentTypeSpecifications()
+        type_specs.name = "TestType"
+
+        component_type = self.type_repository.create(type_specs)
+
+        def test_assign(dic):
+            dic["test_field"] = "test_value"
+        component_type.assign_default_value = test_assign
+
+        specs = CreationComponentSpecifications()
+        specs.component_type_name = "TestType"
+
+        element = self.repository.create(specs)
+
+        self.assertIsNotNone(element.component_value)
+        self.assertEqual({"test_field": "test_value"}, element.component_value)

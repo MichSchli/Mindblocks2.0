@@ -20,9 +20,17 @@ class TestBlockLoader(unittest.TestCase):
         self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)
 
     def testLoadsSimpleComponent(self):
-        text = """<component name="constant_1" type="Constant">
-                       <value type="float">5.17</value>
-                  </component>"""
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+
+        def test_assign(dic):
+            dic["value"] = "test_value"
+            dic["value_type"] = "test_value"
+
+        component_type.assign_default_value = test_assign
+
+        text = """<component name="constant_1" type="Constant"><value>5.17</value><type>float</type></component>"""
 
         self.component_loader.load_component(text, 0)
 
@@ -36,6 +44,6 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEquals(1, len(components))
         self.assertEquals("constant_1", components[0].name)
         self.assertEquals("Constant", components[0].get_component_type_name())
-        self.assertEquals("5.17", components[0].component_value.value)
-        self.assertEquals("float", components[0].component_value.value_type)
+        self.assertEquals("5.17", components[0].component_value["value"])
+        self.assertEquals("float", components[0].component_value["type"])
 

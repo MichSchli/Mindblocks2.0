@@ -27,14 +27,15 @@ class ComponentLoader:
             if current_value_line_id is None:
                 current_value_line_id = next_symbol
                 if not current_value_line_id in value_lines:
-                    value_lines[current_value_line_id] = []
+                    value_lines[current_value_line_id] = ""
             elif next_symbol == "/" + current_value_line_id:
                 current_value_line_id = None
             else:
-                value_lines[current_value_line_id].append((next_symbol, attributes))
+                value_lines[current_value_line_id] += next_symbol
 
             next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 
-        #component.value.load(value_lines)
+        for key, value in value_lines.items():
+            component.set_attribute(key, value)
 
         return component, pointer

@@ -1,10 +1,12 @@
 <block>
     <canvas name="main">
         <component name="constant_1" type="Constant">
-            <value type="float">5.17</value>
+            <value>5.17</value>
+            <type>float</type>
         </component>
         <component name="constant_2" type="Constant">
-            <value type="float">2.98</value>
+            <value>2.98</value>
+            <type>float</type>
         </component>
         <component name="adder" type="Add">
         </component>

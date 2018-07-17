@@ -1,7 +1,10 @@
 import unittest
 
+from controller.block_loader.canvas_loader import CanvasLoader
 from controller.block_loader.component_loader import ComponentLoader
 from helpers.xml.xml_helper import XmlHelper
+from repository.canvas_repository.canvas_repository import CanvasRepository
+from repository.canvas_repository.canvas_specifications import CanvasSpecifications
 from repository.component_type_repository.component_type_repository import ComponentTypeRepository
 from repository.component_type_repository.component_type_specifications import ComponentTypeSpecifications
 from repository.creation_component_repository.creation_component_repository import CreationComponentRepository
@@ -14,10 +17,12 @@ class TestBlockLoader(unittest.TestCase):
     def setUp(self):
         self.identifier_repository = IdentifierRepository()
         self.type_repository = ComponentTypeRepository(self.identifier_repository)
-        self.component_repository = CreationComponentRepository(self.identifier_repository, self.type_repository)
+        self.canvas_repository = CanvasRepository(self.identifier_repository)
+        self.component_repository = CreationComponentRepository(self.identifier_repository, self.type_repository, self.canvas_repository)
 
         self.xml_helper = XmlHelper()
         self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)
+        self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.canvas_repository)
 
     def testLoadsSimpleComponent(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -60,7 +65,7 @@ class TestBlockLoader(unittest.TestCase):
 
         text = """<canvas name="main"><component name="constant_1" type="Constant"><value>5.17</value><type>float</type></component></canvas>"""
 
-        self.canvas_loader.load_component(text, 0)
+        self.canvas_loader.load_canvas(text, 0)
 
         self.assertEquals(1, self.canvas_repository.count())
         self.assertEquals(1, self.component_repository.count())

@@ -7,7 +7,7 @@ class ComponentLoader:
         self.xml_helper = xml_helper
         self.component_repository = component_repository
 
-    def load_component(self, text, start_index):
+    def load_component(self, text, start_index=0, canvas_id=None):
         next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=start_index)
 
         if next_symbol != "component":
@@ -15,6 +15,7 @@ class ComponentLoader:
             exit()
 
         component_specifications = CreationComponentSpecifications()
+        component_specifications.canvas_id = canvas_id
         for key, value in attributes:
             component_specifications.add(key, value)
 

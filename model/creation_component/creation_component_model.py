@@ -3,6 +3,7 @@ class CreationComponentModel:
     identifier = None
     name = None
 
+    canvas = None
     component_type = None
     component_value = None
 
@@ -11,6 +12,12 @@ class CreationComponentModel:
             return None
         else:
             return self.component_type.name
+
+    def get_canvas_name(self):
+        if self.canvas is None:
+            return None
+        else:
+            return self.canvas.name
 
     def set_attribute(self, key, value):
         self.component_value[key] = value

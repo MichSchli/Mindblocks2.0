@@ -1,5 +1,7 @@
 import unittest
 
+from repository.canvas_repository.canvas_repository import CanvasRepository
+from repository.canvas_repository.canvas_specifications import CanvasSpecifications
 from repository.component_type_repository.component_type_repository import ComponentTypeRepository
 from repository.component_type_repository.component_type_specifications import ComponentTypeSpecifications
 from repository.creation_component_repository.creation_component_repository import CreationComponentRepository
@@ -11,8 +13,9 @@ class TestCreationComponentRepository(unittest.TestCase):
 
     def setUp(self):
         self.identifier_repository = IdentifierRepository()
+        self.canvas_repository = CanvasRepository(self.identifier_repository)
         self.type_repository = ComponentTypeRepository(self.identifier_repository)
-        self.repository = CreationComponentRepository(self.identifier_repository, self.type_repository)
+        self.repository = CreationComponentRepository(self.identifier_repository, self.type_repository, self.canvas_repository)
 
     def testCreateAssignsUID(self):
         specs = CreationComponentSpecifications()
@@ -88,3 +91,20 @@ class TestCreationComponentRepository(unittest.TestCase):
 
         self.assertIsNotNone(element.component_value)
         self.assertEqual({"test_field": "test_value"}, element.component_value)
+
+    def testCreateWithCanvasName(self):
+        canvas_specs = CanvasSpecifications()
+        canvas_specs.name = "TestCanvas"
+
+        canvas = self.canvas_repository.create(canvas_specs)
+
+        specs = CreationComponentSpecifications()
+        specs.canvas_name = "TestCanvas"
+
+        element = self.repository.create(specs)
+
+        self.assertIsNotNone(element.canvas)
+        self.assertEqual(canvas, element.canvas)
+        self.assertEquals(1, len(canvas.components))
+        self.assertEquals(element, canvas.components[0])
+        self.assertEquals("TestCanvas", element.get_canvas_name())

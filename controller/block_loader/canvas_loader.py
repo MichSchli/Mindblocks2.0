@@ -26,7 +26,7 @@ class CanvasLoader:
             if next_symbol == "component":
                 _, pointer = self.component_loader.load_component(text, canvas_id=canvas.identifier, start_index=pointer)
             elif next_symbol == "edge":
-                pass #, pointer = self.edge_loader.load_edge(text, pointer)
+                _, pointer = self.edge_loader.load_edge(text, pointer)
             else:
                 _, _, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 

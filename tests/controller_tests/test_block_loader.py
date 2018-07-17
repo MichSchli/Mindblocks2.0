@@ -92,3 +92,86 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEquals(components[0], canvases[0].components[0])
         self.assertEquals(canvases[0], components[0].canvas)
 
+    def testLoadsSimpleCanvasWithTwoComponents(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+
+        def test_assign(dic):
+            dic["value"] = "test_value"
+            dic["value_type"] = "test_value"
+
+        component_type.assign_default_value = test_assign
+
+        text = """<canvas name="main">
+        <component name="constant_1" type="Constant"><value>5.17</value><type>float</type></component>
+        <component name="constant_2" type="Constant"><value>8.14</value><type>float</type></component>
+        </canvas>"""
+
+        self.canvas_loader.load_canvas(text, 0)
+
+        self.assertEquals(1, self.canvas_repository.count())
+        self.assertEquals(2, self.component_repository.count())
+
+        canvas_spec = CanvasSpecifications()
+        canvas_spec.name = "main"
+        canvases = self.canvas_repository.get(canvas_spec)
+
+        self.assertEquals(1, len(canvases))
+        self.assertEquals("main", canvases[0].name)
+        self.assertEquals(2, canvases[0].count_components())
+
+        spec = CreationComponentSpecifications()
+        spec.name = "constant_1"
+
+        components = self.component_repository.get(spec)
+
+        self.assertEquals(1, len(components))
+        self.assertEquals("constant_1", components[0].name)
+        self.assertEquals("Constant", components[0].get_component_type_name())
+        self.assertEquals("5.17", components[0].component_value["value"])
+        self.assertEquals("float", components[0].component_value["type"])
+        self.assertEquals(canvases[0], components[0].canvas)
+
+        spec.name = "constant_2"
+
+        components = self.component_repository.get(spec)
+
+        self.assertEquals(1, len(components))
+        self.assertEquals("constant_2", components[0].name)
+        self.assertEquals("Constant", components[0].get_component_type_name())
+        self.assertEquals("8.14", components[0].component_value["value"])
+        self.assertEquals("float", components[0].component_value["type"])
+        self.assertEquals(canvases[0], components[0].canvas)
+
+    def testLoadsSimpleCanvasWithEdge(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["out"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Printer"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["in"]
+
+        text = """<canvas name="main">
+        <component name="constant_1" type="Constant"></component>
+        <component name="printer" type="Printer"></component>
+        <edge><source socket=out>constant_1></source><target socket=in>printer></target></edge>
+        </canvas>"""
+
+        self.canvas_loader.load_canvas(text, 0)
+
+        spec = CreationComponentSpecifications()
+        spec.name = "constant_1"
+        components = self.component_repository.get(spec)
+        graph = components[0].get_graph()
+
+        self.assertEquals(1, len(graph.get_edges()))
+        self.assertEquals(2, len(graph.get_components()))
+
+        edge = graph.get_edges()[1]
+        self.assertEquals("constant_1", edge.get_source_component_name())
+        self.assertEquals("printer", edge.get_target_component_name())
+

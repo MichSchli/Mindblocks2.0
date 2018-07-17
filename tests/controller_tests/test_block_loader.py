@@ -47,3 +47,43 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEquals("5.17", components[0].component_value["value"])
         self.assertEquals("float", components[0].component_value["type"])
 
+    def testLoadsSimpleCanvas(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+
+        def test_assign(dic):
+            dic["value"] = "test_value"
+            dic["value_type"] = "test_value"
+
+        component_type.assign_default_value = test_assign
+
+        text = """<canvas name="main"><component name="constant_1" type="Constant"><value>5.17</value><type>float</type></component></canvas>"""
+
+        self.canvas_loader.load_component(text, 0)
+
+        self.assertEquals(1, self.canvas_repository.count())
+        self.assertEquals(1, self.component_repository.count())
+
+        canvas_spec = CanvasSpecifications()
+        canvas_spec.name = "main"
+        canvases = self.canvas_repository.get(canvas_spec)
+
+        self.assertEquals(1, len(canvases))
+        self.assertEquals("main", canvases[0].name)
+
+        spec = CreationComponentSpecifications()
+        spec.name = "constant_1"
+
+        components = self.component_repository.get(spec)
+
+        self.assertEquals(1, len(components))
+        self.assertEquals("constant_1", components[0].name)
+        self.assertEquals("Constant", components[0].get_component_type_name())
+        self.assertEquals("5.17", components[0].component_value["value"])
+        self.assertEquals("float", components[0].component_value["type"])
+
+        self.assertEquals(1, canvases[0].count_components())
+        self.assertEquals(components[0], canvases[0].components[0])
+        self.assertEquals(canvases[0], components[0].canvas)
+

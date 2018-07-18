@@ -25,6 +25,18 @@ class TestComponentTypeLoader(unittest.TestCase):
 
         self.assertEqual("Add", c_type.name)
 
+    def testLoadsSingleComponentTypeWithCorrectSockets(self):
+        filename = "arithmetics/add.py"
+        filepath = self.filepath_handler.get_default_component_type_file(filename)
+        self.component_type_loader.load_file(filepath)
+
+        self.assertEqual(1, self.type_repository.count())
+
+        c_type = list(self.type_repository.elements.values())[0]
+
+        self.assertEqual(["left", "right"], c_type.in_sockets)
+        self.assertEqual(["output"], c_type.out_sockets)
+
     def testLoadsDirectory(self):
         filepath = self.filepath_handler.get_default_component_type_folder()
         self.component_type_loader.load_folder(filepath)

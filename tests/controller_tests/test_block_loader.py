@@ -9,6 +9,7 @@ from repository.component_type_repository.component_type_repository import Compo
 from repository.component_type_repository.component_type_specifications import ComponentTypeSpecifications
 from repository.creation_component_repository.creation_component_repository import CreationComponentRepository
 from repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
+from repository.graph.graph_repository import GraphRepository
 from repository.identifier.identifier_repository import IdentifierRepository
 
 
@@ -18,7 +19,11 @@ class TestBlockLoader(unittest.TestCase):
         self.identifier_repository = IdentifierRepository()
         self.type_repository = ComponentTypeRepository(self.identifier_repository)
         self.canvas_repository = CanvasRepository(self.identifier_repository)
-        self.component_repository = CreationComponentRepository(self.identifier_repository, self.type_repository, self.canvas_repository)
+        self.graph_repository = GraphRepository(self.identifier_repository)
+        self.component_repository = CreationComponentRepository(self.identifier_repository,
+                                                                self.type_repository,
+                                                                self.canvas_repository,
+                                                                self.graph_repository)
 
         self.xml_helper = XmlHelper()
         self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)

@@ -24,3 +24,9 @@ class AbstractRepository:
                 l.append(element)
 
         return l
+
+    def delete(self, element):
+        identifier = element.identifier
+
+        if identifier is not None:
+            del self.elements[identifier]

@@ -11,12 +11,12 @@
         <component name="adder" type="Add">
         </component>
         <edge>
-                <source_socket component_name="constant_1">output</source_socket>
-                <target_socket component_name="adder">left</target_socket>
+                <source socket="output">constant_1</source>
+                <target socket="left">adder</target>
         </edge>
         <edge>
-                <source_socket component_name="constant_2">output</source_socket>
-                <target_socket component_name="adder">right</target_socket>
+                <source component_name="output">constant_2</source>
+                <target component_name="right">adder</target>
         </edge>
     </canvas>
 </block>

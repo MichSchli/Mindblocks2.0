@@ -182,3 +182,63 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEquals("constant_1", edge.get_source_component_name())
         self.assertEquals("printer", edge.get_target_component_name())
 
+    def testLoadsFullBlock(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["out"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Printer"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["in"]
+
+        text = """<block>
+        <canvas name="main">
+        <component name="constant_1" type="Constant"></component>
+        <component name="printer" type="Printer"></component>
+        <edge><source socket=out>constant_1</source><target socket=in>printer</target></edge>
+        </canvas>
+        </block>"""
+
+        self.block_loader.load_block(text, 0)
+
+        self.assertEquals(1, self.canvas_repository.count())
+
+    def testLoadsFullBlockTwoCanvases(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["out"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Printer"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["in"]
+
+        text = """<block>
+        <canvas name="main">
+        <component name="constant_1" type="Constant"></component>
+        <component name="printer" type="Printer"></component>
+        <edge><source socket=out>constant_1</source><target socket=in>printer</target></edge>
+        </canvas>
+        <canvas name="secondary">
+        <component name="constant_1_s" type="Constant"></component>
+        <component name="printer_s" type="Printer"></component>
+        <edge><source socket=out>constant_1_s</source><target socket=in>printer_s</target></edge>
+        </canvas>
+        </block>"""
+
+        self.block_loader.load_block(text, 0)
+
+        self.assertEquals(2, self.canvas_repository.count())
+
+        spec = CreationComponentSpecifications()
+        spec.name = "constant_1"
+        component = self.component_repository.get(spec)[0]
+        self.assertEquals("main", component.canvas.name)
+
+        spec = CreationComponentSpecifications()
+        spec.name = "constant_1_s"
+        component = self.component_repository.get(spec)[0]
+        self.assertEquals("secondary", component.canvas.name)

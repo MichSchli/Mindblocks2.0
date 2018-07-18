@@ -267,3 +267,30 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEqual(1, self.canvas_repository.count())
         self.assertEqual(3, self.component_repository.count())
         self.assertEqual(2, list(self.graph_repository.elements.values())[0].count_edges())
+
+    def testLoadsLanguagesCorrect(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["output"]
+        component_type.languages = ["test_language"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Add"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["left", "right"]
+        component_type.languages = ["tensorflow", "python"]
+
+        filename = "add_constants.xml"
+        filepath = self.filepath_handler.get_test_block_path(filename)
+        self.block_loader.load(filepath)
+
+        spec = CreationComponentSpecifications()
+        spec.name = "constant_1"
+        component = self.component_repository.get(spec)[0]
+        self.assertEqual("test_language", component.language)
+
+        spec = CreationComponentSpecifications()
+        spec.name = "adder"
+        component = self.component_repository.get(spec)[0]
+        self.assertEqual("python", component.language)

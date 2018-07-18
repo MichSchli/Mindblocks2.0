@@ -5,12 +5,15 @@ class CreationComponentSpecifications:
     component_type_name = None
     canvas_name = None
     canvas_id = None
+    language = None
 
     def add(self, key, value):
         if key == "name":
             self.name = value
         elif key == "type":
             self.component_type_name = value
+        elif key == "language":
+            self.language = value
 
     def matches(self, element):
         if self.name is not None and self.name != element.name:

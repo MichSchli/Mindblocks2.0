@@ -175,3 +175,18 @@ class TestCreationComponentRepository(unittest.TestCase):
         self.assertIn("in_1", element.in_sockets)
         self.assertIsNotNone(element.get_in_socket("in_1"))
         self.assertIsNotNone(element.get_in_socket("in_2"))
+
+    def testCreateAssignsLanguage(self):
+        type_specs = ComponentTypeSpecifications()
+        type_specs.name = "TestType"
+
+        component_type = self.type_repository.create(type_specs)
+        component_type.languages = ["test_language", "other_test_language"]
+
+        specs = CreationComponentSpecifications()
+        specs.component_type_name = "TestType"
+
+        element = self.repository.create(specs)
+
+        self.assertIsNotNone(element.language)
+        self.assertEqual("test_language", element.language)

@@ -11,6 +11,8 @@ class CreationComponentModel:
     in_sockets = None
     out_sockets = None
 
+    language = None
+
     def __init__(self):
         self.in_sockets = {}
         self.out_sockets = {}

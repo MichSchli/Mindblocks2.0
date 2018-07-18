@@ -8,7 +8,7 @@
             <value>2.98</value>
             <type>float</type>
         </component>
-        <component name="adder" type="Add">
+        <component name="adder" type="Add" language="python">
         </component>
         <edge>
                 <source socket="output">constant_1</source>

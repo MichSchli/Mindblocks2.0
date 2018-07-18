@@ -35,6 +35,11 @@ class CreationComponentRepository(AbstractRepository):
         if model.component_type is not None:
             model.component_type.assign_default_value(model.component_value)
 
+        if specifications.language is not None:
+            model.language = specifications.language
+        elif model.component_type is not None and model.component_type.languages is not None:
+            model.language = model.component_type.languages[0]
+
         return model
 
     def assign_component_type(self, model, specifications):

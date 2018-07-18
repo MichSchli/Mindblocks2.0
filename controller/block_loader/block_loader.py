@@ -12,16 +12,17 @@ class BlockLoader:
             file_lines += line
         block_file.close()
 
-        pointer = 0
+        self.load_block(file_lines)
+
+    def load_block(self, file_lines, start_index=0):
+        pointer = start_index
         next_symbol = self.xml_helper.read_symbol(file_lines, start_index=pointer)
         while next_symbol is not None:
             if next_symbol == "block" or next_symbol == "/block":
-                _,_,pointer = self.xml_helper.pop_symbol(file_lines, start_index=pointer)
+                _, _, pointer = self.xml_helper.pop_symbol(file_lines, start_index=pointer)
             elif next_symbol == "canvas":
                 _, pointer = self.canvas_loader.load_canvas(file_lines, start_index=pointer)
             else:
-                # TODO proper error handling
-                print("ERROR: UNKNOWN SYMBOL")
-                exit()
+                _, _, pointer = self.xml_helper.pop_symbol(file_lines, start_index=pointer)
 
             next_symbol = self.xml_helper.read_symbol(file_lines, start_index=pointer)

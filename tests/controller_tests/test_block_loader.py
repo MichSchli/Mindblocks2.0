@@ -1,5 +1,6 @@
 import unittest
 
+from controller.block_loader.block_loader import BlockLoader
 from controller.block_loader.canvas_loader import CanvasLoader
 from controller.block_loader.component_loader import ComponentLoader
 from controller.block_loader.edge_loader import EdgeLoader
@@ -30,6 +31,7 @@ class TestBlockLoader(unittest.TestCase):
         self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)
         self.edge_loader = EdgeLoader(self.xml_helper, self.graph_repository, self.component_repository)
         self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.edge_loader, self.canvas_repository)
+        self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader)
 
     def testLoadsSimpleComponent(self):
         component_type_spec = ComponentTypeSpecifications()

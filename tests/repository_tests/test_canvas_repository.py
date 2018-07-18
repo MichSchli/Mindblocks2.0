@@ -32,15 +32,15 @@ class TestCanvasRepository(unittest.TestCase):
 
         specs = CanvasSpecifications()
 
-        self.assertEquals(0, self.repository.count())
+        self.assertEqual(0, self.repository.count())
 
         element_1 = self.repository.create(specs)
 
-        self.assertEquals(1, self.repository.count())
+        self.assertEqual(1, self.repository.count())
 
         element_2 = self.repository.create(specs)
 
-        self.assertEquals(2, self.repository.count())
+        self.assertEqual(2, self.repository.count())
 
     def testGetByName(self):
         specs = CanvasSpecifications()
@@ -49,16 +49,16 @@ class TestCanvasRepository(unittest.TestCase):
         element_1 = self.repository.create(specs)
         element_retrieved = self.repository.get(specs)
 
-        self.assertEquals(1, len(element_retrieved))
-        self.assertEquals(element_1.identifier, element_retrieved[0].identifier)
-        self.assertEquals(element_1, element_retrieved[0])
+        self.assertEqual(1, len(element_retrieved))
+        self.assertEqual(element_1.identifier, element_retrieved[0].identifier)
+        self.assertEqual(element_1, element_retrieved[0])
 
         specs.name = "falseTestName"
 
         element_retrieved = self.repository.get(specs)
-        self.assertEquals(0, len(element_retrieved))
+        self.assertEqual(0, len(element_retrieved))
 
     def testCanvasComponentsIsEmptyList(self):
         specs = CanvasSpecifications()
         canvas = self.repository.create(specs)
-        self.assertEquals([], canvas.get_components())
+        self.assertEqual([], canvas.get_components())

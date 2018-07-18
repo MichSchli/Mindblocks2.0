@@ -30,15 +30,15 @@ class TestComponentTypeRepository(unittest.TestCase):
 
         specs = CreationComponentSpecifications()
 
-        self.assertEquals(0, repository.count())
+        self.assertEqual(0, repository.count())
 
         element_1 = repository.create(specs)
 
-        self.assertEquals(1, repository.count())
+        self.assertEqual(1, repository.count())
 
         element_2 = repository.create(specs)
 
-        self.assertEquals(2, repository.count())
+        self.assertEqual(2, repository.count())
 
     def testGetByName(self):
         identifier_repository = IdentifierRepository()
@@ -50,11 +50,11 @@ class TestComponentTypeRepository(unittest.TestCase):
         element_1 = repository.create(specs)
         element_retrieved = repository.get(specs)
 
-        self.assertEquals(1, len(element_retrieved))
-        self.assertEquals(element_1.identifier, element_retrieved[0].identifier)
-        self.assertEquals(element_1, element_retrieved[0])
+        self.assertEqual(1, len(element_retrieved))
+        self.assertEqual(element_1.identifier, element_retrieved[0].identifier)
+        self.assertEqual(element_1, element_retrieved[0])
 
         specs.name = "falseTestName"
 
         element_retrieved = repository.get(specs)
-        self.assertEquals(0, len(element_retrieved))
+        self.assertEqual(0, len(element_retrieved))

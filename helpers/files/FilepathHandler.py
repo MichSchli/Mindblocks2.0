@@ -11,3 +11,20 @@ class FilepathHandler:
         path.append(filename)
 
         return "/".join(path)
+
+    def get_default_component_type_file(self, filename):
+        dirname, _ = os.path.split(os.path.abspath(__file__))
+        path = dirname.split("/")[:-2]
+
+        path.append("default_component_types")
+        path.append(filename)
+
+        return "/".join(path)
+
+    def get_default_component_type_folder(self):
+        dirname, _ = os.path.split(os.path.abspath(__file__))
+        path = dirname.split("/")[:-2]
+
+        path.append("default_component_types")
+
+        return "/".join(path)

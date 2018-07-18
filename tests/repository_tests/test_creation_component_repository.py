@@ -39,15 +39,15 @@ class TestCreationComponentRepository(unittest.TestCase):
 
         specs = CreationComponentSpecifications()
 
-        self.assertEquals(0, self.repository.count())
+        self.assertEqual(0, self.repository.count())
 
         element_1 = self.repository.create(specs)
 
-        self.assertEquals(1, self.repository.count())
+        self.assertEqual(1, self.repository.count())
 
         element_2 = self.repository.create(specs)
 
-        self.assertEquals(2, self.repository.count())
+        self.assertEqual(2, self.repository.count())
 
     def testGetByName(self):
         specs = CreationComponentSpecifications()
@@ -56,14 +56,14 @@ class TestCreationComponentRepository(unittest.TestCase):
         element_1 = self.repository.create(specs)
         element_retrieved = self.repository.get(specs)
 
-        self.assertEquals(1, len(element_retrieved))
-        self.assertEquals(element_1.identifier, element_retrieved[0].identifier)
-        self.assertEquals(element_1, element_retrieved[0])
+        self.assertEqual(1, len(element_retrieved))
+        self.assertEqual(element_1.identifier, element_retrieved[0].identifier)
+        self.assertEqual(element_1, element_retrieved[0])
 
         specs.name = "falseTestName"
 
         element_retrieved = self.repository.get(specs)
-        self.assertEquals(0, len(element_retrieved))
+        self.assertEqual(0, len(element_retrieved))
 
     def testCreateWithComponentTypeName(self):
         type_specs = ComponentTypeSpecifications()
@@ -111,26 +111,26 @@ class TestCreationComponentRepository(unittest.TestCase):
 
         self.assertIsNotNone(element.canvas)
         self.assertEqual(canvas, element.canvas)
-        self.assertEquals(1, len(canvas.components))
-        self.assertEquals(element, canvas.components[0])
-        self.assertEquals("TestCanvas", element.get_canvas_name())
+        self.assertEqual(1, len(canvas.components))
+        self.assertEqual(element, canvas.components[0])
+        self.assertEqual("TestCanvas", element.get_canvas_name())
 
     def testCreateAddsToGraphRepository(self):
         specs = CreationComponentSpecifications()
 
-        self.assertEquals(0, self.graph_repository.count())
+        self.assertEqual(0, self.graph_repository.count())
 
         element_1 = self.repository.create(specs)
 
-        self.assertEquals(1, self.graph_repository.count())
+        self.assertEqual(1, self.graph_repository.count())
 
         specs = GraphSpecifications()
         graph = self.graph_repository.get(specs)[0]
 
-        self.assertEquals(element_1.get_graph_identifier(), graph.identifier)
-        self.assertEquals(element_1.graph, graph)
-        self.assertEquals(1, graph.count_vertices())
-        self.assertEquals(element_1, graph.get_vertices()[0])
+        self.assertEqual(element_1.get_graph_identifier(), graph.identifier)
+        self.assertEqual(element_1.graph, graph)
+        self.assertEqual(1, graph.count_vertices())
+        self.assertEqual(element_1, graph.get_vertices()[0])
 
     def testCreateAssignsOutSockets(self):
         type_specs = ComponentTypeSpecifications()
@@ -146,8 +146,8 @@ class TestCreationComponentRepository(unittest.TestCase):
 
         self.assertIsNotNone(element.out_sockets)
         self.assertIsNotNone(element.in_sockets)
-        self.assertEquals(2, element.count_out_sockets())
-        self.assertEquals(0, element.count_in_sockets())
+        self.assertEqual(2, element.count_out_sockets())
+        self.assertEqual(0, element.count_in_sockets())
 
         self.assertIn("out_1", element.out_sockets)
         self.assertIn("out_2", element.out_sockets)
@@ -168,8 +168,8 @@ class TestCreationComponentRepository(unittest.TestCase):
 
         self.assertIsNotNone(element.out_sockets)
         self.assertIsNotNone(element.in_sockets)
-        self.assertEquals(0, element.count_out_sockets())
-        self.assertEquals(2, element.count_in_sockets())
+        self.assertEqual(0, element.count_out_sockets())
+        self.assertEqual(2, element.count_in_sockets())
 
         self.assertIn("in_1", element.in_sockets)
         self.assertIn("in_1", element.in_sockets)

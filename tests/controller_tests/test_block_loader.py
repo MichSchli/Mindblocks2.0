@@ -51,18 +51,18 @@ class TestBlockLoader(unittest.TestCase):
 
         self.component_loader.load_component(text, 0)
 
-        self.assertEquals(1, self.component_repository.count())
+        self.assertEqual(1, self.component_repository.count())
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
 
         components = self.component_repository.get(spec)
 
-        self.assertEquals(1, len(components))
-        self.assertEquals("constant_1", components[0].name)
-        self.assertEquals("Constant", components[0].get_component_type_name())
-        self.assertEquals("5.17", components[0].component_value["value"])
-        self.assertEquals("float", components[0].component_value["type"])
+        self.assertEqual(1, len(components))
+        self.assertEqual("constant_1", components[0].name)
+        self.assertEqual("Constant", components[0].get_component_type_name())
+        self.assertEqual("5.17", components[0].component_value["value"])
+        self.assertEqual("float", components[0].component_value["type"])
 
     def testLoadsSimpleCanvas(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -79,30 +79,30 @@ class TestBlockLoader(unittest.TestCase):
 
         self.canvas_loader.load_canvas(text, 0)
 
-        self.assertEquals(1, self.canvas_repository.count())
-        self.assertEquals(1, self.component_repository.count())
+        self.assertEqual(1, self.canvas_repository.count())
+        self.assertEqual(1, self.component_repository.count())
 
         canvas_spec = CanvasSpecifications()
         canvas_spec.name = "main"
         canvases = self.canvas_repository.get(canvas_spec)
 
-        self.assertEquals(1, len(canvases))
-        self.assertEquals("main", canvases[0].name)
+        self.assertEqual(1, len(canvases))
+        self.assertEqual("main", canvases[0].name)
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
 
         components = self.component_repository.get(spec)
 
-        self.assertEquals(1, len(components))
-        self.assertEquals("constant_1", components[0].name)
-        self.assertEquals("Constant", components[0].get_component_type_name())
-        self.assertEquals("5.17", components[0].component_value["value"])
-        self.assertEquals("float", components[0].component_value["type"])
+        self.assertEqual(1, len(components))
+        self.assertEqual("constant_1", components[0].name)
+        self.assertEqual("Constant", components[0].get_component_type_name())
+        self.assertEqual("5.17", components[0].component_value["value"])
+        self.assertEqual("float", components[0].component_value["type"])
 
-        self.assertEquals(1, canvases[0].count_components())
-        self.assertEquals(components[0], canvases[0].components[0])
-        self.assertEquals(canvases[0], components[0].canvas)
+        self.assertEqual(1, canvases[0].count_components())
+        self.assertEqual(components[0], canvases[0].components[0])
+        self.assertEqual(canvases[0], components[0].canvas)
 
     def testLoadsSimpleCanvasWithTwoComponents(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -122,39 +122,39 @@ class TestBlockLoader(unittest.TestCase):
 
         self.canvas_loader.load_canvas(text, 0)
 
-        self.assertEquals(1, self.canvas_repository.count())
-        self.assertEquals(2, self.component_repository.count())
+        self.assertEqual(1, self.canvas_repository.count())
+        self.assertEqual(2, self.component_repository.count())
 
         canvas_spec = CanvasSpecifications()
         canvas_spec.name = "main"
         canvases = self.canvas_repository.get(canvas_spec)
 
-        self.assertEquals(1, len(canvases))
-        self.assertEquals("main", canvases[0].name)
-        self.assertEquals(2, canvases[0].count_components())
+        self.assertEqual(1, len(canvases))
+        self.assertEqual("main", canvases[0].name)
+        self.assertEqual(2, canvases[0].count_components())
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
 
         components = self.component_repository.get(spec)
 
-        self.assertEquals(1, len(components))
-        self.assertEquals("constant_1", components[0].name)
-        self.assertEquals("Constant", components[0].get_component_type_name())
-        self.assertEquals("5.17", components[0].component_value["value"])
-        self.assertEquals("float", components[0].component_value["type"])
-        self.assertEquals(canvases[0], components[0].canvas)
+        self.assertEqual(1, len(components))
+        self.assertEqual("constant_1", components[0].name)
+        self.assertEqual("Constant", components[0].get_component_type_name())
+        self.assertEqual("5.17", components[0].component_value["value"])
+        self.assertEqual("float", components[0].component_value["type"])
+        self.assertEqual(canvases[0], components[0].canvas)
 
         spec.name = "constant_2"
 
         components = self.component_repository.get(spec)
 
-        self.assertEquals(1, len(components))
-        self.assertEquals("constant_2", components[0].name)
-        self.assertEquals("Constant", components[0].get_component_type_name())
-        self.assertEquals("8.14", components[0].component_value["value"])
-        self.assertEquals("float", components[0].component_value["type"])
-        self.assertEquals(canvases[0], components[0].canvas)
+        self.assertEqual(1, len(components))
+        self.assertEqual("constant_2", components[0].name)
+        self.assertEqual("Constant", components[0].get_component_type_name())
+        self.assertEqual("8.14", components[0].component_value["value"])
+        self.assertEqual("float", components[0].component_value["type"])
+        self.assertEqual(canvases[0], components[0].canvas)
 
     def testLoadsSimpleCanvasWithEdge(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -180,12 +180,12 @@ class TestBlockLoader(unittest.TestCase):
         components = self.component_repository.get(spec)
         graph = components[0].graph
 
-        self.assertEquals(1, len(graph.get_edges()))
-        self.assertEquals(2, len(graph.get_vertices()))
+        self.assertEqual(1, len(graph.get_edges()))
+        self.assertEqual(2, len(graph.get_vertices()))
 
         edge = graph.get_edges()[0]
-        self.assertEquals("constant_1", edge.get_source_component_name())
-        self.assertEquals("printer", edge.get_target_component_name())
+        self.assertEqual("constant_1", edge.get_source_component_name())
+        self.assertEqual("printer", edge.get_target_component_name())
 
     def testLoadsFullBlock(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -208,7 +208,7 @@ class TestBlockLoader(unittest.TestCase):
 
         self.block_loader.load_block(text, 0)
 
-        self.assertEquals(1, self.canvas_repository.count())
+        self.assertEqual(1, self.canvas_repository.count())
 
     def testLoadsFullBlockTwoCanvases(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -236,17 +236,17 @@ class TestBlockLoader(unittest.TestCase):
 
         self.block_loader.load_block(text, 0)
 
-        self.assertEquals(2, self.canvas_repository.count())
+        self.assertEqual(2, self.canvas_repository.count())
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
         component = self.component_repository.get(spec)[0]
-        self.assertEquals("main", component.canvas.name)
+        self.assertEqual("main", component.canvas.name)
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1_s"
         component = self.component_repository.get(spec)[0]
-        self.assertEquals("secondary", component.canvas.name)
+        self.assertEqual("secondary", component.canvas.name)
 
     def testLoadsFromFile(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -264,6 +264,6 @@ class TestBlockLoader(unittest.TestCase):
 
         self.block_loader.load(filepath)
 
-        self.assertEquals(1, self.canvas_repository.count())
-        self.assertEquals(3, self.component_repository.count())
-        self.assertEquals(2, self.graph_repository.elements.values()[0].count_edges())
+        self.assertEqual(1, self.canvas_repository.count())
+        self.assertEqual(3, self.component_repository.count())
+        self.assertEqual(2, list(self.graph_repository.elements.values())[0].count_edges())

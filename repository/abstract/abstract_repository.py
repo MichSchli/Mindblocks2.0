@@ -17,6 +17,13 @@ class AbstractRepository:
     def count(self):
         return len(self.elements)
 
+    def add(self, model):
+        identifier = self.identifier_repository.create()
+        model.identifier = identifier
+        self.elements[identifier] = model
+
+        return model
+
     def get(self, specifications):
         l = []
         for key, element in self.elements.items():

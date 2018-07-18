@@ -42,15 +42,15 @@ class TestGraphRepository(unittest.TestCase):
 
         specs = GraphSpecifications()
 
-        self.assertEquals(0, self.graph_repository.count())
+        self.assertEqual(0, self.graph_repository.count())
 
         element_1 = self.graph_repository.create(specs)
 
-        self.assertEquals(1, self.graph_repository.count())
+        self.assertEqual(1, self.graph_repository.count())
 
         element_2 = self.graph_repository.create(specs)
 
-        self.assertEquals(2, self.graph_repository.count())
+        self.assertEqual(2, self.graph_repository.count())
 
     def testMergeGraphsCombinesVertices(self):
         c_spec = CreationComponentSpecifications()
@@ -67,8 +67,8 @@ class TestGraphRepository(unittest.TestCase):
         self.assertIn(c1, g1.get_vertices())
         self.assertIn(c2, g1.get_vertices())
 
-        self.assertEquals(g1, c1.graph)
-        self.assertEquals(g1, c2.graph)
+        self.assertEqual(g1, c1.graph)
+        self.assertEqual(g1, c2.graph)
 
     def testMergeGraphsRemovesSecond(self):
         c_spec = CreationComponentSpecifications()
@@ -82,11 +82,11 @@ class TestGraphRepository(unittest.TestCase):
 
         self.graph_repository.merge(g1, g2)
 
-        self.assertEquals(1, self.graph_repository.count())
+        self.assertEqual(1, self.graph_repository.count())
 
         g_retrieved = self.graph_repository.get(GraphSpecifications())[0]
-        self.assertEquals(g1.identifier, g_retrieved.identifier)
-        self.assertEquals(g1, g_retrieved)
+        self.assertEqual(g1.identifier, g_retrieved.identifier)
+        self.assertEqual(g1, g_retrieved)
 
     def testCanAddEdgeWithinGraph(self):
         c_spec = CreationComponentSpecifications()
@@ -105,14 +105,14 @@ class TestGraphRepository(unittest.TestCase):
         self.graph_repository.merge(g1, g2)
         self.graph_repository.add_edge(out_s, in_s)
 
-        self.assertEquals(1, len(g1.edges))
+        self.assertEqual(1, len(g1.edges))
 
         edge = g1.edges[0]
 
-        self.assertEquals(out_s, edge.source_socket)
-        self.assertEquals(in_s, edge.target_socket)
-        self.assertEquals([edge], out_s.edges)
-        self.assertEquals(edge, in_s.edge)
+        self.assertEqual(out_s, edge.source_socket)
+        self.assertEqual(in_s, edge.target_socket)
+        self.assertEqual([edge], out_s.edges)
+        self.assertEqual(edge, in_s.edge)
 
     def testCanAddEdgeBetweenGraphs(self):
         c_spec = CreationComponentSpecifications()
@@ -125,14 +125,14 @@ class TestGraphRepository(unittest.TestCase):
         c1.add_out_socket(out_s)
         c2.add_in_socket(in_s)
 
-        self.assertEquals(0, len(c1.graph.edges))
-        self.assertEquals(0, len(c2.graph.edges))
+        self.assertEqual(0, len(c1.graph.edges))
+        self.assertEqual(0, len(c2.graph.edges))
         self.assertNotEqual(c1.graph, c2.graph)
 
         self.graph_repository.add_edge(out_s, in_s)
 
-        self.assertEquals(1, len(c1.graph.edges))
-        self.assertEquals(c1.graph, c2.graph)
+        self.assertEqual(1, len(c1.graph.edges))
+        self.assertEqual(c1.graph, c2.graph)
 
     def testMergeGraphsCombinesEdges(self):
         c_spec = CreationComponentSpecifications()
@@ -149,7 +149,7 @@ class TestGraphRepository(unittest.TestCase):
 
         g1 = c1.graph
 
-        self.assertEquals(1, g1.count_edges())
+        self.assertEqual(1, g1.count_edges())
 
         c_spec = CreationComponentSpecifications()
         c1 = self.component_repository.create(c_spec)
@@ -165,10 +165,10 @@ class TestGraphRepository(unittest.TestCase):
 
         g2 = c1.graph
 
-        self.assertEquals(1, g2.count_edges())
+        self.assertEqual(1, g2.count_edges())
 
         self.graph_repository.merge(g1, g2)
 
-        self.assertEquals(2, g1.count_edges())
+        self.assertEqual(2, g1.count_edges())
 
 

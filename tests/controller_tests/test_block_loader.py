@@ -4,6 +4,7 @@ from controller.block_loader.block_loader import BlockLoader
 from controller.block_loader.canvas_loader import CanvasLoader
 from controller.block_loader.component_loader import ComponentLoader
 from controller.block_loader.edge_loader import EdgeLoader
+from helpers.files.FilepathHandler import FilepathHandler
 from helpers.xml.xml_helper import XmlHelper
 from repository.canvas_repository.canvas_repository import CanvasRepository
 from repository.canvas_repository.canvas_specifications import CanvasSpecifications
@@ -32,6 +33,8 @@ class TestBlockLoader(unittest.TestCase):
         self.edge_loader = EdgeLoader(self.xml_helper, self.graph_repository, self.component_repository)
         self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.edge_loader, self.canvas_repository)
         self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader)
+
+        self.filepath_handler = FilepathHandler()
 
     def testLoadsSimpleComponent(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -244,3 +247,23 @@ class TestBlockLoader(unittest.TestCase):
         spec.name = "constant_1_s"
         component = self.component_repository.get(spec)[0]
         self.assertEquals("secondary", component.canvas.name)
+
+    def testLoadsFromFile(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["output"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Add"
+        component_type = self.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["left", "right"]
+
+        filename = "add_constants.xml"
+        filepath = self.filepath_handler.get_test_block_path(filename)
+
+        self.block_loader.load(filepath)
+
+        self.assertEquals(1, self.canvas_repository.count())
+        self.assertEquals(3, self.component_repository.count())
+        self.assertEquals(2, self.graph_repository.elements.values()[0].count_edges())

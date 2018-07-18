@@ -15,8 +15,8 @@
                 <target socket="left">adder</target>
         </edge>
         <edge>
-                <source component_name="output">constant_2</source>
-                <target component_name="right">adder</target>
+                <source socket="output">constant_2</source>
+                <target socket="right">adder</target>
         </edge>
     </canvas>
 </block>

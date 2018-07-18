@@ -3,10 +3,11 @@ from repository.canvas_repository.canvas_specifications import CanvasSpecificati
 
 class CanvasLoader:
 
-    def __init__(self, xml_helper, component_loader, canvas_repository):
+    def __init__(self, xml_helper, component_loader, edge_loader, canvas_repository):
         self.xml_helper = xml_helper
         self.component_loader = component_loader
         self.canvas_repository = canvas_repository
+        self.edge_loader = edge_loader
 
     def load_canvas(self, text, start_index):
         next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=start_index)
@@ -16,7 +17,7 @@ class CanvasLoader:
             exit()
 
         canvas_specifications = CanvasSpecifications()
-        for key, value in attributes:
+        for key, value in attributes.items():
             canvas_specifications.add(key, value)
 
         canvas = self.canvas_repository.create(canvas_specifications)

@@ -50,7 +50,7 @@ class XmlHelper:
             parts = symbol[1:-1].split(' ')
             name = parts[0]
             attributes = [tuple(att.split("=")) for att in parts[1:]]
-            attributes = [(k,v[1:-1]) for k,v in attributes]
+            attributes = {k: v.replace("\"", "") for k,v in attributes}
             return name, attributes, scanner
         else:
             while lines[scanner] != "<":

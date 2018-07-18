@@ -16,7 +16,7 @@ class ComponentLoader:
 
         component_specifications = CreationComponentSpecifications()
         component_specifications.canvas_id = canvas_id
-        for key, value in attributes:
+        for key, value in attributes.items():
             component_specifications.add(key, value)
 
         component = self.component_repository.create(component_specifications)

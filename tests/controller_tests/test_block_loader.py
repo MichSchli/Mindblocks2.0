@@ -2,6 +2,7 @@ import unittest
 
 from controller.block_loader.canvas_loader import CanvasLoader
 from controller.block_loader.component_loader import ComponentLoader
+from controller.block_loader.edge_loader import EdgeLoader
 from helpers.xml.xml_helper import XmlHelper
 from repository.canvas_repository.canvas_repository import CanvasRepository
 from repository.canvas_repository.canvas_specifications import CanvasSpecifications
@@ -27,7 +28,8 @@ class TestBlockLoader(unittest.TestCase):
 
         self.xml_helper = XmlHelper()
         self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)
-        self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.canvas_repository)
+        self.edge_loader = EdgeLoader(self.xml_helper, self.graph_repository, self.component_repository)
+        self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.edge_loader, self.canvas_repository)
 
     def testLoadsSimpleComponent(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -163,7 +165,7 @@ class TestBlockLoader(unittest.TestCase):
         text = """<canvas name="main">
         <component name="constant_1" type="Constant"></component>
         <component name="printer" type="Printer"></component>
-        <edge><source socket=out>constant_1></source><target socket=in>printer></target></edge>
+        <edge><source socket=out>constant_1</source><target socket=in>printer</target></edge>
         </canvas>"""
 
         self.canvas_loader.load_canvas(text, 0)
@@ -171,12 +173,12 @@ class TestBlockLoader(unittest.TestCase):
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
         components = self.component_repository.get(spec)
-        graph = components[0].get_graph()
+        graph = components[0].graph
 
         self.assertEquals(1, len(graph.get_edges()))
-        self.assertEquals(2, len(graph.get_components()))
+        self.assertEquals(2, len(graph.get_vertices()))
 
-        edge = graph.get_edges()[1]
+        edge = graph.get_edges()[0]
         self.assertEquals("constant_1", edge.get_source_component_name())
         self.assertEquals("printer", edge.get_target_component_name())
 

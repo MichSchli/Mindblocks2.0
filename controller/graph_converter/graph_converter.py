@@ -1,3 +1,4 @@
+from controller.graph_converter.tensorflow_section_contractor import TensorflowSectionContractor
 from model.execution_graph.execution_component_model import ExecutionComponentModel
 from model.execution_graph.execution_graph_model import ExecutionGraphModel
 from model.execution_graph.execution_head_component import ExecutionHeadComponent
@@ -7,27 +8,36 @@ from model.execution_graph.execution_out_socket import ExecutionOutSocket
 
 class GraphConverter:
 
-    def to_executable(self, creation_graph, runs):
-        value_dictionary = self.build_value_dictionary(creation_graph, runs)
+    tensorflow_section_contractor = None
+
+    def __init__(self):
+        self.tensorflow_section_contractor = TensorflowSectionContractor()
+
+    def to_executable(self, runs):
+        value_dictionary = self.build_value_dictionary(runs)
 
         execution_graphs = []
 
         for run in runs:
-            run_graph = self.build_execution_graph(creation_graph, run, value_dictionary)
+            run_graph = self.build_execution_graph(run, value_dictionary)
 
-            #self.contract_tensorflow_sections(run_graph)
+            self.tensorflow_section_contractor.contract_tensorflow_sections(run_graph)
 
             execution_graphs.append(run_graph)
 
         return execution_graphs
 
-    def build_execution_graph(self, creation_graph, run, value_dictionary):
-        head_component = self.get_run_components_and_edges(creation_graph, run, value_dictionary)
+    def build_execution_graph(self, run, value_dictionary):
+        head_component, execution_components = self.get_run_components_and_edges(run, value_dictionary)
         run_graph = ExecutionGraphModel()
         run_graph.add_head_component(head_component)
+
+        for execution_component in execution_components:
+            run_graph.add_execution_component(execution_component)
+
         return run_graph
 
-    def build_value_dictionary(self, creation_graph, runs):
+    def build_value_dictionary(self, runs):
         value_dictionary = {}
 
         activated_output_sockets = []
@@ -54,7 +64,7 @@ class GraphConverter:
     def initialize_value(self, component):
         return component.component_type.initialize_value(component.component_value)
 
-    def get_run_components_and_edges(self, creation_graph, run, value_dictionary):
+    def get_run_components_and_edges(self, run, value_dictionary):
         run_output_socket_ids = [str(socket.component.identifier) + ":" + socket.name for socket in run]
 
         activated_output_sockets = run[:]
@@ -62,6 +72,8 @@ class GraphConverter:
 
         unmatched_in_sockets = {}
         execution_out_sockets = {}
+
+        execution_components = []
 
         while len(activated_output_sockets) > 0:
             socket = activated_output_sockets.pop()
@@ -79,6 +91,7 @@ class GraphConverter:
                 execution_out_socket = ExecutionOutSocket()
                 execution_component.add_out_socket(name, execution_out_socket)
                 execution_out_socket.execution_component = execution_component
+                execution_components.append(execution_component)
 
                 socket_id = str(component.identifier) + ":" + name
                 execution_out_socket.socket_id = socket_id
@@ -87,6 +100,7 @@ class GraphConverter:
             for name, socket in component.in_sockets.items():
                 execution_in_socket = ExecutionInSocket()
                 execution_component.add_in_socket(name, execution_in_socket)
+                execution_in_socket.execution_component = execution_component
 
                 desired_source_id = str(socket.edge.source_socket.component.identifier) + ":" + socket.edge.source_socket.name
                 if desired_source_id not in unmatched_in_sockets:
@@ -101,26 +115,17 @@ class GraphConverter:
             if execution_out_socket.socket_id in unmatched_in_sockets:
                 for in_socket in unmatched_in_sockets[execution_out_socket.socket_id]:
                     in_socket.set_source(execution_out_socket)
+                    execution_out_socket.add_target(in_socket)
 
         run_output_sockets = [execution_out_sockets[socket_id] for socket_id in run_output_socket_ids]
         head_component = ExecutionHeadComponent(run_output_sockets)
 
-        return head_component
+        return head_component, execution_components
 
     def build_execution_component(self, component, execution_value):
         execution_component_model = ExecutionComponentModel()
         execution_component_model.execution_value = execution_value
         execution_component_model.execution_type = component.component_type
+        execution_component_model.identifier = component.identifier
+        execution_component_model.language = component.language
         return execution_component_model
-
-    def contract_tensorflow_sections(self, execution_graph):
-        tensorflow_section = self.find_tensorflow_section(execution_graph)
-        while tensorflow_section is not None:
-            self.replace_tensorflow_section(execution_graph, tensorflow_section)
-            tensorflow_section = self.find_tensorflow_section(execution_graph)
-
-    def find_tensorflow_section(self, execution_graph):
-        pass
-
-    def replace_tensorflow_section(self, execution_graph, tensorflow_section):
-        pass

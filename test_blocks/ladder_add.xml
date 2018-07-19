@@ -1,0 +1,62 @@
+<block>
+    <canvas name="main">
+        <component name="constant_1" type="Constant">
+            <value>2.5</value>
+            <type>float</type>
+        </component>
+        <component name="constant_2" type="Constant">
+            <value>-0.5</value>
+            <type>float</type>
+        </component>
+        <component name="adder_1_1" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant_1</source>
+                <target socket="left">adder_1_1</target>
+        </edge>
+        <edge>
+                <source socket="output">constant_2</source>
+                <target socket="right">adder_1_1</target>
+        </edge>
+        <component name="adder_1_2" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant_1</source>
+                <target socket="left">adder_1_2</target>
+        </edge>
+        <edge>
+                <source socket="output">constant_2</source>
+                <target socket="right">adder_1_2</target>
+        </edge>
+        <component name="adder_2_1" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">adder_1_1</source>
+                <target socket="left">adder_2_1</target>
+        </edge>
+        <edge>
+                <source socket="output">adder_1_2</source>
+                <target socket="right">adder_2_1</target>
+        </edge>
+        <component name="adder_2_2" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">adder_1_1</source>
+                <target socket="left">adder_2_2</target>
+        </edge>
+        <edge>
+                <source socket="output">adder_1_2</source>
+                <target socket="right">adder_2_2</target>
+        </edge>
+        <component name="adder_3" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">adder_2_1</source>
+                <target socket="left">adder_3</target>
+        </edge>
+        <edge>
+                <source socket="output">adder_2_2</source>
+                <target socket="right">adder_3</target>
+        </edge>
+    </canvas>
+</block>

@@ -13,7 +13,6 @@ from repository.component_type_repository.component_type_repository import Compo
 from repository.creation_component_repository.creation_component_repository import CreationComponentRepository
 from repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
 from repository.graph.graph_repository import GraphRepository
-from repository.graph.graph_specifications import GraphSpecifications
 from repository.identifier.identifier_repository import IdentifierRepository
 
 class TestGraphConverter(unittest.TestCase):
@@ -46,9 +45,6 @@ class TestGraphConverter(unittest.TestCase):
         filepath = self.filepath_handler.get_test_block_path(filename)
         self.block_loader.load(filepath)
 
-        spec = GraphSpecifications()
-        graph = self.graph_repository.get(spec)[0]
-
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adder"
         adder = self.component_repository.get(component_spec)[0]
@@ -56,7 +52,7 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket]]
 
-        value_dictionary = self.graph_converter.build_value_dictionary(graph, runs)
+        value_dictionary = self.graph_converter.build_value_dictionary(runs)
 
         self.assertIsNotNone(value_dictionary)
         self.assertEqual(3, len(value_dictionary))
@@ -72,9 +68,6 @@ class TestGraphConverter(unittest.TestCase):
         filepath = self.filepath_handler.get_test_block_path(filename)
         self.block_loader.load(filepath)
 
-        spec = GraphSpecifications()
-        graph = self.graph_repository.get(spec)[0]
-
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adder"
         adder = self.component_repository.get(component_spec)[0]
@@ -82,7 +75,7 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket]]
 
-        value_dictionary = self.graph_converter.build_value_dictionary(graph, runs)
+        value_dictionary = self.graph_converter.build_value_dictionary(runs)
 
         self.assertIsNotNone(value_dictionary)
         self.assertEqual(3, len(value_dictionary))
@@ -99,9 +92,6 @@ class TestGraphConverter(unittest.TestCase):
         filepath = self.filepath_handler.get_test_block_path(filename)
         self.block_loader.load(filepath)
 
-        spec = GraphSpecifications()
-        graph = self.graph_repository.get(spec)[0]
-
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adder"
         adder = self.component_repository.get(component_spec)[0]
@@ -109,7 +99,7 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket]]
 
-        run_graphs = self.graph_converter.to_executable(graph, runs)
+        run_graphs = self.graph_converter.to_executable(runs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.15], run_graphs[0].execute())
@@ -119,9 +109,6 @@ class TestGraphConverter(unittest.TestCase):
         filepath = self.filepath_handler.get_test_block_path(filename)
         self.block_loader.load(filepath)
 
-        spec = GraphSpecifications()
-        graph = self.graph_repository.get(spec)[0]
-
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adder"
         adder = self.component_repository.get(component_spec)[0]
@@ -129,7 +116,7 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket]]
 
-        run_graphs = self.graph_converter.to_executable(graph, runs)
+        run_graphs = self.graph_converter.to_executable(runs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.15], run_graphs[0].execute())
@@ -138,9 +125,6 @@ class TestGraphConverter(unittest.TestCase):
         filename = "add_constants_with_extra_adder.xml"
         filepath = self.filepath_handler.get_test_block_path(filename)
         self.block_loader.load(filepath)
-
-        spec = GraphSpecifications()
-        graph = self.graph_repository.get(spec)[0]
 
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adder"
@@ -153,7 +137,7 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket], [target_socket_2]]
 
-        run_graphs = self.graph_converter.to_executable(graph, runs)
+        run_graphs = self.graph_converter.to_executable(runs)
 
         self.assertEqual(2, len(run_graphs))
         self.assertEqual([8.15], run_graphs[0].execute())
@@ -164,9 +148,6 @@ class TestGraphConverter(unittest.TestCase):
         filename = "add_constants_with_extra_adder.xml"
         filepath = self.filepath_handler.get_test_block_path(filename)
         self.block_loader.load(filepath)
-
-        spec = GraphSpecifications()
-        graph = self.graph_repository.get(spec)[0]
 
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adder"
@@ -179,13 +160,28 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket, target_socket_2]]
 
-        run_graphs = self.graph_converter.to_executable(graph, runs)
+        run_graphs = self.graph_converter.to_executable(runs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.15, 13.32], run_graphs[0].execute())
 
     def testTensorflowPartsContracted(self):
-        pass
+        filename = "tensorflow_unit_test_blocks/add_constants_tensorflow.xml"
+        filepath = self.filepath_handler.get_test_block_path(filename)
+        self.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "adder"
+        adder = self.component_repository.get(component_spec)[0]
+        target_socket = adder.get_out_socket("output")
+
+        runs = [[target_socket]]
+
+        run_graphs = self.graph_converter.to_executable(runs)
+
+        self.assertEqual(1, len(run_graphs))
+        self.assertEqual(2, run_graphs[0].count_components())
+        self.assertEqual([8.15], run_graphs[0].execute())
 
     def testIrrelevantTensorflowPartsExcluded(self):
         pass

@@ -2,6 +2,8 @@ class ExecutionComponentModel:
 
     out_sockets = None
     in_sockets = None
+    identifier = None
+    language = None
 
     def __init__(self):
         self.out_sockets = {}
@@ -19,3 +21,9 @@ class ExecutionComponentModel:
 
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)
+
+    def get_in_sockets(self):
+        return list(self.in_sockets.values())
+
+    def get_out_sockets(self):
+        return list(self.out_sockets.values())

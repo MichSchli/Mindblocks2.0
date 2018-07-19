@@ -5,7 +5,7 @@ class Constant(ComponentTypeModel):
 
     name = "Constant"
     out_sockets = ["output"]
-    languages = ["tensorflow", "python"]
+    languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary):
         return ConstantValue(value_dictionary["value"], value_dictionary["type"])

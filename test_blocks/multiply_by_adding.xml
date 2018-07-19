@@ -1,0 +1,48 @@
+<block>
+    <canvas name="main">
+        <component name="constant" type="Constant">
+            <value>3.1</value>
+            <type>float</type>
+        </component>
+        <component name="adder_1" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant</source>
+                <target socket="left">adder_1</target>
+        </edge>
+        <edge>
+                <source socket="output">constant</source>
+                <target socket="right">adder_1</target>
+        </edge>
+        <component name="adder_2" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">adder_1</source>
+                <target socket="left">adder_2</target>
+        </edge>
+        <edge>
+                <source socket="output">constant</source>
+                <target socket="right">adder_2</target>
+        </edge>
+        <component name="adder_3" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">adder_2</source>
+                <target socket="left">adder_3</target>
+        </edge>
+        <edge>
+                <source socket="output">constant</source>
+                <target socket="right">adder_3</target>
+        </edge>
+        <component name="adder_4" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant</source>
+                <target socket="left">adder_4</target>
+        </edge>
+        <edge>
+                <source socket="output">adder_3</source>
+                <target socket="right">adder_4</target>
+        </edge>
+    </canvas>
+</block>

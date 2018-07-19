@@ -1,4 +1,6 @@
 from controller.graph_converter.tensorflow_section import TensorflowSection
+from model.execution_graph.execution_in_socket import ExecutionInSocket
+from model.execution_graph.execution_out_socket import ExecutionOutSocket
 
 
 class TensorflowSectionContractor:
@@ -34,4 +36,28 @@ class TensorflowSectionContractor:
                     self.expand_tensorflow_section(target.execution_component, tensorflow_section, tensorflow_section_map)
 
     def replace_tensorflow_section(self, execution_graph, tensorflow_section):
-        print(tensorflow_section.components)
+        execution_graph.add_execution_component(tensorflow_section)
+        for component in tensorflow_section.components:
+            for out_socket in component.get_out_sockets():
+                target_in_sockets = out_socket.targets
+                for in_socket in target_in_sockets:
+                    if in_socket.execution_component.language != "tensorflow":
+                        new_out_socket = ExecutionOutSocket()
+                        in_socket.set_source(new_out_socket)
+                        new_out_socket.execution_component = tensorflow_section
+
+                        tensorflow_section.map_out_socket(out_socket, new_out_socket)
+
+            for in_socket in component.get_in_sockets():
+                source_out_socket = in_socket.source
+                if source_out_socket.execution_component.language != "tensorflow":
+                    new_in_socket = ExecutionInSocket()
+                    source_out_socket.targets.remove(in_socket)
+                    source_out_socket.add_target(new_in_socket)
+                    new_in_socket.execution_component = tensorflow_section
+
+                    tensorflow_section.map_in_socket(in_socket, new_in_socket)
+
+
+
+            execution_graph.components.remove(component)

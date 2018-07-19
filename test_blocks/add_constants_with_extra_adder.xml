@@ -1,0 +1,32 @@
+<block>
+    <canvas name="main">
+        <component name="constant_1" type="Constant">
+            <value>5.17</value>
+            <type>float</type>
+        </component>
+        <component name="constant_2" type="Constant">
+            <value>2.98</value>
+            <type>float</type>
+        </component>
+        <component name="adder" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant_1</source>
+                <target socket="left">adder</target>
+        </edge>
+        <edge>
+                <source socket="output">constant_2</source>
+                <target socket="right">adder</target>
+        </edge>
+        <component name="adder_2" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant_1</source>
+                <target socket="left">adder_2</target>
+        </edge>
+        <edge>
+                <source socket="output">adder</source>
+                <target socket="right">adder_2</target>
+        </edge>
+    </canvas>
+</block>

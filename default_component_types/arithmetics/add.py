@@ -11,6 +11,9 @@ class Add(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return AddValue()
 
+    def execute(self, input_dictionary, value):
+        return {"output": input_dictionary["left"] + input_dictionary["right"]}
+
 class AddValue:
 
     pass

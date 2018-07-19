@@ -73,11 +73,11 @@ class TestGraphConverter(unittest.TestCase):
         self.block_loader.load(filepath)
 
         spec = GraphSpecifications()
-        graph = self.graph_repository.get(component_spec)[0]
+        graph = self.graph_repository.get(spec)[0]
 
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adder"
-        adder = self.component_repository.get(spec)[0]
+        adder = self.component_repository.get(component_spec)[0]
         target_socket = adder.get_out_socket("output")
 
         runs = [[target_socket]]
@@ -112,7 +112,7 @@ class TestGraphConverter(unittest.TestCase):
         run_graphs = self.graph_converter.to_executable(graph, runs)
 
         self.assertEqual(1, len(run_graphs))
-        self.assertEqual(8.15, run_graphs[0].pull())
+        self.assertEqual([8.15], run_graphs[0].execute())
 
     def testExcludesIrrelevantPartsFromExecution(self):
         filename = "add_constants_with_extra_adder.xml"
@@ -132,7 +132,7 @@ class TestGraphConverter(unittest.TestCase):
         run_graphs = self.graph_converter.to_executable(graph, runs)
 
         self.assertEqual(1, len(run_graphs))
-        self.assertEqual(8.15, run_graphs[0].pull())
+        self.assertEqual([8.15], run_graphs[0].execute())
 
     def testExecutesMultipleRuns(self):
         filename = "add_constants_with_extra_adder.xml"
@@ -156,9 +156,9 @@ class TestGraphConverter(unittest.TestCase):
         run_graphs = self.graph_converter.to_executable(graph, runs)
 
         self.assertEqual(2, len(run_graphs))
-        self.assertEqual(8.15, run_graphs[0].pull())
+        self.assertEqual([8.15], run_graphs[0].execute())
 
-        self.assertEqual(13.32, run_graphs[1].pull())
+        self.assertEqual([13.32], run_graphs[1].execute())
 
     def testExecutesMultipleTargetsInRun(self):
         filename = "add_constants_with_extra_adder.xml"
@@ -182,7 +182,7 @@ class TestGraphConverter(unittest.TestCase):
         run_graphs = self.graph_converter.to_executable(graph, runs)
 
         self.assertEqual(1, len(run_graphs))
-        self.assertEqual([8.15, 13.32], run_graphs[0].pull())
+        self.assertEqual([8.15, 13.32], run_graphs[0].execute())
 
     def testTensorflowPartsContracted(self):
         pass

@@ -10,6 +10,9 @@ class Constant(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return ConstantValue(value_dictionary["value"], value_dictionary["type"])
 
+    def execute(self, input_dictionary, value):
+        return {"output": value.value}
+
 class ConstantValue:
 
     value = None

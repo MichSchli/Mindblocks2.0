@@ -22,6 +22,20 @@ class ExecutionComponentModel:
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)
 
+    def infer_types(self):
+        in_types = {k : in_socket.pull_types() for k,in_socket in self.in_sockets.items()}
+        output_types = self.execution_type.infer_types(in_types, self.execution_value)
+
+        for k,v in output_types.items():
+            self.out_sockets[k].set_cached_type(v)
+
+    def infer_dims(self):
+        in_dims = {k : in_socket.pull_dims() for k,in_socket in self.in_sockets.items()}
+        output_dims = self.execution_type.infer_dims(in_dims, self.execution_value)
+
+        for k,v in output_dims.items():
+            self.out_sockets[k].set_cached_dims(v)
+
     def get_in_sockets(self):
         return list(self.in_sockets.values())
 

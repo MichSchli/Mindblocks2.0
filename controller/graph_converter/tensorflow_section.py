@@ -1,3 +1,6 @@
+import tensorflow as tf
+
+
 class TensorflowSection:
 
     components = None
@@ -25,16 +28,22 @@ class TensorflowSection:
         self.outputs = [tf_out_socket.pull() for tf_out_socket, _ in self.matched_out_sockets]
 
     def fill_in_sockets(self):
-        for tf_in_socket, in_socket in self.matched_in_sockets:
+        for in_socket, tf_in_socket in self.matched_in_sockets:
             socket_type = in_socket.pull_type()
             socket_dim = in_socket.pull_dim()
 
             socket_placeholder = self.get_placeholder(socket_type, socket_dim)
-            tf_in_socket.set_cached_value(socket_placeholder)
+            tf_in_socket.replaced_value = socket_placeholder
+
+    def get_placeholder(self, socket_type, socket_dim):
+        if socket_type == "float":
+            tf_type = tf.float32
+
+        return tf.placeholder(tf_type, shape=socket_dim)
 
     def execute(self):
         feed_dict = {}
-        for tf_in_socket, in_socket in self.matched_in_sockets:
+        for in_socket, tf_in_socket in self.matched_in_sockets:
             placeholder = tf_in_socket.pull()
             value = in_socket.pull()
             feed_dict[placeholder] = value

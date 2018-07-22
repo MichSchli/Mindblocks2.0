@@ -58,6 +58,6 @@ class TensorflowSectionContractor:
 
                     tensorflow_section.map_in_socket(in_socket, new_in_socket)
 
-
-
             execution_graph.components.remove(component)
+
+        tensorflow_section.compile()

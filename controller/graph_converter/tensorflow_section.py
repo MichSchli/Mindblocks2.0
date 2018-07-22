@@ -33,6 +33,8 @@ class TensorflowSection:
             socket_dim = in_socket.pull_dim()
 
             socket_placeholder = self.get_placeholder(socket_type, socket_dim)
+
+            # TODO: OVERLAPPING IN SOCKETS (same out socket) USE SEPARATE PLACEHOLDERS
             tf_in_socket.replaced_value = socket_placeholder
 
     def get_placeholder(self, socket_type, socket_dim):

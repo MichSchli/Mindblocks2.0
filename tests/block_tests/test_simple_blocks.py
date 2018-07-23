@@ -74,13 +74,3 @@ class TestSimpleBlocks(unittest.TestCase):
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([12.4], run_graphs[0].execute())
-
-    def testConllReaderWithVariable(self):
-        filename = "multiply_by_adding.xml"
-        filepath = self.filepath_handler.get_test_block_path(filename)
-        self.block_loader.load(filepath)
-
-        component_spec = CreationComponentSpecifications()
-        component_spec.name = "adder_3"
-        adder = self.component_repository.get(component_spec)[0]
-        target_socket = adder.get_out_socket("output")

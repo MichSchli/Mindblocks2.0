@@ -14,49 +14,30 @@ from repository.creation_component_repository.creation_component_repository impo
 from repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
 from repository.graph.graph_repository import GraphRepository
 from repository.identifier.identifier_repository import IdentifierRepository
+from tests.setup_holder import SetupHolder
 
 
 class TestConllReaderBlocks(unittest.TestCase):
 
     def setUp(self):
-        self.identifier_repository = IdentifierRepository()
-        self.type_repository = ComponentTypeRepository(self.identifier_repository)
-        self.canvas_repository = CanvasRepository(self.identifier_repository)
-        self.graph_repository = GraphRepository(self.identifier_repository)
-        self.component_repository = CreationComponentRepository(self.identifier_repository,
-                                                                self.type_repository,
-                                                                self.canvas_repository,
-                                                                self.graph_repository)
-
-        self.filepath_handler = FilepathHandler()
-        self.component_type_loader = ComponentTypeLoader(self.filepath_handler, self.type_repository)
-        self.component_type_loader.load_default_folder()
-
-        self.xml_helper = XmlHelper()
-        self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)
-        self.edge_loader = EdgeLoader(self.xml_helper, self.graph_repository, self.component_repository)
-        self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.edge_loader,
-                                          self.canvas_repository)
-        self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader)
-
-        self.graph_converter = GraphConverter()
+        self.setup_holder = SetupHolder()
 
     def testConllReaderReadsFile(self):
         filename = "conll_reader_tests/conll_reader.xml"
-        filepath = self.filepath_handler.get_test_block_path(filename)
-        self.block_loader.load(filepath)
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
 
         component_spec = CreationComponentSpecifications()
         component_spec.name = "reader"
-        adder = self.component_repository.get(component_spec)[0]
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
         target_socket = adder.get_out_socket("output")
 
         runs = [[target_socket]]
 
-        run_graphs = self.graph_converter.to_executable(runs)
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
 
         self.assertEqual(1, len(run_graphs))
-        self.assertEqual([[[0, "this"],
+        self.assertEqual([[[[0, "this"],
                            [1, "is"],
                            [2, "a"],
                            [3, "sentence"],
@@ -64,4 +45,4 @@ class TestConllReaderBlocks(unittest.TestCase):
                           [[0, "so"],
                            [1, "is"],
                            [2, "this"],
-                           [3, "."]]], run_graphs[0].execute())
+                           [3, "."]]]], run_graphs[0].execute())

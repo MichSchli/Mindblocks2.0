@@ -46,3 +46,28 @@ class TestConllReaderBlocks(unittest.TestCase):
                            [1, "is"],
                            [2, "this"],
                            [3, "."]]]], run_graphs[0].execute())
+
+    def testConllReaderReadsFile(self):
+        filename = "conll_reader_tests/conll_reader_with_indexer.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "reader"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        target_socket = adder.get_out_socket("output")
+
+        runs = [[target_socket]]
+
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+
+        self.assertEqual(1, len(run_graphs))
+        self.assertEqual([[[[0, "this"],
+                           [1, "is"],
+                           [2, "a"],
+                           [3, "sentence"],
+                           [4, "."]],
+                          [[0, "so"],
+                           [1, "is"],
+                           [2, "this"],
+                           [3, "."]]]], run_graphs[0].execute())

@@ -1,7 +1,7 @@
 from model.component_type.component_type_model import ComponentTypeModel
 
 
-class Constant(ComponentTypeModel):
+class ConllReader(ComponentTypeModel):
 
     name = "ConllReader"
     out_sockets = ["output"]

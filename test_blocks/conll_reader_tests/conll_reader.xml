@@ -1,0 +1,7 @@
+<block>
+    <canvas name="main">
+        <component name="reader" type="ConllReader">
+            <file_location>$MINDBLOCKS_DIR/test_blocks/conll_reader_tests/test_conll_file.conll</file_location>
+        </component>
+    </canvas>
+</block>

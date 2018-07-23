@@ -16,7 +16,7 @@ from repository.graph.graph_repository import GraphRepository
 from repository.identifier.identifier_repository import IdentifierRepository
 
 
-class TestSimpleBlocks(unittest.TestCase):
+class TestTensorflowSimpleBlocks(unittest.TestCase):
 
     def setUp(self):
         self.identifier_repository = IdentifierRepository()
@@ -57,3 +57,20 @@ class TestSimpleBlocks(unittest.TestCase):
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.0], run_graphs[0].execute())
+
+    def testSecondLadderAdd(self):
+        filename = "tensorflow_unit_test_blocks/ladder_add_tensorflow_2.xml"
+        filepath = self.filepath_handler.get_test_block_path(filename)
+        self.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "adder_3"
+        adder = self.component_repository.get(component_spec)[0]
+        target_socket = adder.get_out_socket("output")
+
+        runs = [[target_socket]]
+
+        run_graphs = self.graph_converter.to_executable(runs)
+
+        self.assertEqual(1, len(run_graphs))
+        self.assertAlmostEqual(8.0, run_graphs[0].execute()[0], places=5)

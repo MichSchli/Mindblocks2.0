@@ -41,3 +41,82 @@ class TestIrisBlocks(unittest.TestCase):
 
         self.assertEqual("0.2", result[0][0][-1])
         self.assertEqual("Iris-setosa", result[1][0][0])
+
+    def testIndexesNames(self):
+        filename = "iris_tests/read_and_index_iris_data.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "indexer"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        target_socket_1 = adder.get_out_socket("output")
+
+        runs = [[target_socket_1]]
+
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        result = run_graphs[0].execute()
+
+        self.assertEqual(0, result[1][0][0])
+        self.assertEqual(1, result[1][50][0])
+        self.assertEqual(2, result[1][100][0])
+
+    def testBatchesForTraining(self):
+        filename = "iris_tests/batch_iris.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "data_batcher"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        target_socket_1 = adder.get_out_socket("output")
+
+        runs = [[target_socket_1]]
+
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        run_graphs[0].init_batches(shuffle=False)
+
+        result = run_graphs[0].execute()
+        self.assertTrue(run_graphs[0].has_batches())
+        self.assertEqual(50, len(result))
+        result = run_graphs[0].execute()
+        self.assertTrue(run_graphs[0].has_batches())
+        self.assertEqual(50, len(result))
+        result = run_graphs[0].execute()
+        self.assertEqual(50, len(result))
+        self.assertFalse(run_graphs[0].has_batches())
+
+        run_graphs[0].init_batches(shuffle=False)
+
+        result = run_graphs[0].execute()
+        self.assertTrue(run_graphs[0].has_batches())
+        self.assertEqual(50, len(result))
+        result = run_graphs[0].execute()
+        self.assertTrue(run_graphs[0].has_batches())
+        self.assertEqual(50, len(result))
+        result = run_graphs[0].execute()
+        self.assertEqual(50, len(result))
+        self.assertFalse(run_graphs[0].has_batches())
+
+    def testFullTraining(self):
+        filename = "iris_tests/full_iris.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "updater"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        update = adder.get_out_socket("update")
+        loss = adder.get_out_socket("loss")
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "accuracy"
+        component = self.setup_holder.component_repository.get(component_spec)[0]
+        accuracy = component.get_out_socket("output")
+
+        ml_helper = self.setup_helper.ml_helper_factory.build_ml_helper(update=update, loss=loss, evaluate=accuracy)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertLess(0.9, performance)

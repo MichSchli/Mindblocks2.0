@@ -61,3 +61,6 @@ class TensorflowSectionContractor:
 
 
             execution_graph.components.remove(component)
+
+        tensorflow_section.initialize_placeholders()
+        tensorflow_section.compile()

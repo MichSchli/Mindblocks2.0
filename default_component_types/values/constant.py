@@ -13,6 +13,12 @@ class Constant(ComponentTypeModel):
     def execute(self, input_dictionary, value):
         return {"output": value.value}
 
+    def infer_types(self, input_types, value):
+        return {"output": value.value_type}
+
+    def infer_dims(self, input_dims, value):
+        return {"output": 1}
+
 class ConstantValue:
 
     value = None

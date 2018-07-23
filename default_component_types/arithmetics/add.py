@@ -14,6 +14,12 @@ class Add(ComponentTypeModel):
     def execute(self, input_dictionary, value):
         return {"output": input_dictionary["left"] + input_dictionary["right"]}
 
+    def infer_types(self, input_types, value):
+        return {"output": input_types["left"]}
+
+    def infer_dims(self, input_dims, value):
+        return {"output": input_dims["left"]}
+
 class AddValue:
 
     pass

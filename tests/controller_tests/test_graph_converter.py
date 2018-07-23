@@ -181,7 +181,7 @@ class TestGraphConverter(unittest.TestCase):
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual(2, run_graphs[0].count_components())
-        self.assertEqual([8.15], run_graphs[0].execute())
+        self.assertAlmostEqual(8.15, run_graphs[0].execute()[0], places=5)
 
     def testIrrelevantTensorflowPartsExcluded(self):
         pass

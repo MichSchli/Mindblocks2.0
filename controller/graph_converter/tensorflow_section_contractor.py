@@ -1,13 +1,17 @@
 from controller.graph_converter.tensorflow_section import TensorflowSection
 from model.execution_graph.execution_in_socket import ExecutionInSocket
 from model.execution_graph.execution_out_socket import ExecutionOutSocket
+import tensorflow as tf
 
 
 class TensorflowSectionContractor:
 
     def contract_tensorflow_sections(self, execution_graph):
+        tensorflow_session = tf.Session()
+
         tensorflow_sections = self.find_tensorflow_sections(execution_graph)
         for tensorflow_section in tensorflow_sections:
+            tensorflow_section.set_session(tensorflow_session)
             self.replace_tensorflow_section(execution_graph, tensorflow_section)
 
     def find_tensorflow_sections(self, execution_graph):
@@ -54,6 +58,7 @@ class TensorflowSectionContractor:
                     new_in_socket = ExecutionInSocket()
                     source_out_socket.targets.remove(in_socket)
                     source_out_socket.add_target(new_in_socket)
+                    new_in_socket.set_source(source_out_socket)
                     new_in_socket.execution_component = tensorflow_section
 
                     tensorflow_section.map_in_socket(in_socket, new_in_socket)

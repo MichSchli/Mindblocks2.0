@@ -8,7 +8,7 @@
             <value>-0.5</value>
             <type>float</type>
         </component>
-        <component name="adder_1_1" type="Add" language="python">
+        <component name="adder_1_1" type="Add" language="tensorflow">
         </component>
         <edge>
                 <source socket="output">constant_1</source>
@@ -48,7 +48,7 @@
                 <source socket="output">adder_1_2</source>
                 <target socket="right">adder_2_2</target>
         </edge>
-        <component name="adder_3" type="Add" language="python">
+        <component name="adder_3" type="Add">
         </component>
         <edge>
                 <source socket="output">adder_2_1</source>

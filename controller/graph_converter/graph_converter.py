@@ -117,8 +117,17 @@ class GraphConverter:
                     in_socket.set_source(execution_out_socket)
                     execution_out_socket.add_target(in_socket)
 
-        run_output_sockets = [execution_out_sockets[socket_id] for socket_id in run_output_socket_ids]
-        head_component = ExecutionHeadComponent(run_output_sockets)
+        head_component = ExecutionHeadComponent()
+
+        for socket_id in run_output_socket_ids:
+            socket = execution_out_sockets[socket_id]
+
+            head_in_socket = ExecutionInSocket()
+            head_in_socket.set_source(socket)
+            socket.add_target(head_in_socket)
+            head_in_socket.execution_component = head_component
+
+            head_component.add_in_socket(head_in_socket)
 
         return head_component, execution_components
 

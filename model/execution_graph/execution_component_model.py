@@ -23,14 +23,14 @@ class ExecutionComponentModel:
             self.out_sockets[k].set_cached_value(v)
 
     def infer_types(self):
-        in_types = {k : in_socket.pull_types() for k,in_socket in self.in_sockets.items()}
+        in_types = {k : in_socket.pull_type() for k,in_socket in self.in_sockets.items()}
         output_types = self.execution_type.infer_types(in_types, self.execution_value)
 
         for k,v in output_types.items():
             self.out_sockets[k].set_cached_type(v)
 
     def infer_dims(self):
-        in_dims = {k : in_socket.pull_dims() for k,in_socket in self.in_sockets.items()}
+        in_dims = {k : in_socket.pull_dim() for k,in_socket in self.in_sockets.items()}
         output_dims = self.execution_type.infer_dims(in_dims, self.execution_value)
 
         for k,v in output_dims.items():

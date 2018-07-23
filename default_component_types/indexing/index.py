@@ -10,7 +10,7 @@ class Index(ComponentTypeModel):
         return IndexValue()
 
     def execute(self, input_dictionary, value):
-        return {"output": value.get_index()}
+        return {"index": value.get_index()}
 
     def infer_types(self, input_types, value):
         return {"output": "nonstandard"}

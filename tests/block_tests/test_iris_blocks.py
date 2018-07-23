@@ -57,9 +57,9 @@ class TestIrisBlocks(unittest.TestCase):
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
         result = run_graphs[0].execute()
 
-        self.assertEqual(0, result[1][0][0])
-        self.assertEqual(1, result[1][50][0])
-        self.assertEqual(2, result[1][100][0])
+        self.assertEqual('0', result[0][0][0])
+        self.assertEqual('1', result[0][50][0])
+        self.assertEqual('2', result[0][100][0])
 
     def testBatchesForTraining(self):
         filename = "iris_tests/batch_iris.xml"
@@ -114,7 +114,7 @@ class TestIrisBlocks(unittest.TestCase):
         component = self.setup_holder.component_repository.get(component_spec)[0]
         accuracy = component.get_out_socket("output")
 
-        ml_helper = self.setup_helper.ml_helper_factory.build_ml_helper(update=update, loss=loss, evaluate=accuracy)
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper(update=update, loss=loss, evaluate=accuracy)
 
         ml_helper.train()
         performance = ml_helper.evaluate()

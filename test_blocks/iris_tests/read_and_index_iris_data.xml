@@ -1,0 +1,29 @@
+<block>
+    <canvas name="main">
+        <component name="reader" type="CsvReader">
+            <file_path>/Users/micschli/Documents/Projects/Mindblocks/Mindblocks2.0/test_blocks/iris_tests/iris.data.txt</file_path>
+            <columns>string,string,string,string,string</columns>
+        </component>
+        <component name="data_splitter" type="DataSplitter">
+            <pivot>3</pivot>
+        </component>
+        <edge>
+                <source socket="output">reader</source>
+                <target socket="input">data_splitter</target>
+        </edge>
+        <component name="index" type="Index">
+        </component>
+        <component name="indexer" type="Indexer">
+            <input_type>tensor:2</input_type>
+            <input_column>0</input_column>
+        </component>
+        <edge>
+                <source socket="right">data_splitter</source>
+                <target socket="input">indexer</target>
+        </edge>
+        <edge>
+                <source socket="index">index</source>
+                <target socket="index">indexer</target>
+        </edge>
+    </canvas>
+</block>

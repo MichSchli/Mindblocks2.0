@@ -9,7 +9,7 @@ class Indexer(ComponentTypeModel):
 
     def initialize_value(self, value_dictionary):
         return IndexerValue(value_dictionary["input_type"],
-                            value_dictionary["input_column"])
+                            int(value_dictionary["input_column"]))
 
     def execute(self, input_dictionary, value):
         transformed_input = value.apply_index(input_dictionary["input"],
@@ -37,9 +37,20 @@ class IndexerValue:
                     to_index = input_value[i][j][self.input_column]
 
                     if to_index not in index["forward"]:
-                        index["forward"][to_index] = len(index["forward"]) + 1
+                        index["forward"][to_index] = len(index["forward"])
                         index["backward"][index["forward"][to_index]] = to_index
 
                     input_value[i][j][self.input_column] = index["forward"][to_index]
+        elif self.input_type.startswith("tensor"):
+            total_dims = int(self.input_type.split(":")[1])
+            if total_dims == 2:
+                for i in range(len(input_value)):
+                    to_index = input_value[i][self.input_column]
+
+                    if to_index not in index["forward"]:
+                        index["forward"][to_index] = len(index["forward"])
+                        index["backward"][index["forward"][to_index]] = to_index
+
+                    input_value[i][self.input_column] = index["forward"][to_index]
 
         return input_value

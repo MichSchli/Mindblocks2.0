@@ -25,6 +25,7 @@ class CsvReaderValue:
 
     filepath = None
     separator = ","
+    size = None
 
     def __init__(self, filepath, column_info):
         self.filepath = filepath
@@ -49,6 +50,9 @@ class CsvReaderValue:
         f.close()
 
         return lines
+
+    def count_columns(self):
+        return len(self.column_info)
 
     def count(self):
         return self.size

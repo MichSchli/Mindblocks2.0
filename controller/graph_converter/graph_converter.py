@@ -102,6 +102,8 @@ class GraphConverter:
                 execution_component.add_in_socket(name, execution_in_socket)
                 execution_in_socket.execution_component = execution_component
 
+                execution_in_socket.cast = socket.edge.cast
+
                 desired_source_id = str(socket.edge.source_socket.component.identifier) + ":" + socket.edge.source_socket.name
                 if desired_source_id not in unmatched_in_sockets:
                     unmatched_in_sockets[desired_source_id] = []

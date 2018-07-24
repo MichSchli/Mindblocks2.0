@@ -14,6 +14,8 @@ class TensorflowSectionContractor:
             tensorflow_section.set_session(tensorflow_session)
             self.replace_tensorflow_section(execution_graph, tensorflow_section)
 
+        tensorflow_session.run(tf.global_variables_initializer())
+
     def find_tensorflow_sections(self, execution_graph):
         tensorflow_section_map = {}
 
@@ -59,6 +61,7 @@ class TensorflowSectionContractor:
                     source_out_socket.targets.remove(in_socket)
                     source_out_socket.add_target(new_in_socket)
                     new_in_socket.set_source(source_out_socket)
+                    new_in_socket.cast = in_socket.cast
                     new_in_socket.execution_component = tensorflow_section
 
                     tensorflow_section.map_in_socket(in_socket, new_in_socket)

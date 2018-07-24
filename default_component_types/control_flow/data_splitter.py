@@ -18,10 +18,10 @@ class DataSplitter(ComponentTypeModel):
         return {"left": inp[:,:value.pivot+1], "right": inp[:,value.pivot+1:]}
 
     def infer_types(self, input_types, value):
-        return {"output": "abc"}
+        return {"left": input_types["input"], "right": input_types["input"]}
 
     def infer_dims(self, input_dims, value):
-        return {"output": "abc"}
+        return {"left": "abc", "right": "abc"}
 
 class DataSplitterValue:
 

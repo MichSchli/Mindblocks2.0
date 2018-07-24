@@ -18,6 +18,10 @@ class EdgeLoader:
         source_socket = None
         target_socket = None
 
+        cast = None
+        if "cast" in attributes:
+            cast = attributes["cast"]
+
         while next_symbol != "/edge":
             next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
             if next_symbol == "source":
@@ -45,6 +49,6 @@ class EdgeLoader:
 
                 next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 
-        edge = self.graph_repository.add_edge(source_socket, target_socket)
+        edge = self.graph_repository.add_edge(source_socket, target_socket, cast=cast)
 
         return edge, pointer

@@ -6,6 +6,7 @@ class TensorflowSection:
     components = None
     outputs = None
     session = None
+    execution_type = None
 
     def __init__(self):
         self.components = []

@@ -21,10 +21,10 @@ class BatchGenerator(ComponentTypeModel):
         return {"batch": value.get_next_batch()}
 
     def infer_types(self, input_types, value):
-        return {"output": "int"}
+        return {"batch": "int"}
 
     def infer_dims(self, input_dims, value):
-        return {"output": "abc"}
+        return {"batch": "abc"}
 
 
 class BatchGeneratorValue:

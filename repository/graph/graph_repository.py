@@ -23,7 +23,7 @@ class GraphRepository(AbstractRepository):
         for edge in graph_2.get_edges():
             graph_1.add_edge(edge)
 
-    def add_edge(self, out_socket, in_socket):
+    def add_edge(self, out_socket, in_socket, cast=None):
         g1 = out_socket.get_component().graph
         g2 = in_socket.get_component().graph
 
@@ -35,3 +35,4 @@ class GraphRepository(AbstractRepository):
         g1.add_edge(edge)
         out_socket.add_edge(edge)
         in_socket.set_edge(edge)
+        edge.cast = cast

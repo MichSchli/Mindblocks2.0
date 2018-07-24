@@ -98,6 +98,24 @@ class TestIrisBlocks(unittest.TestCase):
         self.assertEqual(50, len(result))
         self.assertFalse(run_graphs[0].has_batches())
 
+    def testAccuracyOnlyNotLazy(self):
+        filename = "iris_tests/untrained_iris_accuracy.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "softmax"
+        component = self.setup_holder.component_repository.get(component_spec)[0]
+        accuracy = component.get_out_socket("output")
+
+        runs = [[accuracy]]
+
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        run_graphs[0].init_batches()
+        performance = run_graphs[0].execute()[0]
+
+        self.assertFalse(run_graphs[0].has_batches())
+
     def testAccuracyOnlyWithoutMlHelper(self):
         filename = "iris_tests/untrained_iris_accuracy.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)

@@ -74,27 +74,27 @@ class TestIrisBlocks(unittest.TestCase):
         runs = [[target_socket_1]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
-        run_graphs[0].init_batches(shuffle=False)
+        run_graphs[0].init_batches()
 
-        result = run_graphs[0].execute()
+        result = run_graphs[0].execute()[0]
         self.assertTrue(run_graphs[0].has_batches())
         self.assertEqual(50, len(result))
-        result = run_graphs[0].execute()
+        result = run_graphs[0].execute()[0]
         self.assertTrue(run_graphs[0].has_batches())
         self.assertEqual(50, len(result))
-        result = run_graphs[0].execute()
+        result = run_graphs[0].execute()[0]
         self.assertEqual(50, len(result))
         self.assertFalse(run_graphs[0].has_batches())
 
-        run_graphs[0].init_batches(shuffle=False)
+        run_graphs[0].init_batches()
 
-        result = run_graphs[0].execute()
+        result = run_graphs[0].execute()[0]
         self.assertTrue(run_graphs[0].has_batches())
         self.assertEqual(50, len(result))
-        result = run_graphs[0].execute()
+        result = run_graphs[0].execute()[0]
         self.assertTrue(run_graphs[0].has_batches())
         self.assertEqual(50, len(result))
-        result = run_graphs[0].execute()
+        result = run_graphs[0].execute()[0]
         self.assertEqual(50, len(result))
         self.assertFalse(run_graphs[0].has_batches())
 

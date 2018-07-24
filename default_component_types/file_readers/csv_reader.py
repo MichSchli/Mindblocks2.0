@@ -4,7 +4,7 @@ from model.component_type.component_type_model import ComponentTypeModel
 class CsvReader(ComponentTypeModel):
 
     name = "CsvReader"
-    out_sockets = ["output"]
+    out_sockets = ["output", "count"]
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
@@ -12,13 +12,13 @@ class CsvReader(ComponentTypeModel):
                               value_dictionary["columns"].split(","))
 
     def execute(self, input_dictionary, value):
-        return {"output": value.read()}
+        return {"output": value.read(), "count": value.count()}
 
     def infer_types(self, input_types, value):
-        return {"output": value.column_info}
+        return {"output": value.column_info, "count": "int"}
 
     def infer_dims(self, input_dims, value):
-        return {"output": [None, value.count_columns()]}
+        return {"output": [None, value.count_columns()], "count": 1}
 
 
 class CsvReaderValue:
@@ -32,7 +32,8 @@ class CsvReaderValue:
 
     def read(self):
         lines = []
-        for line in open(self.filepath, 'r'):
+        f = open(self.filepath, 'r')
+        for line in f:
             line = line.strip()
 
             if line:
@@ -44,4 +45,10 @@ class CsvReaderValue:
 
                 lines.append(line_parts)
 
+        self.size = len(lines)
+        f.close()
+
         return lines
+
+    def count(self):
+        return self.size

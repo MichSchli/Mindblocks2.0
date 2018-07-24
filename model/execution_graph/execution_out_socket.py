@@ -37,3 +37,7 @@ class ExecutionOutSocket:
 
     def add_target(self, in_socket):
         self.targets.append(in_socket)
+
+    def clear_caches(self):
+        self.cached_value = None
+        self.execution_component.clear_caches()

@@ -41,3 +41,7 @@ class ExecutionComponentModel:
 
     def get_out_sockets(self):
         return list(self.out_sockets.values())
+
+    def clear_caches(self):
+        for in_socket in self.get_in_sockets():
+            in_socket.clear_caches()

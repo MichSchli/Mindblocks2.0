@@ -64,3 +64,7 @@ class TensorflowSection:
         for tf_out_socket, out_socket in self.matched_out_sockets:
             out_dims = tf_out_socket.pull_dim()
             out_socket.set_cached_dims(out_dims)
+
+    def clear_caches(self):
+        for _, in_socket in self.matched_in_sockets:
+            in_socket.clear_caches()

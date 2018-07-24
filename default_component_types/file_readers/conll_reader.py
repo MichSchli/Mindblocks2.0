@@ -4,7 +4,7 @@ from model.component_type.component_type_model import ComponentTypeModel
 class ConllReader(ComponentTypeModel):
 
     name = "ConllReader"
-    out_sockets = ["output"]
+    out_sockets = ["output", "count"]
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
@@ -12,21 +12,25 @@ class ConllReader(ComponentTypeModel):
                                 value_dictionary["columns"].split(","))
 
     def execute(self, input_dictionary, value):
-        return {"output": value.read()}
+        return {"output": value.read(), "count": value.count()}
 
     def infer_types(self, input_types, value):
-        return {"output": "sequence"}
+        return {"output": "sequence", "count": "int"}
 
     def infer_dims(self, input_dims, value):
-        return {"output": [None, None, value.count_columns()]}
+        return {"output": [None, None, value.count_columns()], "count": 1}
 
 class ConllReaderValue:
 
     filepath = None
+    size = None
 
     def __init__(self, filepath, column_info):
         self.filepath = filepath
         self.column_info = column_info
+
+    def count(self):
+        return self.size
 
     def read(self):
         lines = [[]]
@@ -46,5 +50,7 @@ class ConllReaderValue:
 
         if not lines[-1]:
             lines = lines[-1]
+
+        self.size = len(lines)
 
         return lines

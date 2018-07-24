@@ -1,0 +1,26 @@
+<block>
+    <canvas name="main">
+        <component name="reader" type="CsvReader">
+            <file_path>/Users/micschli/Documents/Projects/Mindblocks/Mindblocks2.0/test_blocks/iris_tests/iris.data.txt</file_path>
+            <columns>string,string,string,string,string</columns>
+        </component>
+        <component name="batch_generator" type="BatchGenerator">
+            <batch_size>50</batch_size>
+        </component>
+        <edge>
+                <source socket="count">reader</source>
+                <target socket="count">batch_generator</target>
+        </edge>
+        <component name="data_batcher" type="Batcher">
+            <lazy>True</lazy>
+        </component>
+        <edge>
+                <source socket="output">reader</source>
+                <target socket="data">data_batcher</target>
+        </edge>
+        <edge>
+                <source socket="batch">batch_generator</source>
+                <target socket="indexes">data_batcher</target>
+        </edge>
+    </canvas>
+</block>

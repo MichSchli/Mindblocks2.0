@@ -9,5 +9,9 @@ class ExecutionHeadComponent:
     def add_in_socket(self, in_socket):
         self.run_output_sockets.append(in_socket)
 
+    def clear_caches(self):
+        for socket in self.run_output_sockets:
+            socket.clear_caches()
+
     def pull(self):
         return [socket.pull() for socket in self.run_output_sockets]

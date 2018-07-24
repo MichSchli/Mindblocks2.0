@@ -19,3 +19,6 @@ class ExecutionInSocket:
 
     def pull_dim(self):
         return self.source.pull_dim()
+
+    def clear_caches(self):
+        self.source.clear_caches()

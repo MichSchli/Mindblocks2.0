@@ -4,6 +4,7 @@ from controller.block_loader.component_loader import ComponentLoader
 from controller.block_loader.edge_loader import EdgeLoader
 from controller.component_type_loader.component_type_loader import ComponentTypeLoader
 from controller.graph_converter.graph_converter import GraphConverter
+from controller.ml_helper.ml_helper_factory import MlHelperFactory
 from helpers.files.FilepathHandler import FilepathHandler
 from helpers.xml.xml_helper import XmlHelper
 from repository.canvas_repository.canvas_repository import CanvasRepository
@@ -36,3 +37,5 @@ class SetupHolder:
         self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader)
 
         self.graph_converter = GraphConverter()
+
+        self.ml_helper_factory = MlHelperFactory(self.graph_converter)

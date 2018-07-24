@@ -120,3 +120,63 @@ class TestIrisBlocks(unittest.TestCase):
         performance = ml_helper.evaluate()
 
         self.assertLess(0.9, performance)
+
+    def testFullTrainingWithStoredPointers(self):
+        filename = "iris_tests/full_iris.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertLess(0.9, performance)
+
+    def testFullTrainingWithDropouts(self):
+        filename = "iris_tests/full_iris_with_dropouts.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertLess(0.9, performance)
+
+    def testFullTrainingWithValidation(self):
+        filename = "iris_tests/full_iris_with_validation.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertLess(0.9, performance)
+
+    def testFullTrainingWithThreeDataSets(self):
+        filename = "iris_tests/full_iris_with_three_data_sets.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertLess(0.9, performance)

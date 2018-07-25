@@ -66,13 +66,12 @@
         </edge>
         <component name="accuracy" type="Accuracy" language="python">
             <mark socket="output">Evaluation</mark>
-            <lazy>False</lazy>
         </component>
-        <edge>
+        <edge lazy="False">
                 <source socket="output">argmax</source>
                 <target socket="predictions">accuracy</target>
         </edge>
-        <edge>
+        <edge lazy="False">
                 <source socket="output">indexer</source>
                 <target socket="labels">accuracy</target>
         </edge>

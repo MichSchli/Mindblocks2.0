@@ -69,3 +69,9 @@ class TensorflowSection:
     def clear_caches(self):
         for _, in_socket in self.matched_in_sockets:
             in_socket.clear_caches()
+
+    def has_batches(self):
+        for _, in_socket in self.matched_in_sockets:
+            if not in_socket.has_batches():
+                return False
+        return True

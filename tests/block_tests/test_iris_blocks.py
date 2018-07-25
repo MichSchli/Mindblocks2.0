@@ -104,17 +104,15 @@ class TestIrisBlocks(unittest.TestCase):
         self.setup_holder.block_loader.load(filepath)
 
         component_spec = CreationComponentSpecifications()
-        component_spec.name = "softmax"
+        component_spec.name = "accuracy"
         component = self.setup_holder.component_repository.get(component_spec)[0]
         accuracy = component.get_out_socket("output")
 
-        runs = [[accuracy]]
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper(evaluate=accuracy)
 
-        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
-        run_graphs[0].init_batches()
-        performance = run_graphs[0].execute()[0]
+        performance = ml_helper.evaluate()
 
-        self.assertFalse(run_graphs[0].has_batches())
+        self.assertFalse(ml_helper.evaluate_function.has_batches())
 
     def testAccuracyOnlyWithoutMlHelper(self):
         filename = "iris_tests/untrained_iris_accuracy.xml"

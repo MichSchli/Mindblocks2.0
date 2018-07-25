@@ -41,3 +41,6 @@ class ExecutionOutSocket:
     def clear_caches(self):
         self.cached_value = None
         self.execution_component.clear_caches()
+
+    def has_batches(self):
+        return self.execution_component.has_batches()

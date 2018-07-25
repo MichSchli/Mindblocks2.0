@@ -26,6 +26,9 @@ class BatchGenerator(ComponentTypeModel):
     def infer_dims(self, input_dims, value):
         return {"batch": "abc"}
 
+    def has_batches(self, value):
+        return value.has_unyielded_batches()
+
 
 class BatchGeneratorValue:
 

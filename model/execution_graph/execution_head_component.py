@@ -15,3 +15,9 @@ class ExecutionHeadComponent:
 
     def pull(self):
         return [socket.pull() for socket in self.run_output_sockets]
+
+    def has_batches(self):
+        for socket in self.run_output_sockets:
+            if not socket.has_batches():
+                return False
+        return True

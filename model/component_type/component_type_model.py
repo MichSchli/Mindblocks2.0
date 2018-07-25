@@ -19,3 +19,6 @@ class ComponentTypeModel:
 
     def get_in_sockets(self):
         return self.in_sockets
+
+    def has_batches(self, value):
+        return True

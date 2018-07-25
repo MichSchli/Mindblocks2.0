@@ -45,3 +45,10 @@ class ExecutionComponentModel:
     def clear_caches(self):
         for in_socket in self.get_in_sockets():
             in_socket.clear_caches()
+
+    def has_batches(self):
+        for in_socket in self.get_in_sockets():
+            if not in_socket.has_batches():
+                return False
+
+        return self.execution_type.has_batches(self.execution_value)

@@ -1,3 +1,4 @@
+import numpy as np
 
 
 class ExecutionInSocket:
@@ -27,3 +28,6 @@ class ExecutionInSocket:
 
     def clear_caches(self):
         self.source.clear_caches()
+
+    def has_batches(self):
+        return self.source.has_batches()

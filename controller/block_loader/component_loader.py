@@ -25,7 +25,12 @@ class ComponentLoader:
         current_value_line_id = None
         next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
         while next_symbol != "/component":
-            if current_value_line_id is None:
+            if next_symbol == "mark":
+                socket_name = attributes["socket"]
+                next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
+                component.place_mark(next_symbol, socket_name)
+                next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
+            elif current_value_line_id is None:
                 current_value_line_id = next_symbol
                 if not current_value_line_id in value_lines:
                     value_lines[current_value_line_id] = ""

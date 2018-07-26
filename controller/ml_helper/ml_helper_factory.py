@@ -8,6 +8,19 @@ class MlHelperFactory:
     def __init__(self, graph_converter):
         self.graph_converter = graph_converter
 
+    def build_ml_helper_from_graph(self, graph):
+        marked_sockets = graph.get_marked_sockets()
+
+        update = marked_sockets["update"] if "update" in marked_sockets else None
+        loss = marked_sockets["loss"] if "loss" in marked_sockets else None
+        evaluate = marked_sockets["evaluate"] if "evaluate" in marked_sockets else None
+        prediction = marked_sockets["prediction"] if "prediction" in marked_sockets else None
+
+        return self.build_ml_helper(update=update,
+                                    loss=loss,
+                                    evaluate=evaluate,
+                                    prediction=prediction)
+
     def build_ml_helper(self, update=None, loss=None, evaluate=None, prediction=None):
         ml_helper = MlHelper()
 

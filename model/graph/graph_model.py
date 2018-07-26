@@ -27,3 +27,10 @@ class GraphModel:
 
     def get_edges(self):
         return self.edges
+
+    def get_marked_sockets(self):
+        marked_sockets = {}
+        for component in self.components:
+            for k,v in component.get_marked_sockets().items():
+                marked_sockets[k] = v
+        return marked_sockets

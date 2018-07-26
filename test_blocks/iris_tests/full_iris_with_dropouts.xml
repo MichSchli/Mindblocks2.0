@@ -47,6 +47,7 @@
 
         <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
             <dimensions>4,20,3</dimensions>
+            <dropout_rate>0.4</dropout_rate>
         </component>
         <edge cast="float">
                 <source socket="left">data_splitter</source>

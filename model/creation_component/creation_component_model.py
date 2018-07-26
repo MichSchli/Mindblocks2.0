@@ -17,11 +17,25 @@ class CreationComponentModel:
         self.in_sockets = {}
         self.out_sockets = {}
 
+    def get_graph(self):
+        return self.graph
+
     def get_component_type_name(self):
         if self.component_type is None:
             return None
         else:
             return self.component_type.name
+
+    def place_mark(self, mark, socket):
+        socket = self.get_out_socket(socket)
+        socket.place_mark(mark)
+
+    def get_marked_sockets(self):
+        marked = {}
+        for socket in list(self.out_sockets.values()):
+            if socket.marked():
+                marked[socket.get_mark()] = socket
+        return marked
 
     def get_canvas_name(self):
         if self.canvas is None:

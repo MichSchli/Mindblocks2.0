@@ -5,7 +5,7 @@ import numpy as np
 class Accuracy(ComponentTypeModel):
 
     name = "Accuracy"
-    in_sockets = ["predictions", "labels"]
+    in_sockets = ["predictions", "labels", "normalization"]
     out_sockets = ["output"]
     languages = ["python"]
 
@@ -16,7 +16,7 @@ class Accuracy(ComponentTypeModel):
         predictions = input_dictionary["predictions"]
         labels = input_dictionary["labels"].astype(np.int32).flatten()
 
-        accuracy = (np.abs(predictions - labels) < value.tolerance).mean()
+        accuracy = (np.abs(predictions - labels) < value.tolerance).sum() / input_dictionary["normalization"]
 
         return {"output": accuracy}
 
@@ -25,6 +25,7 @@ class Accuracy(ComponentTypeModel):
 
     def infer_dims(self, input_dims, value):
         return {"output": 1}
+
 
 class AccuracyValue:
 

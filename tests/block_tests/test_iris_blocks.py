@@ -98,22 +98,6 @@ class TestIrisBlocks(unittest.TestCase):
         self.assertEqual(50, len(result))
         self.assertFalse(run_graphs[0].has_batches())
 
-    def testAccuracyOnlyNotLazy(self):
-        filename = "iris_tests/untrained_iris_accuracy.xml"
-        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
-        self.setup_holder.block_loader.load(filepath)
-
-        component_spec = CreationComponentSpecifications()
-        component_spec.name = "accuracy"
-        component = self.setup_holder.component_repository.get(component_spec)[0]
-        accuracy = component.get_out_socket("output")
-
-        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper(evaluate=accuracy)
-
-        performance = ml_helper.evaluate()
-
-        self.assertFalse(ml_helper.evaluate_function.has_batches())
-
     def testAccuracyOnlyWithoutMlHelper(self):
         filename = "iris_tests/untrained_iris_accuracy.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
@@ -130,7 +114,7 @@ class TestIrisBlocks(unittest.TestCase):
         run_graphs[0].init_batches()
         performance = run_graphs[0].execute()[0]
 
-        self.assertGreaterEqual(1.0, performance)
+        self.assertGreaterEqual(10.0, performance)
         self.assertLessEqual(0.0, performance)
 
     def testAccuracyOnly(self):
@@ -149,6 +133,7 @@ class TestIrisBlocks(unittest.TestCase):
 
         self.assertGreaterEqual(1.0, performance)
         self.assertLessEqual(0.0, performance)
+        self.assertFalse(ml_helper.evaluate_function.has_batches())
 
     def testFullTraining(self):
         filename = "iris_tests/full_iris.xml"

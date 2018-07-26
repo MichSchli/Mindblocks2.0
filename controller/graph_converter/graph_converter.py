@@ -20,10 +20,9 @@ class GraphConverter:
 
         for run in runs:
             run_graph = self.build_execution_graph(run, value_dictionary)
-
-            self.tensorflow_section_contractor.contract_tensorflow_sections(run_graph)
-
             execution_graphs.append(run_graph)
+
+        self.tensorflow_section_contractor.contract_tensorflow_sections_in_graphs(execution_graphs)
 
         return execution_graphs
 

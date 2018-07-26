@@ -141,10 +141,14 @@ class TestIrisBlocks(unittest.TestCase):
         self.setup_holder.block_loader.load(filepath)
 
         component_spec = CreationComponentSpecifications()
-        component_spec.name = "updater"
+        component_spec.name = "adam_upd"
         adder = self.setup_holder.component_repository.get(component_spec)[0]
         update = adder.get_out_socket("update")
-        loss = adder.get_out_socket("loss")
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "cross_ent"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        loss = adder.get_out_socket("output")
 
         component_spec = CreationComponentSpecifications()
         component_spec.name = "accuracy"
@@ -156,6 +160,9 @@ class TestIrisBlocks(unittest.TestCase):
         ml_helper.train()
         performance = ml_helper.evaluate()
 
+        print(performance)
+
+        self.assertGreaterEqual(1.0, performance)
         self.assertLess(0.9, performance)
 
     def testFullTrainingWithStoredPointers(self):

@@ -18,7 +18,7 @@ class Indexer(ComponentTypeModel):
         return {"output": transformed_input}
 
     def infer_types(self, input_types, value):
-        return {"output": input_types["input"][-1] + ["int"]}
+        return {"output": "int"}
 
     def infer_dims(self, input_dims, value):
         return {"output": input_dims["input"]}

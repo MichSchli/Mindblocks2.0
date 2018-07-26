@@ -13,10 +13,10 @@ class Index(ComponentTypeModel):
         return {"index": value.get_index()}
 
     def infer_types(self, input_types, value):
-        return {"output": "nonstandard"}
+        return {"index": "nonstandard"}
 
     def infer_dims(self, input_dims, value):
-        return {"output": "nonstandard"}
+        return {"index": "nonstandard"}
 
 
 class IndexValue:

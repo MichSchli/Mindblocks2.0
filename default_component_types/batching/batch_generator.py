@@ -45,7 +45,7 @@ class BatchGeneratorValue:
 
     def register_count(self, count):
         indexes = list(range(count))
-        random.shuffle(indexes)
+        #random.shuffle(indexes)
 
         self.batches = indexes
         self.pointer = 0

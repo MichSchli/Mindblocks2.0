@@ -41,6 +41,8 @@ class TensorflowSection:
     def get_placeholder(self, socket_type, socket_dim):
         if socket_type == "float":
             tf_type = tf.float32
+        elif socket_type == "int":
+            tf_type = tf.int32
 
         return tf.placeholder(tf_type)
 

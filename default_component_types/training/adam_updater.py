@@ -12,7 +12,7 @@ class AdamUpdater(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return AdamUpdaterValue()
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         adam = tf.train.AdamOptimizer(learning_rate=value.learning_rate)
         grad_and_var_pairs = adam.compute_gradients(input_dictionary["loss"])
         update = adam.apply_gradients(grad_and_var_pairs)

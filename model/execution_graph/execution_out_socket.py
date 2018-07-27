@@ -10,9 +10,9 @@ class ExecutionOutSocket:
     def __init__(self):
         self.targets = []
 
-    def pull(self):
+    def pull(self, mode):
         if self.cached_value is None:
-            self.execution_component.execute()
+            self.execution_component.execute(mode)
 
         return self.cached_value
 

@@ -12,7 +12,7 @@ class Accuracy(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return AccuracyValue()
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         predictions = input_dictionary["predictions"]
         labels = input_dictionary["labels"].astype(np.int32).flatten()
 

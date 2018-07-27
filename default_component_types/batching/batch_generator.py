@@ -14,7 +14,7 @@ class BatchGenerator(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return BatchGeneratorValue(int(value_dictionary["batch_size"]))
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         if value.needs_count():
             value.register_count(input_dictionary["count"])
 

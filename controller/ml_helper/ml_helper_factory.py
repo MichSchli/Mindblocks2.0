@@ -26,34 +26,37 @@ class MlHelperFactory:
 
         runs = []
         run_interpretations = []
+        run_modes = []
 
         if update is not None and loss is not None:
             update_and_loss_sockets = [update, loss]
             runs.append(update_and_loss_sockets)
             run_interpretations.append("update_and_loss")
             ml_helper.report_loss_after_updates = True
+            run_modes.append("train")
         elif update is not None:
             update_sockets = [update, loss]
             runs.append(update_sockets)
             run_interpretations.append("update")
             ml_helper.report_loss_after_updates = False
-
+            run_modes.append("train")
         if loss is not None:
             loss_socket = [loss]
             runs.append(loss_socket)
             run_interpretations.append("loss")
-
+            run_modes.append("train")
         if evaluate is not None:
             evaluate_socket = [evaluate]
             runs.append(evaluate_socket)
             run_interpretations.append("evaluate")
-
+            run_modes.append("test")
         if prediction is not None:
             prediction_socket = [prediction]
             runs.append(prediction_socket)
             run_interpretations.append("prediction")
+            run_modes.append("test")
 
-        run_graphs = self.graph_converter.to_executable(runs)
+        run_graphs = self.graph_converter.to_executable(runs, run_modes=run_modes)
 
         for run_graph, interpretation in zip(run_graphs, run_interpretations):
             if interpretation == "update_and_loss":

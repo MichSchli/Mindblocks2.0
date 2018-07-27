@@ -13,8 +13,8 @@ class ExecutionHeadComponent:
         for socket in self.run_output_sockets:
             socket.clear_caches()
 
-    def pull(self):
-        return [socket.pull() for socket in self.run_output_sockets]
+    def pull(self, mode):
+        return [socket.pull(mode) for socket in self.run_output_sockets]
 
     def has_batches(self):
         for socket in self.run_output_sockets:

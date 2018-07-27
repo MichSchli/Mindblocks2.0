@@ -2,6 +2,7 @@ class ExecutionGraphModel:
 
     head_component = None
     components = None
+    run_mode = None
 
     def __init__(self):
         self.components = []
@@ -11,7 +12,7 @@ class ExecutionGraphModel:
 
     def execute(self):
         self.clear_all_caches()
-        return self.head_component.pull()
+        return self.head_component.pull(self.run_mode)
 
     def clear_all_caches(self):
         self.head_component.clear_caches()

@@ -9,7 +9,7 @@ class Index(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return IndexValue()
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         return {"index": value.get_index()}
 
     def infer_types(self, input_types, value):

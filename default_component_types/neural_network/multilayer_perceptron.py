@@ -11,10 +11,16 @@ class MultilayerPerceptron(ComponentTypeModel):
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary):
-        return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"].split(",")])
+        if "dropout_rate" in value_dictionary:
+            dropout_rate = float(value_dictionary["dropout_rate"])
+        else:
+            dropout_rate = 0.0
 
-    def execute(self, input_dictionary, value):
-        return {"output": value.transform(input_dictionary["input"], mode='train')}
+        return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"].split(",")],
+                                         dropout_rate=dropout_rate)
+
+    def execute(self, input_dictionary, value, mode):
+        return {"output": value.transform(input_dictionary["input"], mode)}
 
     def infer_types(self, input_types, value):
         return {"output": input_types["input"]}
@@ -27,11 +33,14 @@ class MultilayerPerceptronValue:
     dims = None
     weights = None
     biases = None
-    variable_prefix = "test"
+    dropout_rate = None
 
-    def __init__(self, dims):
+    variable_prefix = "abc"
+
+    def __init__(self, dims, dropout_rate=0.0):
         self.dims = dims
         self.initialize_weights_and_biases()
+        self.dropout_rate = dropout_rate
 
     def initialize_weights_and_biases(self):
         self.weights = [None] * len(self.dims)
@@ -52,9 +61,13 @@ class MultilayerPerceptronValue:
             self.biases[i] = tf.Variable(bias_initializer, name=self.variable_prefix + "_b" + str(i))
 
     def transform(self, vectors, mode):
+        keep_prob = 1.0 - self.dropout_rate
         for i in range(len(self.dims) - 1):
             vectors = tf.matmul(vectors, self.weights[i]) + self.biases[i]
             if i < len(self.dims) - 2:
+                if self.dropout_rate > 0.00001 and mode == "train":
+                    vectors = tf.nn.dropout(vectors, keep_prob=keep_prob)
+
                 vectors = tf.nn.relu(vectors)
 
         return vectors

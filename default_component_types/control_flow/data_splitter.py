@@ -12,7 +12,7 @@ class DataSplitter(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return DataSplitterValue(int(value_dictionary["pivot"]))
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         inp = input_dictionary["input"]
         inp = np.array(inp)
         return {"left": inp[:,:value.pivot+1], "right": inp[:,value.pivot+1:]}

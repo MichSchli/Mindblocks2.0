@@ -6,19 +6,19 @@ import tensorflow as tf
 
 class TensorflowSectionContractor:
 
-    def contract_tensorflow_sections_in_graphs(self, execution_graphs):
+    def contract_tensorflow_sections_in_graphs(self, execution_graphs, run_modes):
         tensorflow_session = tf.Session()
-        for execution_graph in execution_graphs:
-            self.contract_tensorflow_sections(execution_graph, tensorflow_session)
+        for execution_graph, mode in zip(execution_graphs, run_modes):
+            self.contract_tensorflow_sections(execution_graph, mode, tensorflow_session)
 
         tensorflow_session.run(tf.global_variables_initializer())
 
 
-    def contract_tensorflow_sections(self, execution_graph, tensorflow_session):
+    def contract_tensorflow_sections(self, execution_graph, mode, tensorflow_session):
         tensorflow_sections = self.find_tensorflow_sections(execution_graph)
         for tensorflow_section in tensorflow_sections:
             tensorflow_section.set_session(tensorflow_session)
-            self.replace_tensorflow_section(execution_graph, tensorflow_section)
+            self.replace_tensorflow_section(execution_graph, tensorflow_section, mode)
 
     def find_tensorflow_sections(self, execution_graph):
         tensorflow_section_map = {}
@@ -45,7 +45,7 @@ class TensorflowSectionContractor:
                 if target.execution_component.language == "tensorflow" and target.execution_component.identifier not in tensorflow_section_map:
                     self.expand_tensorflow_section(target.execution_component, tensorflow_section, tensorflow_section_map)
 
-    def replace_tensorflow_section(self, execution_graph, tensorflow_section):
+    def replace_tensorflow_section(self, execution_graph, tensorflow_section, mode):
         execution_graph.add_execution_component(tensorflow_section)
         for component in tensorflow_section.components:
             for out_socket in component.get_out_sockets():
@@ -73,4 +73,4 @@ class TensorflowSectionContractor:
             execution_graph.components.remove(component)
 
         tensorflow_section.initialize_placeholders()
-        tensorflow_section.compile()
+        tensorflow_section.compile(mode)

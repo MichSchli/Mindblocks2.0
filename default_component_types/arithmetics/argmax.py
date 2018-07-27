@@ -11,7 +11,7 @@ class Argmax(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return ArgmaxValue()
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         return {"output": np.argmax(input_dictionary["input"], axis=-1)}
 
     def infer_types(self, input_types, value):

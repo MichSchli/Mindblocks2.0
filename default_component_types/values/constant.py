@@ -10,7 +10,7 @@ class Constant(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return ConstantValue(value_dictionary["value"], value_dictionary["type"])
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         return {"output": value.value}
 
     def infer_types(self, input_types, value):

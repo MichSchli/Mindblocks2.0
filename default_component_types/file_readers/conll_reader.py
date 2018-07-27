@@ -11,7 +11,7 @@ class ConllReader(ComponentTypeModel):
         return ConllReaderValue(value_dictionary["file_path"],
                                 value_dictionary["columns"].split(","))
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         return {"output": value.read(), "count": value.count()}
 
     def infer_types(self, input_types, value):

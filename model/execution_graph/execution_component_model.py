@@ -15,9 +15,9 @@ class ExecutionComponentModel:
     def add_in_socket(self, key, socket):
         self.in_sockets[key] = socket
 
-    def execute(self):
-        input_dictionary = {k : in_socket.pull() for k,in_socket in self.in_sockets.items()}
-        output_dictionary = self.execution_type.execute(input_dictionary, self.execution_value)
+    def execute(self, mode):
+        input_dictionary = {k : in_socket.pull(mode) for k,in_socket in self.in_sockets.items()}
+        output_dictionary = self.execution_type.execute(input_dictionary, self.execution_value, mode)
 
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)

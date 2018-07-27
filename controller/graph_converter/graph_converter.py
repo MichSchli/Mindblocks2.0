@@ -13,22 +13,26 @@ class GraphConverter:
     def __init__(self):
         self.tensorflow_section_contractor = TensorflowSectionContractor()
 
-    def to_executable(self, runs):
+    def to_executable(self, runs, run_modes=None):
         value_dictionary = self.build_value_dictionary(runs)
 
         execution_graphs = []
 
-        for run in runs:
-            run_graph = self.build_execution_graph(run, value_dictionary)
+        if run_modes is None:
+            run_modes = ["test" for _ in runs]
+
+        for run, mode in zip(runs, run_modes):
+            run_graph = self.build_execution_graph(run, mode, value_dictionary)
             execution_graphs.append(run_graph)
 
-        self.tensorflow_section_contractor.contract_tensorflow_sections_in_graphs(execution_graphs)
+        self.tensorflow_section_contractor.contract_tensorflow_sections_in_graphs(execution_graphs, run_modes)
 
         return execution_graphs
 
-    def build_execution_graph(self, run, value_dictionary):
+    def build_execution_graph(self, run, mode, value_dictionary):
         head_component, execution_components = self.get_run_components_and_edges(run, value_dictionary)
         run_graph = ExecutionGraphModel()
+        run_graph.run_mode = mode
         run_graph.add_head_component(head_component)
 
         for execution_component in execution_components:

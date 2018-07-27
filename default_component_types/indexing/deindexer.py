@@ -11,7 +11,7 @@ class DeIndexer(ComponentTypeModel):
         return DeIndexerValue(value_dictionary["input_type"],
                             value_dictionary["input_column"])
 
-    def execute(self, input_dictionary, value):
+    def execute(self, input_dictionary, value, mode):
         transformed_input = value.apply_index(input_dictionary["input"],
                                               input_dictionary["index"])
 

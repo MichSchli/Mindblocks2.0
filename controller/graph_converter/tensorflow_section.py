@@ -25,8 +25,8 @@ class TensorflowSection:
     def map_in_socket(self, in_socket, new_in_socket):
         self.matched_in_sockets.append((in_socket, new_in_socket))
 
-    def compile(self):
-        self.outputs = [tf_out_socket.pull() for tf_out_socket, _ in self.matched_out_sockets]
+    def compile(self, mode):
+        self.outputs = [tf_out_socket.pull(mode) for tf_out_socket, _ in self.matched_out_sockets]
 
     def initialize_placeholders(self):
         for tf_in_socket, in_socket in self.matched_in_sockets:
@@ -46,11 +46,11 @@ class TensorflowSection:
 
         return tf.placeholder(tf_type)
 
-    def execute(self):
+    def execute(self, mode):
         feed_dict = {}
         for tf_in_socket, in_socket in self.matched_in_sockets:
-            placeholder = tf_in_socket.pull()
-            value = in_socket.pull()
+            placeholder = tf_in_socket.pull(mode)
+            value = in_socket.pull(mode)
             feed_dict[placeholder] = value
 
         tf_outputs = self.session.run(self.outputs, feed_dict=feed_dict)

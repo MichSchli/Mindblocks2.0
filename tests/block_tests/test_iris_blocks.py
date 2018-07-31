@@ -196,7 +196,7 @@ class TestIrisBlocks(unittest.TestCase):
         self.assertLess(0.9, performance)
 
     def testFullTrainingWithValidation(self):
-        filename = "iris_tests/full_iris_with_validation.xml"
+        filename = "iris_tests/full_iris_with_separate_validation.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 

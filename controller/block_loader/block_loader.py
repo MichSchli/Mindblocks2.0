@@ -1,8 +1,9 @@
 class BlockLoader:
 
-    def __init__(self, xml_helper, canvas_loader):
+    def __init__(self, xml_helper, canvas_loader, configuration_loader):
         self.xml_helper = xml_helper
         self.canvas_loader = canvas_loader
+        self.configuration_loader = configuration_loader
 
     def load(self, filename):
         file_lines = ""
@@ -22,6 +23,8 @@ class BlockLoader:
                 _, _, pointer = self.xml_helper.pop_symbol(file_lines, start_index=pointer)
             elif next_symbol == "canvas":
                 _, pointer = self.canvas_loader.load_canvas(file_lines, start_index=pointer)
+            elif next_symbol == "configuration":
+                _, pointer = self.configuration_loader.load_configuration(file_lines, start_index=pointer)
             else:
                 _, _, pointer = self.xml_helper.pop_symbol(file_lines, start_index=pointer)
 

@@ -1,0 +1,31 @@
+<block>
+    <configuration>
+        <variable name="constant_value">
+            <train_value>5.17</train_value>
+            <test_value>10.17</test_value>
+        </variable>
+        <variable name="constant_2_value">
+            <default_value>2.98</default_value>
+        </variable>
+    </configuration>
+    <canvas name="main">
+        <component name="constant_1" type="Constant">
+            <value>$constant_value</value>
+            <type>float</type>
+        </component>
+        <component name="constant_2" type="Constant">
+            <value>$constant_2_value</value>
+            <type>float</type>
+        </component>
+        <component name="adder" type="Add" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant_1</source>
+                <target socket="left">adder</target>
+        </edge>
+        <edge>
+                <source socket="output">constant_2</source>
+                <target socket="right">adder</target>
+        </edge>
+    </canvas>
+</block>

@@ -14,6 +14,7 @@ from repository.creation_component_repository.creation_component_repository impo
 from repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
 from repository.graph.graph_repository import GraphRepository
 from repository.identifier.identifier_repository import IdentifierRepository
+from tests.setup_holder import SetupHolder
 
 
 class TestSimpleBlocks(unittest.TestCase):
@@ -40,6 +41,42 @@ class TestSimpleBlocks(unittest.TestCase):
         self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader)
 
         self.graph_converter = GraphConverter()
+
+    def testAdder(self):
+        filename = "add_constants.xml"
+        filepath = self.filepath_handler.get_test_block_path(filename)
+        self.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "adder"
+        adder = self.component_repository.get(component_spec)[0]
+        target_socket = adder.get_out_socket("output")
+
+        runs = [[target_socket]]
+
+        run_graphs = self.graph_converter.to_executable(runs)
+
+        self.assertEqual(1, len(run_graphs))
+        self.assertEqual([8.15], run_graphs[0].execute())
+
+    def testAdderWithVariable(self):
+        filename = "add_constants_with_variable.xml"
+        filepath = self.filepath_handler.get_test_block_path(filename)
+        self.block_loader.load(filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "adder"
+        adder = self.component_repository.get(component_spec)[0]
+        target_socket = adder.get_out_socket("output")
+
+        runs = [[target_socket], [target_socket]]
+        run_modes = ["train", "test"]
+
+        run_graphs = self.graph_converter.to_executable(runs, run_modes=run_modes)
+
+        self.assertEqual(2, len(run_graphs))
+        self.assertEqual([8.15], run_graphs[0].execute())
+        self.assertEqual([13.15], run_graphs[1].execute())
 
     def testLadderAdd(self):
         filename = "ladder_add.xml"

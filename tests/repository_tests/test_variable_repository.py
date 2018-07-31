@@ -57,7 +57,7 @@ class TestVariableRepository(unittest.TestCase):
 
         specs.name = "falseTestName"
 
-        element_retrieved = self.repository.get(specs)
+        element_retrieved = self.variable_repository.get(specs)
         self.assertEqual(0, len(element_retrieved))
 
     def testGetValueAllModes(self):
@@ -69,25 +69,25 @@ class TestVariableRepository(unittest.TestCase):
 
         element_retrieved = self.variable_repository.get(specs)[0]
 
-        self.assertEquals(45, element_retrieved.get_value(mode=None))
-        self.assertEquals(45, element_retrieved.get_value(mode="train"))
-        self.assertEquals(45, element_retrieved.get_value(mode="dev"))
-        self.assertEquals(45, element_retrieved.get_value(mode="test"))
+        self.assertEqual(45, element_retrieved.get_value(mode=None))
+        self.assertEqual(45, element_retrieved.get_value(mode="train"))
+        self.assertEqual(45, element_retrieved.get_value(mode="validate"))
+        self.assertEqual(45, element_retrieved.get_value(mode="test"))
 
     def testGetValueSpecificMode(self):
         specs = VariableSpecifications()
         specs.name = "testElement"
 
         element_1 = self.variable_repository.create(specs)
-        element_1.set_value(45, mode="dev")
+        element_1.set_value(45, mode="validate")
         element_1.set_value(547, mode="test")
 
         element_retrieved = self.variable_repository.get(specs)[0]
 
-        self.assertEquals(None, element_retrieved.get_value(mode=None))
-        self.assertEquals(None, element_retrieved.get_value(mode="train"))
-        self.assertEquals(45, element_retrieved.get_value(mode="dev"))
-        self.assertEquals(547, element_retrieved.get_value(mode="test"))
+        self.assertEqual(None, element_retrieved.get_value(mode=None))
+        self.assertEqual(None, element_retrieved.get_value(mode="train"))
+        self.assertEqual(45, element_retrieved.get_value(mode="validate"))
+        self.assertEqual(547, element_retrieved.get_value(mode="test"))
 
     def testGetValueSpecificModeWithDefault(self):
         specs = VariableSpecifications()
@@ -95,24 +95,12 @@ class TestVariableRepository(unittest.TestCase):
 
         element_1 = self.variable_repository.create(specs)
         element_1.set_value(233, mode=None)
-        element_1.set_value(45, mode="dev")
+        element_1.set_value(45, mode="validate")
         element_1.set_value(547, mode="test")
 
         element_retrieved = self.variable_repository.get(specs)[0]
 
-        self.assertEquals(233, element_retrieved.get_value(mode=None))
-        self.assertEquals(233, element_retrieved.get_value(mode="train"))
-        self.assertEquals(45, element_retrieved.get_value(mode="dev"))
-        self.assertEquals(547, element_retrieved.get_value(mode="test"))
-
-    def testReplaceInString(self):
-        specs = VariableSpecifications()
-        specs.name = "testElement"
-
-        element_1 = self.variable_repository.create(specs)
-        element_1.set_value("test value", mode=None)
-
-        source_str = "will this $testElement have the correct value"
-        target_str = element_1.replace_in_string(source_str)
-
-        self.assertEquals("will this test value have the correct value", target_str)
+        self.assertEqual(233, element_retrieved.get_value(mode=None))
+        self.assertEqual(233, element_retrieved.get_value(mode="train"))
+        self.assertEqual(45, element_retrieved.get_value(mode="validate"))
+        self.assertEqual(547, element_retrieved.get_value(mode="test"))

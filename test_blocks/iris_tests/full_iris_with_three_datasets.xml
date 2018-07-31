@@ -8,7 +8,7 @@
         <variable name="IRIS">
             <train_value>iris.data</train_value>
             <test_value>iris.data</test_value>
-            <dev_value>iris.data</dev_value>
+            <validate_value>iris.data</validate_value>
         </variable>
     </configuration>
     <canvas name="main">

@@ -1,12 +1,39 @@
 from controller.ml_helper.ml_helper import MlHelper
+from controller.ml_helper.ml_helper_configuration import MlHelperConfiguration
+from repository.variable_repository.variable_specifications import VariableSpecifications
 
 
 class MlHelperFactory:
 
     graph_converter = None
+    variable_repository = None
 
-    def __init__(self, graph_converter):
+    def __init__(self, graph_converter, variable_repository):
         self.graph_converter = graph_converter
+        self.variable_repository = variable_repository
+
+    def build_configuration(self):
+        configuration = MlHelperConfiguration()
+
+        vars = self.variable_repository.get_by_name("max_iterations")
+        if len(vars) > 0:
+            configuration.max_iterations = int(vars[0].get_value())
+        else:
+            configuration.max_iterations = 500
+
+        vars = self.variable_repository.get_by_name("report_loss_every_n")
+        if len(vars) > 0:
+            configuration.report_loss_every_n = int(vars[0].get_value())
+        else:
+            configuration.report_loss_every_n = None
+
+        vars = self.variable_repository.get_by_name("validate_every_n")
+        if len(vars) > 0:
+            configuration.validate_every_n = int(vars[0].get_value())
+        else:
+            configuration.validate_every_n = 10
+
+        return configuration
 
     def build_ml_helper_from_graph(self, graph):
         marked_sockets = graph.get_marked_sockets()
@@ -72,7 +99,11 @@ class MlHelperFactory:
                 ml_helper.set_loss_function(run_graph)
             elif interpretation == "evaluate":
                 ml_helper.set_evaluate_function(run_graph)
+            elif interpretation == "validate":
+                ml_helper.set_validate_function(run_graph)
             elif interpretation == "prediction":
                 ml_helper.set_prediction_function(run_graph)
+
+        ml_helper.configuration = self.build_configuration()
 
         return ml_helper

@@ -1,16 +1,22 @@
 <block>
     <configuration>
-        <learner>
-            <max_iterations>1000</max_iterations>
-            <report_loss_every>10</report_loss_every>
-            <validate_every>100</validate_every>
-        </learner>
+        <variable name="max_iterations">
+            <default_value>1000</default_value>
+        </variable>
+        <variable name="report_loss_every_n">
+            <default_value>10</default_value>
+        </variable>
+        <variable name="validate_every_n">
+            <default_value>10</default_value>
+        </variable>
+
         <variable name="IRIS">
             <train_value>iris.data</train_value>
             <test_value>iris.data</test_value>
             <validate_value>iris.data</validate_value>
         </variable>
     </configuration>
+
     <canvas name="main">
         <component name="reader" type="CsvReader">
             <file_path>/Users/micschli/Documents/Projects/Mindblocks/Mindblocks2.0/test_blocks/iris_tests/$IRIS.txt</file_path>

@@ -32,6 +32,11 @@ class AbstractRepository:
 
         return l
 
+    def get_by_name(self, name):
+        spec = self.get_specifications()
+        spec.name = name
+        return self.get(spec)
+
     def get_all(self):
         return list(self.elements.values())
 

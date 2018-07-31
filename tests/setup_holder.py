@@ -49,4 +49,4 @@ class SetupHolder:
 
         self.graph_converter = GraphConverter(self.variable_repository)
 
-        self.ml_helper_factory = MlHelperFactory(self.graph_converter)
+        self.ml_helper_factory = MlHelperFactory(self.graph_converter, self.variable_repository)

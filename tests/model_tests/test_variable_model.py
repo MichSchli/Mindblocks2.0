@@ -33,7 +33,7 @@ class TestVariableModel(unittest.TestCase):
         element_1.set_value("test value", mode="validate")
 
         source_str = "will this $testElement have the correct value"
-        target_str = element_1.replace_in_string(source_str, mode="dev")
+        target_str = element_1.replace_in_string(source_str, mode="validate")
 
         self.assertEqual("will this test value have the correct value", target_str)
 

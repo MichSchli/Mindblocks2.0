@@ -9,17 +9,19 @@ from model.execution_graph.execution_out_socket import ExecutionOutSocket
 class GraphConverter:
 
     tensorflow_section_contractor = None
+    variable_repository = None
 
-    def __init__(self):
+    def __init__(self, variable_repository):
         self.tensorflow_section_contractor = TensorflowSectionContractor()
+        self.variable_repository = variable_repository
 
     def to_executable(self, runs, run_modes=None):
-        value_dictionary = self.build_value_dictionary(runs)
-
-        execution_graphs = []
-
         if run_modes is None:
             run_modes = ["test" for _ in runs]
+
+        value_dictionary = self.build_value_dictionary(runs, run_modes)
+
+        execution_graphs = []
 
         for run, mode in zip(runs, run_modes):
             run_graph = self.build_execution_graph(run, mode, value_dictionary)
@@ -30,7 +32,7 @@ class GraphConverter:
         return execution_graphs
 
     def build_execution_graph(self, run, mode, value_dictionary):
-        head_component, execution_components = self.get_run_components_and_edges(run, value_dictionary)
+        head_component, execution_components = self.get_run_components_and_edges(run, mode, value_dictionary)
         run_graph = ExecutionGraphModel()
         run_graph.run_mode = mode
         run_graph.add_head_component(head_component)
@@ -40,34 +42,74 @@ class GraphConverter:
 
         return run_graph
 
-    def build_value_dictionary(self, runs):
+    def build_value_dictionary(self, runs, run_modes):
         value_dictionary = {}
 
         activated_output_sockets = []
-        for run in runs:
+        for run, run_mode in zip(runs, run_modes):
             for socket in run:
-                activated_output_sockets.append(socket)
+                activated_output_sockets.append((socket, run_mode))
 
         while len(activated_output_sockets) > 0:
-            socket = activated_output_sockets.pop()
+            socket, run_mode = activated_output_sockets.pop()
             component = socket.get_component()
 
-            if component.identifier in value_dictionary:
+            if str(component.identifier) + run_mode in value_dictionary:
                 continue
 
-            value_dictionary[component.identifier] = self.initialize_value(component)
+            init_dictionary = self.initialize_values(component)
+            for mode in ["train", "validate", "test"]:
+                value_dictionary[str(component.identifier) + mode] = init_dictionary[mode]
 
             for in_socket in list(component.in_sockets.values()):
                 edge = in_socket.edge
                 source_socket = edge.source_socket
-                activated_output_sockets.append(source_socket)
+                activated_output_sockets.append((source_socket, run_mode))
 
         return value_dictionary
 
-    def initialize_value(self, component):
-        return component.component_type.initialize_value(component.component_value)
+    def initialize_values(self, component):
+        versions = {"default": {},
+                    "train": {},
+                    "validate": {},
+                    "test": {}}
 
-    def get_run_components_and_edges(self, run, value_dictionary):
+        required_modes = []
+
+        for k, v in component.component_value.items():
+            for variable in self.get_all_variables():
+                if variable.referenced_in(v):
+                    for mode in variable.defined_for():
+                        if mode not in required_modes:
+                            required_modes.append(mode)
+
+                    for mode, mode_value in versions.items():
+                        versions[mode][k] = variable.replace_in_string(v, mode=mode)
+
+            for mode, mode_value in versions.items():
+                if k not in versions[mode]:
+                    versions[mode][k] = v
+
+        if len(required_modes) < 3:
+            required_modes.append("default")
+
+        for k,v in versions.items():
+            if k == "default" or k in required_modes:
+                versions[k] = component.component_type.initialize_value(versions[k])
+
+        output_d = {}
+        for mode in ["train", "validate", "test"]:
+            if mode in required_modes:
+                output_d[mode] = versions[mode]
+            else:
+                output_d[mode] = versions["default"]
+
+        return output_d
+
+    def get_all_variables(self):
+        return self.variable_repository.get_all()
+
+    def get_run_components_and_edges(self, run, run_mode, value_dictionary):
         run_output_socket_ids = [str(socket.component.identifier) + ":" + socket.name for socket in run]
 
         activated_output_sockets = run[:]
@@ -87,7 +129,7 @@ class GraphConverter:
 
             processed_components.append(component.identifier)
 
-            execution_value = value_dictionary[component.identifier]
+            execution_value = value_dictionary[str(component.identifier)+ run_mode]
             execution_component = self.build_execution_component(component, execution_value)
 
             for name, socket in component.out_sockets.items():

@@ -47,6 +47,6 @@ class SetupHolder:
 
         self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader, self.configuration_loader)
 
-        self.graph_converter = GraphConverter()
+        self.graph_converter = GraphConverter(self.variable_repository)
 
         self.ml_helper_factory = MlHelperFactory(self.graph_converter)

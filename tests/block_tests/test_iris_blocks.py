@@ -211,7 +211,7 @@ class TestIrisBlocks(unittest.TestCase):
         self.assertLess(0.9, performance)
 
     def testFullTrainingWithThreeDataSets(self):
-        filename = "iris_tests/full_iris_with_three_data_sets.xml"
+        filename = "iris_tests/full_iris_with_three_datasets.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 

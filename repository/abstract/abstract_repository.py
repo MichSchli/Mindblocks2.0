@@ -32,6 +32,9 @@ class AbstractRepository:
 
         return l
 
+    def get_all(self):
+        return list(self.elements.values())
+
     def delete(self, element):
         identifier = element.identifier
 

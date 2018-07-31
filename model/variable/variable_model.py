@@ -20,8 +20,19 @@ class VariableModel:
         else:
             return self.values[mode]
 
+    def referenced_in(self, string):
+        ref = "$" + self.name
+        return ref in string
+
+    def defined_for(self):
+        defined_for_modes = []
+        for key in self.values:
+            if key != "default":
+                defined_for_modes.append(key)
+        return defined_for_modes
+
     def replace_in_string(self, string, mode=None):
-        if mode in self.values:
+        if mode in self.values and mode != "default":
             replacement = self.values[mode]
         elif self.values["default"] is not None:
             replacement = self.values["default"]

@@ -2,7 +2,7 @@
     <configuration>
         <variable name="constant_value">
             <train_value>5.17</train_value>
-            <test_value>10.17</test_value>
+            <default_value>10.17</default_value>
         </variable>
         <variable name="constant_2_value">
             <default_value>2.98</default_value>

@@ -1,6 +1,6 @@
 import unittest
 
-from model.variable.variable_model import VariableModel
+from Mindblocks.model.variable.variable_model import VariableModel
 
 class TestVariableModel(unittest.TestCase):
 

@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 tensorflow = "*"
+setuptools = "*"
+wheel = "*"
 
 [dev-packages]
 

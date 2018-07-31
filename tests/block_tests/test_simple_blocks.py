@@ -1,19 +1,6 @@
 import unittest
 
-from controller.block_loader.block_loader import BlockLoader
-from controller.block_loader.canvas_loader import CanvasLoader
-from controller.block_loader.component_loader import ComponentLoader
-from controller.block_loader.edge_loader import EdgeLoader
-from controller.component_type_loader.component_type_loader import ComponentTypeLoader
-from controller.graph_converter.graph_converter import GraphConverter
-from helpers.files.FilepathHandler import FilepathHandler
-from helpers.xml.xml_helper import XmlHelper
-from repository.canvas_repository.canvas_repository import CanvasRepository
-from repository.component_type_repository.component_type_repository import ComponentTypeRepository
-from repository.creation_component_repository.creation_component_repository import CreationComponentRepository
-from repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
-from repository.graph.graph_repository import GraphRepository
-from repository.identifier.identifier_repository import IdentifierRepository
+from Mindblocks.repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
 from tests.setup_holder import SetupHolder
 
 

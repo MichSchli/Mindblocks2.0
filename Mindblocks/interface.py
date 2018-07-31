@@ -16,10 +16,9 @@ from Mindblocks.repository.graph.graph_repository import GraphRepository
 from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
 from Mindblocks.repository.variable_repository.variable_repository import VariableRepository
 
+class Interface:
 
-class SetupHolder:
-
-    def __init__(self, load_default_types=True):
+    def __init__(self):
         self.identifier_repository = IdentifierRepository()
         self.type_repository = ComponentTypeRepository(self.identifier_repository)
         self.canvas_repository = CanvasRepository(self.identifier_repository)

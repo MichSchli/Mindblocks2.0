@@ -1,4 +1,5 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
 class Index(ComponentTypeModel):
@@ -19,7 +20,7 @@ class Index(ComponentTypeModel):
         return {"index": "nonstandard"}
 
 
-class IndexValue:
+class IndexValue(ExecutionComponentValueModel):
 
     def __init__(self):
         self.index = {"forward": {}, "backward": {}}

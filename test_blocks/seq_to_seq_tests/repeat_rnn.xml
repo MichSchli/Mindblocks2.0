@@ -1,0 +1,56 @@
+<block>
+    <canvas name="main">
+        <component name="reader" type="ConllReader">
+            <file_path>/Users/micschli/Documents/Projects/Mindblocks/Mindblocks2.0/test_blocks/conll_reader_tests/test_conll_file.conll</file_path>
+            <columns>int,string</columns>
+        </component>
+        <component name="index" type="Index">
+        </component>
+        <component name="indexer" type="Indexer">
+            <input_type>sequence</input_type>
+            <input_column>1</input_column>
+        </component>
+        <edge>
+                <source socket="output">reader</source>
+                <target socket="input">indexer</target>
+        </edge>
+        <edge>
+                <source socket="index">index</source>
+                <target socket="index">indexer</target>
+        </edge>
+
+
+        <component name="deindexer" type="DeIndexer">
+            <input_type>sequence</input_type>
+            <input_column>1</input_column>
+        </component>
+        <edge>
+                <source socket="output">indexer</source>
+                <target socket="input">deindexer</target>
+        </edge>
+        <edge>
+                <source socket="index">index</source>
+                <target socket="index">deindexer</target>
+        </edge>
+    </canvas>
+
+    <canvas name="inner">
+        <graph name="graph">
+            <component name="input" type="PassThrough">
+            </component>
+            <component name="previous_output" type="PassThrough">
+            </component>
+
+            <component name="concat" type="Concat">
+            </component>
+            <edge>
+                <source socket="output">previous_input</source>
+                <target socket="left">concat</target>
+            </edge>
+            <edge>
+                <source socket="output">input</source>
+                <target socket="right">concat</target>
+            </edge>
+        </graph>
+    </canvas>
+</block>

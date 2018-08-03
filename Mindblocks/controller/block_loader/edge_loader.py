@@ -8,7 +8,7 @@ class EdgeLoader:
         self.graph_repository = graph_repository
         self.component_repository = component_repository
 
-    def load_edge(self, text, start_index):
+    def load_edge(self, text, start_index, graph_id=None):
         next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=start_index)
 
         if next_symbol != "edge":
@@ -30,6 +30,7 @@ class EdgeLoader:
 
                 component_name = next_symbol
                 component_spec = CreationComponentSpecifications()
+                component_spec.graph_id = graph_id
                 component_spec.name = component_name
                 component = self.component_repository.get(component_spec)[0]
 
@@ -42,6 +43,7 @@ class EdgeLoader:
 
                 component_name = next_symbol
                 component_spec = CreationComponentSpecifications()
+                component_spec.graph_id = graph_id
                 component_spec.name = component_name
                 component = self.component_repository.get(component_spec)[0]
 

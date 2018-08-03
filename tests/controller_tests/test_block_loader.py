@@ -21,23 +21,6 @@ from tests.setup_holder import SetupHolder
 class TestBlockLoader(unittest.TestCase):
 
     def setUp(self):
-        self.identifier_repository = IdentifierRepository()
-        self.type_repository = ComponentTypeRepository(self.identifier_repository)
-        self.canvas_repository = CanvasRepository(self.identifier_repository)
-        self.graph_repository = GraphRepository(self.identifier_repository)
-        self.component_repository = CreationComponentRepository(self.identifier_repository,
-                                                                self.type_repository,
-                                                                self.canvas_repository,
-                                                                self.graph_repository)
-
-        self.xml_helper = XmlHelper()
-        self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)
-        self.edge_loader = EdgeLoader(self.xml_helper, self.graph_repository, self.component_repository)
-        self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.edge_loader, self.canvas_repository)
-        self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader, None)
-
-        self.filepath_handler = FilepathHandler()
-
         self.setup_holder = SetupHolder(load_default_types=False)
 
     def testLoadsVariable(self):
@@ -104,7 +87,7 @@ class TestBlockLoader(unittest.TestCase):
     def testLoadsSimpleComponent(self):
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Constant"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
 
         def test_assign(dic):
             dic["value"] = "test_value"
@@ -114,25 +97,25 @@ class TestBlockLoader(unittest.TestCase):
 
         text = """<component name="constant_1" type="Constant"><value>5.17</value><type>float</type></component>"""
 
-        self.component_loader.load_component(text, 0)
+        self.setup_holder.component_loader.load_component(text, 0)
 
-        self.assertEqual(1, self.component_repository.count())
+        self.assertEqual(1, self.setup_holder.component_repository.count())
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
 
-        components = self.component_repository.get(spec)
+        components = self.setup_holder.component_repository.get(spec)
 
         self.assertEqual(1, len(components))
         self.assertEqual("constant_1", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual("5.17", components[0].component_value["value"])
-        self.assertEqual("float", components[0].component_value["type"])
+        self.assertEqual(["5.17"], components[0].component_value["value"])
+        self.assertEqual(["float"], components[0].component_value["type"])
 
     def testLoadsSimpleCanvas(self):
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Constant"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
 
         def test_assign(dic):
             dic["value"] = "test_value"
@@ -142,14 +125,14 @@ class TestBlockLoader(unittest.TestCase):
 
         text = """<canvas name="main"><component name="constant_1" type="Constant"><value>5.17</value><type>float</type></component></canvas>"""
 
-        self.canvas_loader.load_canvas(text, 0)
+        self.setup_holder.canvas_loader.load_canvas(text, 0)
 
-        self.assertEqual(1, self.canvas_repository.count())
-        self.assertEqual(1, self.component_repository.count())
+        self.assertEqual(1, self.setup_holder.canvas_repository.count())
+        self.assertEqual(1, self.setup_holder.component_repository.count())
 
         canvas_spec = CanvasSpecifications()
         canvas_spec.name = "main"
-        canvases = self.canvas_repository.get(canvas_spec)
+        canvases = self.setup_holder.canvas_repository.get(canvas_spec)
 
         self.assertEqual(1, len(canvases))
         self.assertEqual("main", canvases[0].name)
@@ -157,13 +140,13 @@ class TestBlockLoader(unittest.TestCase):
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
 
-        components = self.component_repository.get(spec)
+        components = self.setup_holder.component_repository.get(spec)
 
         self.assertEqual(1, len(components))
         self.assertEqual("constant_1", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual("5.17", components[0].component_value["value"])
-        self.assertEqual("float", components[0].component_value["type"])
+        self.assertEqual(["5.17"], components[0].component_value["value"])
+        self.assertEqual(["float"], components[0].component_value["type"])
 
         self.assertEqual(1, canvases[0].count_components())
         self.assertEqual(components[0], canvases[0].components[0])
@@ -172,7 +155,7 @@ class TestBlockLoader(unittest.TestCase):
     def testLoadsSimpleCanvasWithTwoComponents(self):
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Constant"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
 
         def test_assign(dic):
             dic["value"] = "test_value"
@@ -185,14 +168,14 @@ class TestBlockLoader(unittest.TestCase):
         <component name="constant_2" type="Constant"><value>8.14</value><type>float</type></component>
         </canvas>"""
 
-        self.canvas_loader.load_canvas(text, 0)
+        self.setup_holder.canvas_loader.load_canvas(text, 0)
 
-        self.assertEqual(1, self.canvas_repository.count())
-        self.assertEqual(2, self.component_repository.count())
+        self.assertEqual(1, self.setup_holder.canvas_repository.count())
+        self.assertEqual(2, self.setup_holder.component_repository.count())
 
         canvas_spec = CanvasSpecifications()
         canvas_spec.name = "main"
-        canvases = self.canvas_repository.get(canvas_spec)
+        canvases = self.setup_holder.canvas_repository.get(canvas_spec)
 
         self.assertEqual(1, len(canvases))
         self.assertEqual("main", canvases[0].name)
@@ -201,35 +184,35 @@ class TestBlockLoader(unittest.TestCase):
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
 
-        components = self.component_repository.get(spec)
+        components = self.setup_holder.component_repository.get(spec)
 
         self.assertEqual(1, len(components))
         self.assertEqual("constant_1", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual("5.17", components[0].component_value["value"])
-        self.assertEqual("float", components[0].component_value["type"])
+        self.assertEqual(["5.17"], components[0].component_value["value"])
+        self.assertEqual(["float"], components[0].component_value["type"])
         self.assertEqual(canvases[0], components[0].canvas)
 
         spec.name = "constant_2"
 
-        components = self.component_repository.get(spec)
+        components = self.setup_holder.component_repository.get(spec)
 
         self.assertEqual(1, len(components))
         self.assertEqual("constant_2", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual("8.14", components[0].component_value["value"])
-        self.assertEqual("float", components[0].component_value["type"])
+        self.assertEqual(["8.14"], components[0].component_value["value"])
+        self.assertEqual(["float"], components[0].component_value["type"])
         self.assertEqual(canvases[0], components[0].canvas)
 
     def testLoadsSimpleCanvasWithEdge(self):
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Constant"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.out_sockets = ["out"]
 
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Printer"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.in_sockets = ["in"]
 
         text = """<canvas name="main">
@@ -238,11 +221,11 @@ class TestBlockLoader(unittest.TestCase):
         <edge><source socket=out>constant_1</source><target socket=in>printer</target></edge>
         </canvas>"""
 
-        self.canvas_loader.load_canvas(text, 0)
+        self.setup_holder.canvas_loader.load_canvas(text, 0)
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
-        components = self.component_repository.get(spec)
+        components = self.setup_holder.component_repository.get(spec)
         graph = components[0].graph
 
         self.assertEqual(1, len(graph.get_edges()))
@@ -306,12 +289,12 @@ class TestBlockLoader(unittest.TestCase):
     def testLoadsFullBlockTwoCanvases(self):
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Constant"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.out_sockets = ["out"]
 
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Printer"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.in_sockets = ["in"]
 
         text = """<block>
@@ -327,63 +310,63 @@ class TestBlockLoader(unittest.TestCase):
         </canvas>
         </block>"""
 
-        self.block_loader.load_block(text, 0)
+        self.setup_holder.block_loader.load_block(text, 0)
 
-        self.assertEqual(2, self.canvas_repository.count())
+        self.assertEqual(2, self.setup_holder.canvas_repository.count())
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
-        component = self.component_repository.get(spec)[0]
+        component = self.setup_holder.component_repository.get(spec)[0]
         self.assertEqual("main", component.canvas.name)
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1_s"
-        component = self.component_repository.get(spec)[0]
+        component = self.setup_holder.component_repository.get(spec)[0]
         self.assertEqual("secondary", component.canvas.name)
 
     def testLoadsFromFile(self):
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Constant"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.out_sockets = ["output"]
 
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Add"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.in_sockets = ["left", "right"]
 
         filename = "add_constants.xml"
-        filepath = self.filepath_handler.get_test_block_path(filename)
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
 
-        self.block_loader.load(filepath)
+        self.setup_holder.block_loader.load(filepath)
 
-        self.assertEqual(1, self.canvas_repository.count())
-        self.assertEqual(3, self.component_repository.count())
-        self.assertEqual(2, list(self.graph_repository.elements.values())[0].count_edges())
+        self.assertEqual(1, self.setup_holder.canvas_repository.count())
+        self.assertEqual(3, self.setup_holder.component_repository.count())
+        self.assertEqual(2, list(self.setup_holder.graph_repository.elements.values())[0].count_edges())
 
     def testLoadsLanguagesCorrect(self):
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Constant"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.out_sockets = ["output"]
         component_type.languages = ["test_language"]
 
         component_type_spec = ComponentTypeSpecifications()
         component_type_spec.name = "Add"
-        component_type = self.type_repository.create(component_type_spec)
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
         component_type.in_sockets = ["left", "right"]
         component_type.languages = ["tensorflow", "python"]
 
         filename = "add_constants.xml"
-        filepath = self.filepath_handler.get_test_block_path(filename)
-        self.block_loader.load(filepath)
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
 
         spec = CreationComponentSpecifications()
         spec.name = "constant_1"
-        component = self.component_repository.get(spec)[0]
+        component = self.setup_holder.component_repository.get(spec)[0]
         self.assertEqual("test_language", component.language)
 
         spec = CreationComponentSpecifications()
         spec.name = "adder"
-        component = self.component_repository.get(spec)[0]
+        component = self.setup_holder.component_repository.get(spec)[0]
         self.assertEqual("python", component.language)

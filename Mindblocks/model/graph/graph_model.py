@@ -28,9 +28,18 @@ class GraphModel:
     def get_edges(self):
         return self.edges
 
+    def get_out_socket(self, component_name, socket_name):
+        for component in self.components:
+            if component.name == component_name:
+                out_socket = component.get_out_socket(socket_name)
+                return out_socket
+
     def get_marked_sockets(self):
         marked_sockets = {}
         for component in self.components:
             for k,v in component.get_marked_sockets().items():
                 marked_sockets[k] = v
         return marked_sockets
+
+    def __str__(self):
+        return self.name if self.name is not None else str(self.identifier)

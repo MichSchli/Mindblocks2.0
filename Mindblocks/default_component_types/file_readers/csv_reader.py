@@ -1,4 +1,5 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
 class CsvReader(ComponentTypeModel):
@@ -8,8 +9,8 @@ class CsvReader(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return CsvReaderValue(value_dictionary["file_path"],
-                              value_dictionary["columns"].split(","))
+        return CsvReaderValue(value_dictionary["file_path"][0],
+                              value_dictionary["columns"][0].split(","))
 
     def execute(self, input_dictionary, value, mode):
         return {"output": value.read(), "count": value.count()}
@@ -21,7 +22,7 @@ class CsvReader(ComponentTypeModel):
         return {"output": [None, value.count_columns()], "count": 1}
 
 
-class CsvReaderValue:
+class CsvReaderValue(ExecutionComponentValueModel):
 
     filepath = None
     separator = ","

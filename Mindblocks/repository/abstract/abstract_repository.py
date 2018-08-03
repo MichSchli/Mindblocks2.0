@@ -45,3 +45,10 @@ class AbstractRepository:
 
         if identifier is not None:
             del self.elements[identifier]
+
+    def print_elements(self):
+        print("Printing elements:")
+        print("==================")
+
+        for k,v in self.elements.items():
+            print(str(k) + ": " + str(v))

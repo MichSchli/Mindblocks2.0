@@ -1,6 +1,8 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 import numpy as np
 
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+
 
 class Accuracy(ComponentTypeModel):
 
@@ -27,6 +29,6 @@ class Accuracy(ComponentTypeModel):
         return {"output": 1}
 
 
-class AccuracyValue:
+class AccuracyValue(ExecutionComponentValueModel):
 
     tolerance = 1e-8

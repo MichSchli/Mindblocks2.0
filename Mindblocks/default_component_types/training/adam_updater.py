@@ -24,6 +24,6 @@ class AdamUpdater(ComponentTypeModel):
     def infer_dims(self, input_dims, value):
         return {"update": input_dims["input"]}
 
-class AdamUpdaterValue:
+class AdamUpdaterValue(ExecutionComponentValueModel):
 
     learning_rate = 0.001

@@ -2,6 +2,8 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 import tensorflow as tf
 import numpy as np
 
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+
 
 class MultilayerPerceptron(ComponentTypeModel):
 
@@ -12,11 +14,11 @@ class MultilayerPerceptron(ComponentTypeModel):
 
     def initialize_value(self, value_dictionary):
         if "dropout_rate" in value_dictionary:
-            dropout_rate = float(value_dictionary["dropout_rate"])
+            dropout_rate = float(value_dictionary["dropout_rate"][0])
         else:
             dropout_rate = 0.0
 
-        return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"].split(",")],
+        return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"][0].split(",")],
                                          dropout_rate=dropout_rate)
 
     def execute(self, input_dictionary, value, mode):
@@ -28,7 +30,7 @@ class MultilayerPerceptron(ComponentTypeModel):
     def infer_dims(self, input_dims, value):
         return {"output": input_dims["input"][:-1]+[value.dims[-1]]}
 
-class MultilayerPerceptronValue:
+class MultilayerPerceptronValue(ExecutionComponentValueModel):
 
     dims = None
     weights = None

@@ -1,4 +1,5 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
 class DeIndexer(ComponentTypeModel):
@@ -8,8 +9,8 @@ class DeIndexer(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return DeIndexerValue(value_dictionary["input_type"],
-                            value_dictionary["input_column"])
+        return DeIndexerValue(value_dictionary["input_type"][0],
+                            value_dictionary["input_column"][0])
 
     def execute(self, input_dictionary, value, mode):
         transformed_input = value.apply_index(input_dictionary["input"],
@@ -24,7 +25,7 @@ class DeIndexer(ComponentTypeModel):
         return {"output": input_dims["input"]}
 
 
-class DeIndexerValue:
+class DeIndexerValue(ExecutionComponentValueModel):
 
     def __init__(self, input_type, input_column):
         self.input_type = input_type

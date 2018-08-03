@@ -3,6 +3,7 @@ from Mindblocks.controller.block_loader.canvas_loader import CanvasLoader
 from Mindblocks.controller.block_loader.component_loader import ComponentLoader
 from Mindblocks.controller.block_loader.configuration_loader import ConfigurationLoader
 from Mindblocks.controller.block_loader.edge_loader import EdgeLoader
+from Mindblocks.controller.block_loader.graph_loader import GraphLoader
 from Mindblocks.controller.block_loader.variable_loader import VariableLoader
 from Mindblocks.controller.component_type_loader.component_type_loader import ComponentTypeLoader
 from Mindblocks.controller.graph_converter.graph_converter import GraphConverter
@@ -38,7 +39,9 @@ class SetupHolder:
         self.xml_helper = XmlHelper()
         self.component_loader = ComponentLoader(self.xml_helper, self.component_repository)
         self.edge_loader = EdgeLoader(self.xml_helper, self.graph_repository, self.component_repository)
-        self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.edge_loader,
+        self.graph_loader = GraphLoader(self.xml_helper, self.component_loader, self.edge_loader,
+                                        self.graph_repository)
+        self.canvas_loader = CanvasLoader(self.xml_helper, self.component_loader, self.edge_loader, self.graph_loader,
                                           self.canvas_repository)
 
         self.variable_repository = VariableRepository(self.identifier_repository)
@@ -47,6 +50,6 @@ class SetupHolder:
 
         self.block_loader = BlockLoader(self.xml_helper, self.canvas_loader, self.configuration_loader)
 
-        self.graph_converter = GraphConverter(self.variable_repository)
+        self.graph_converter = GraphConverter(self.variable_repository, self.graph_repository)
 
         self.ml_helper_factory = MlHelperFactory(self.graph_converter, self.variable_repository)

@@ -1,0 +1,50 @@
+<block>
+    <canvas name="main">
+        <component name="constant_1" type="Constant">
+            <value>5.17</value>
+            <type>float</type>
+        </component>
+        <component name="constant_2" type="Constant">
+            <value>2.98</value>
+            <type>float</type>
+        </component>
+
+        <component name="cell" type="GraphComponent">
+            <graph canvas="inner">graph</graph>
+            <socket type="in">left</socket>
+            <socket type="in">right</socket>
+            <socket type="out">output</socket>
+            <in_link>left->input:input</in_link>
+            <in_link>right->previous_output:input</in_link>
+            <out_link socket="output">concat:output</out_link>
+        </component>
+        <edge>
+            <source socket="output">constant_1</source>
+            <target socket="left">cell</target>
+        </edge>
+        <edge>
+            <source socket="output">constant_2</source>
+            <target socket="right">cell</target>
+        </edge>
+    </canvas>
+
+    <canvas name="inner">
+        <graph name="graph">
+            <component name="input" type="PassThrough">
+            </component>
+            <component name="previous_output" type="PassThrough">
+            </component>
+
+            <component name="concat" type="Concat">
+            </component>
+            <edge>
+                <source socket="output">input</source>
+                <target socket="left">concat</target>
+            </edge>
+            <edge>
+                <source socket="output">previous_output</source>
+                <target socket="right">concat</target>
+            </edge>
+        </graph>
+    </canvas>
+</block>

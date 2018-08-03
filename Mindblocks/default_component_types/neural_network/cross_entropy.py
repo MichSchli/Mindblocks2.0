@@ -1,6 +1,8 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 import tensorflow as tf
 
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+
 
 class CrossEntropy(ComponentTypeModel):
 
@@ -22,6 +24,6 @@ class CrossEntropy(ComponentTypeModel):
     def infer_dims(self, input_dims, value):
         return {"output": 1}
 
-class CrossEntropyValue:
+class CrossEntropyValue(ExecutionComponentValueModel):
 
     pass

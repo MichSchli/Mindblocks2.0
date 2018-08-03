@@ -1,4 +1,5 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
 class ConllReader(ComponentTypeModel):
@@ -8,8 +9,8 @@ class ConllReader(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return ConllReaderValue(value_dictionary["file_path"],
-                                value_dictionary["columns"].split(","))
+        return ConllReaderValue(value_dictionary["file_path"][0],
+                                value_dictionary["columns"][0].split(","))
 
     def execute(self, input_dictionary, value, mode):
         return {"output": value.read(), "count": value.count()}
@@ -20,7 +21,7 @@ class ConllReader(ComponentTypeModel):
     def infer_dims(self, input_dims, value):
         return {"output": [None, None, value.count_columns()], "count": 1}
 
-class ConllReaderValue:
+class ConllReaderValue(ExecutionComponentValueModel):
 
     filepath = None
     size = None

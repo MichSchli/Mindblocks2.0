@@ -1,6 +1,7 @@
 import random
 
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
 class BatchGenerator(ComponentTypeModel):
@@ -11,7 +12,7 @@ class BatchGenerator(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return BatchGeneratorValue(int(value_dictionary["batch_size"]))
+        return BatchGeneratorValue(int(value_dictionary["batch_size"][0]))
 
     def execute(self, input_dictionary, value, mode):
         if value.needs_count():
@@ -29,7 +30,7 @@ class BatchGenerator(ComponentTypeModel):
         return value.has_unyielded_batches()
 
 
-class BatchGeneratorValue:
+class BatchGeneratorValue(ExecutionComponentValueModel):
 
     batch_size = None
 

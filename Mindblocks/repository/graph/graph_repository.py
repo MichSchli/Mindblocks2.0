@@ -10,6 +10,7 @@ class GraphRepository(AbstractRepository):
 
     def create(self, specifications):
         model = self.__create__()
+        model.name = specifications.name
 
         return model
 

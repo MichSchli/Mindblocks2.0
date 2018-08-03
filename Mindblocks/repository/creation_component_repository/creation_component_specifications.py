@@ -6,6 +6,7 @@ class CreationComponentSpecifications:
     canvas_name = None
     canvas_id = None
     language = None
+    graph_id = None
 
     def add(self, key, value):
         if key == "name":

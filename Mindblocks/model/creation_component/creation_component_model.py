@@ -65,6 +65,8 @@ class CreationComponentModel:
         self.in_sockets[socket.name] = socket
 
     def get_out_socket(self, name):
+        print(self.out_sockets)
+        print(name)
         if name in self.out_sockets:
             return self.out_sockets[name]
         else:
@@ -75,3 +77,6 @@ class CreationComponentModel:
             return self.in_sockets[name]
         else:
             return None
+
+    def __str__(self):
+        return self.name + " (" +self.component_type.name + ")"

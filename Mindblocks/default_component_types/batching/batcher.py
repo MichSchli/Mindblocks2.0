@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
 class Batcher(ComponentTypeModel):
@@ -12,7 +13,7 @@ class Batcher(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return BatcherValue(value_dictionary["lazy"] == "True")
+        return BatcherValue(value_dictionary["lazy"][0] == "True")
 
     def execute(self, input_dictionary, value, mode):
         data = np.array(input_dictionary["data"])
@@ -30,7 +31,7 @@ class Batcher(ComponentTypeModel):
         return {"output": [None, None]}
 
 
-class BatcherValue:
+class BatcherValue(ExecutionComponentValueModel):
 
     lazy = None
 

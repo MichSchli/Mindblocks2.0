@@ -4,16 +4,19 @@ from Mindblocks.model.execution_graph.execution_graph_model import ExecutionGrap
 from Mindblocks.model.execution_graph.execution_head_component import ExecutionHeadComponent
 from Mindblocks.model.execution_graph.execution_in_socket import ExecutionInSocket
 from Mindblocks.model.execution_graph.execution_out_socket import ExecutionOutSocket
+from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
 
 
 class GraphConverter:
 
     tensorflow_section_contractor = None
     variable_repository = None
+    graph_repository = None
 
-    def __init__(self, variable_repository):
+    def __init__(self, variable_repository, graph_repository):
         self.tensorflow_section_contractor = TensorflowSectionContractor()
         self.variable_repository = variable_repository
+        self.graph_repository = graph_repository
 
     def to_executable(self, runs, run_modes=None):
         if run_modes is None:
@@ -57,18 +60,19 @@ class GraphConverter:
             if str(component.identifier) + run_mode in value_dictionary:
                 continue
 
-            init_dictionary = self.initialize_values(component)
+            init_dictionary = self.initialize_values(component, run_modes)
             for mode in ["train", "validate", "test"]:
                 value_dictionary[str(component.identifier) + mode] = init_dictionary[mode]
 
             for in_socket in list(component.in_sockets.values()):
                 edge = in_socket.edge
                 source_socket = edge.source_socket
-                activated_output_sockets.append((source_socket, run_mode))
+                if source_socket is not None:
+                    activated_output_sockets.append((source_socket, run_mode))
 
         return value_dictionary
 
-    def initialize_values(self, component):
+    def initialize_values(self, component, run_modes):
         versions = {"default": {},
                     "train": {},
                     "validate": {},
@@ -78,13 +82,18 @@ class GraphConverter:
 
         for k, v in component.component_value.items():
             for variable in self.get_all_variables():
-                if variable.referenced_in(v):
+                ref = False
+                for val in v:
+                    if variable.referenced_in(val):
+                        ref = True
+                        break
+                if ref:
                     for mode in variable.defined_for():
                         if mode not in required_modes:
                             required_modes.append(mode)
 
                     for mode, mode_value in versions.items():
-                        versions[mode][k] = variable.replace_in_string(v, mode=mode)
+                        versions[mode][k] = [variable.replace_in_string(val, mode=mode) for val in v]
 
             for mode, mode_value in versions.items():
                 if k not in versions[mode]:
@@ -96,6 +105,7 @@ class GraphConverter:
         for k,v in versions.items():
             if k == "default" or k in required_modes:
                 versions[k] = component.component_type.initialize_value(versions[k])
+                versions[k] = self.populate_value(versions[k], run_modes)
 
         output_d = {}
         for mode in ["train", "validate", "test"]:
@@ -108,6 +118,21 @@ class GraphConverter:
 
     def get_all_variables(self):
         return self.variable_repository.get_all()
+
+    def populate_value(self, value, run_modes):
+        for populate_key, populate_spec_dict in value.get_populate_items():
+            if populate_key == "graph":
+                spec = GraphSpecifications()
+                spec.add_all(populate_spec_dict)
+                graph = self.graph_repository.get(spec)[0]
+
+                run = []
+                for component_name, socket_name in value.get_required_graph_outputs():
+                    run.append(graph.get_out_socket(component_name, socket_name))
+
+                value.graph = self.to_executable([run], run_modes)
+
+        return value
 
     def get_run_components_and_edges(self, run, run_mode, value_dictionary):
         run_output_socket_ids = [str(socket.component.identifier) + ":" + socket.name for socket in run]

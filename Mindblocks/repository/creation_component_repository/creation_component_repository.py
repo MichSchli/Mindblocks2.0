@@ -29,7 +29,7 @@ class CreationComponentRepository(AbstractRepository):
 
         self.assign_component_type(model, specifications)
         self.assign_canvas(model, specifications)
-        self.assign_graph(model)
+        self.assign_graph(model, specifications)
 
         model.component_value = {}
         if model.component_type is not None:
@@ -66,9 +66,14 @@ class CreationComponentRepository(AbstractRepository):
             model.canvas = canvas
             canvas.add_component(model)
 
-    def assign_graph(self, model):
+    def assign_graph(self, model, specifications):
         graph_spec = GraphSpecifications()
-        graph = self.graph_repository.create(graph_spec)
+
+        if specifications.graph_id is not None:
+            graph_spec.identifier = specifications.graph_id
+            graph = self.graph_repository.get(graph_spec)[0]
+        else:
+            graph = self.graph_repository.create(graph_spec)
 
         graph.add_component(model)
         model.graph = graph

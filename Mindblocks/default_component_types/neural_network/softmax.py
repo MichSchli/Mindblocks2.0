@@ -1,6 +1,8 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 import tensorflow as tf
 
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+
 
 class Softmax(ComponentTypeModel):
 
@@ -21,6 +23,6 @@ class Softmax(ComponentTypeModel):
     def infer_dims(self, input_dims, value):
         return {"output": input_dims["input"]}
 
-class SoftmaxValue:
+class SoftmaxValue(ExecutionComponentValueModel):
 
     pass

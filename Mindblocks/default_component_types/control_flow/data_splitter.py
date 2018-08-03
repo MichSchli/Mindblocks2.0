@@ -1,5 +1,6 @@
 import numpy as np
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
 class DataSplitter(ComponentTypeModel):
@@ -10,7 +11,7 @@ class DataSplitter(ComponentTypeModel):
     languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary):
-        return DataSplitterValue(int(value_dictionary["pivot"]))
+        return DataSplitterValue(int(value_dictionary["pivot"][0]))
 
     def execute(self, input_dictionary, value, mode):
         inp = input_dictionary["input"]
@@ -23,7 +24,7 @@ class DataSplitter(ComponentTypeModel):
     def infer_dims(self, input_dims, value):
         return {"left": "abc", "right": "abc"}
 
-class DataSplitterValue:
+class DataSplitterValue(ExecutionComponentValueModel):
 
     pivot = None
 

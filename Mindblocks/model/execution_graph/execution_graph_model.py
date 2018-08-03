@@ -33,3 +33,12 @@ class ExecutionGraphModel:
 
     def has_batches(self):
         return self.head_component.has_batches()
+
+    def get_in_socket(self, component_name, socket_name):
+        for component in self.components:
+            if component.get_name() == component_name:
+                return component.in_sockets[socket_name]
+
+    def enforce_value(self, component, socket, value):
+        in_socket = self.get_in_socket(component, socket)
+        in_socket.replace_value(value)

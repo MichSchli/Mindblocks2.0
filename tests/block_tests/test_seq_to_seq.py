@@ -25,4 +25,6 @@ class TestSimpleBlocks(unittest.TestCase):
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
 
         self.assertEqual(1, len(run_graphs))
-        self.assertEqual([[5.17, 2.98]], run_graphs[0].execute())
+        output = run_graphs[0].execute()[0]
+        self.assertEqual(5.17, output[0])
+        self.assertEqual(2.98, output[1])

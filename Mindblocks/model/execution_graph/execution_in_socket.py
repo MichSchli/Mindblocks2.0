@@ -27,7 +27,11 @@ class ExecutionInSocket:
         return self.source.pull_dim()
 
     def clear_caches(self):
-        self.source.clear_caches()
+        if self.source is not None:
+            self.source.clear_caches()
 
     def has_batches(self):
         return self.source.has_batches()
+
+    def replace_value(self, value):
+        self.replaced_value = value

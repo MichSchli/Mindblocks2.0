@@ -66,8 +66,9 @@ class GraphConverter:
 
             for in_socket in list(component.in_sockets.values()):
                 edge = in_socket.edge
-                source_socket = edge.source_socket
-                if source_socket is not None:
+
+                if edge is not None:
+                    source_socket = edge.source_socket
                     activated_output_sockets.append((source_socket, run_mode))
 
         return value_dictionary
@@ -130,7 +131,9 @@ class GraphConverter:
                 for component_name, socket_name in value.get_required_graph_outputs():
                     run.append(graph.get_out_socket(component_name, socket_name))
 
-                value.graph = self.to_executable([run], run_modes)
+                runs = self.to_executable([run for _ in run_modes], run_modes)
+
+                value.graph = {mode: run for mode, run in zip(run_modes, runs)}
 
         return value
 
@@ -172,15 +175,17 @@ class GraphConverter:
                 execution_component.add_in_socket(name, execution_in_socket)
                 execution_in_socket.execution_component = execution_component
 
-                execution_in_socket.cast = socket.edge.cast
+                if socket.edge is not None:
 
-                desired_source_id = str(socket.edge.source_socket.component.identifier) + ":" + socket.edge.source_socket.name
-                if desired_source_id not in unmatched_in_sockets:
-                    unmatched_in_sockets[desired_source_id] = []
+                    execution_in_socket.cast = socket.edge.cast
 
-                unmatched_in_sockets[desired_source_id].append(execution_in_socket)
+                    desired_source_id = str(socket.edge.source_socket.component.identifier) + ":" + socket.edge.source_socket.name
+                    if desired_source_id not in unmatched_in_sockets:
+                        unmatched_in_sockets[desired_source_id] = []
 
-                activated_output_sockets.append(socket.edge.source_socket)
+                    unmatched_in_sockets[desired_source_id].append(execution_in_socket)
+
+                    activated_output_sockets.append(socket.edge.source_socket)
 
         for execution_out_socket in list(execution_out_sockets.values()):
 
@@ -209,4 +214,5 @@ class GraphConverter:
         execution_component_model.execution_type = component.component_type
         execution_component_model.identifier = component.identifier
         execution_component_model.language = component.language
+        execution_component_model.name = component.name
         return execution_component_model

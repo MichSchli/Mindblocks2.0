@@ -36,6 +36,9 @@ class ExecutionComponentModel:
         for k,v in output_dims.items():
             self.out_sockets[k].set_cached_dims(v)
 
+    def get_name(self):
+        return self.name
+
     def get_in_sockets(self):
         return list(self.in_sockets.values())
 

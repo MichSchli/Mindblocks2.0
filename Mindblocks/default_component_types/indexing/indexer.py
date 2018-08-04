@@ -1,5 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+import numpy as np
 
 
 class Indexer(ComponentTypeModel):
@@ -33,7 +34,9 @@ class IndexerValue(ExecutionComponentValueModel):
 
     def apply_index(self, input_value, index):
         if self.input_type == "sequence":
+            output = []
             for i in range(len(input_value)):
+                output.append([])
                 for j in range(len(input_value[i])):
                     to_index = input_value[i][j][self.input_column]
 
@@ -41,7 +44,8 @@ class IndexerValue(ExecutionComponentValueModel):
                         index["forward"][to_index] = len(index["forward"])
                         index["backward"][index["forward"][to_index]] = to_index
 
-                    input_value[i][j][self.input_column] = index["forward"][to_index]
+                    output[i].append(index["forward"][to_index])
+            return output
         elif self.input_type.startswith("tensor"):
             total_dims = int(self.input_type.split(":")[1])
             if total_dims == 2:

@@ -9,8 +9,7 @@ class DeIndexer(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return DeIndexerValue(value_dictionary["input_type"][0],
-                            value_dictionary["input_column"][0])
+        return DeIndexerValue(value_dictionary["input_type"][0])
 
     def execute(self, input_dictionary, value, mode):
         transformed_input = value.apply_index(input_dictionary["input"],
@@ -27,20 +26,19 @@ class DeIndexer(ComponentTypeModel):
 
 class DeIndexerValue(ExecutionComponentValueModel):
 
-    def __init__(self, input_type, input_column):
+    def __init__(self, input_type):
         self.input_type = input_type
-        self.input_column = input_column
 
     def apply_index(self, input_value, index):
         if self.input_type == "sequence":
             for i in range(len(input_value)):
                 for j in range(len(input_value[i])):
-                    to_index = input_value[i][j][self.input_column]
+                    to_index = input_value[i][j]
 
                     if to_index not in index["forward"]:
                         index["forward"][to_index] = len(index["forward"]) + 1
                         index["backward"][index["forward"][to_index]] = to_index
 
-                    input_value[i][j][self.input_column] = index["backward"][to_index]
+                    input_value[i][j] = index["backward"][to_index]
 
         return input_value

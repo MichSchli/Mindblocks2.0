@@ -2,6 +2,7 @@ import random
 
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.tensor_type import TensorType
 
 
 class BatchGenerator(ComponentTypeModel):
@@ -20,11 +21,8 @@ class BatchGenerator(ComponentTypeModel):
 
         return {"batch": value.get_next_batch()}
 
-    def infer_types(self, input_types, value):
-        return {"batch": "int"}
-
-    def infer_dims(self, input_dims, value):
-        return {"batch": "abc"}
+    def build_value_type(self, input_types, value):
+        return {"output": TensorType("int", value.batch_size)}
 
     def has_batches(self, value):
         return value.has_unyielded_batches()

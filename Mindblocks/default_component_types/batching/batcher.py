@@ -24,6 +24,12 @@ class Batcher(ComponentTypeModel):
 
         return None
 
+    def build_value_type(self, input_types, value):
+        data_type = input_types["data"].copy()
+        indexes_outer_dim = input_types["indexes"].get_outer_dim_size()
+        data_type.set_outer_dim_size(indexes_outer_dim)
+        return {"output": data_type}
+
     def infer_types(self, input_types, value):
         return {"output": "string"}
 

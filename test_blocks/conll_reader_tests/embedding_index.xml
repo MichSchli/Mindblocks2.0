@@ -2,13 +2,17 @@
     <configuration>
         <variable name="data_file">
         </variable>
+        <variable name="embedding_file">
+        </variable>
     </configuration>
     <canvas name="main">
         <component name="reader" type="ConllReader">
             <file_path>$data_file</file_path>
             <columns>int,string</columns>
         </component>
-        <component name="index" type="Index">
+        <component name="glove" type="FileEmbeddings">
+            <file_path>$embedding_file</file_path>
+            <separator> </separator>
         </component>
         <component name="indexer" type="Indexer">
             <input_type>sequence</input_type>
@@ -19,19 +23,8 @@
                 <target socket="input">indexer</target>
         </edge>
         <edge>
-                <source socket="index">index</source>
+                <source socket="index">glove</source>
                 <target socket="index">indexer</target>
-        </edge>
-        <component name="deindexer" type="DeIndexer">
-            <input_type>sequence</input_type>
-        </component>
-        <edge>
-                <source socket="output">indexer</source>
-                <target socket="input">deindexer</target>
-        </edge>
-        <edge>
-                <source socket="index">index</source>
-                <target socket="index">deindexer</target>
         </edge>
     </canvas>
 </block>

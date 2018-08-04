@@ -17,3 +17,9 @@ class VariableRepository(AbstractRepository):
         model.name = specifications.name
 
         return model
+
+    def set_variable_value(self, name, value, mode=None):
+        specs = self.get_specifications()
+        specs.name = name
+        variable = self.get(specs)[0]
+        variable.set_value(value, mode=mode)

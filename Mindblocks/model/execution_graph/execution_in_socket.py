@@ -18,13 +18,13 @@ class ExecutionInSocket:
 
         return self.source.pull(mode)
 
-    def pull_type(self):
-        if self.cast is not None:
-            return self.cast
-        return self.source.pull_type()
+    def pull_value_type(self):
+        source_type = self.source.pull_value_type()
 
-    def pull_dim(self):
-        return self.source.pull_dim()
+        if self.cast is not None:
+            return source_type.cast(self.cast)
+        else:
+            return source_type
 
     def clear_caches(self):
         if self.source is not None:

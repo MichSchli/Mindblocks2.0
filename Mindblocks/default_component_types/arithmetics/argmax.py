@@ -18,7 +18,7 @@ class Argmax(ComponentTypeModel):
         return {"output": np.argmax(input_dictionary["input"], axis=-1)}
 
     def build_value_type(self, input_types, value):
-        return {"output": input_types["input"].copy()}
+        return {"output": input_types["input"].copy().remove_dim(-1)}
 
 class ArgmaxValue(ExecutionComponentValueModel):
 

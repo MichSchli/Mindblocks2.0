@@ -1,5 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.sequence_batch_type import SequenceBatchType
 
 
 class ConllReader(ComponentTypeModel):
@@ -15,11 +16,10 @@ class ConllReader(ComponentTypeModel):
     def execute(self, input_dictionary, value, mode):
         return {"output": value.read(), "count": value.count()}
 
-    def infer_types(self, input_types, value):
-        return {"output": "sequence", "count": "int"}
+    def build_value_type(self, input_types, value):
+        #TODO: Hardcoded max sequence length to 20
+        return {"output": SequenceBatchType(value.column_info, [value.count_columns()], 20)}
 
-    def infer_dims(self, input_dims, value):
-        return {"output": [None, None, value.count_columns()], "count": 1}
 
 class ConllReaderValue(ExecutionComponentValueModel):
 
@@ -32,6 +32,9 @@ class ConllReaderValue(ExecutionComponentValueModel):
 
     def count(self):
         return self.size
+
+    def count_columns(self):
+        return len(self.column_info)
 
     def read(self):
         lines = [[]]

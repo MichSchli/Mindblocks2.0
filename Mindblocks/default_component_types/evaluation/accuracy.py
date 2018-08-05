@@ -2,6 +2,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 import numpy as np
 
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.tensor_type import TensorType
 
 
 class Accuracy(ComponentTypeModel):
@@ -22,11 +23,8 @@ class Accuracy(ComponentTypeModel):
 
         return {"output": accuracy}
 
-    def infer_types(self, input_types, value):
-        return {"output": "float"}
-
-    def infer_dims(self, input_dims, value):
-        return {"output": 1}
+    def build_value_type(self, input_types, value):
+        return {"output": TensorType("float", [None])}
 
 
 class AccuracyValue(ExecutionComponentValueModel):

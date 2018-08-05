@@ -1,5 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.sequence_batch_type import SequenceBatchType
 
 
 class DeIndexer(ComponentTypeModel):
@@ -17,11 +18,8 @@ class DeIndexer(ComponentTypeModel):
 
         return {"output": transformed_input}
 
-    def infer_types(self, input_types, value):
-        return {"output": input_types["input"][-1] + [value.input_type]}
-
-    def infer_dims(self, input_dims, value):
-        return {"output": input_dims["input"]}
+    def build_value_type(self, input_types, value):
+        return {"output": SequenceBatchType("string", [], input_types["input"].get_maxlength())}
 
 
 class DeIndexerValue(ExecutionComponentValueModel):

@@ -30,33 +30,35 @@ class TensorflowSection:
 
     def initialize_placeholders(self):
         for tf_in_socket, in_socket in self.matched_in_sockets:
-            socket_type = in_socket.pull_type()
-            socket_dim = in_socket.pull_dim()
-
-            socket_placeholder = self.get_placeholder(socket_type, socket_dim)
+            socket_placeholder = self.get_placeholder(in_socket)
 
             # TODO: OVERLAPPING IN SOCKETS (same out socket) USE SEPARATE PLACEHOLDERS
             tf_in_socket.replaced_value = socket_placeholder
 
-    def get_placeholder(self, socket_type, socket_dim):
-        if socket_type == "float":
-            tf_type = tf.float32
-        elif socket_type == "int":
-            tf_type = tf.int32
-
-        return tf.placeholder(tf_type)
+    def get_placeholder(self, in_socket):
+        value_type = in_socket.pull_value_type()
+        return value_type.get_tensorflow_placeholder()
 
     def execute(self, mode):
+        feed_dict = self.create_feed_dict(mode)
+        tf_outputs = self.session.run(self.outputs, feed_dict=feed_dict)
+
+        for i in range(len(self.matched_out_sockets)):
+            output_type = self.matched_out_sockets[i][0].pull_value_type()
+            formatted_output = output_type.format_from_tensorflow_output(tf_outputs[i])
+            self.matched_out_sockets[i][1].set_cached_value(formatted_output)
+
+    def create_feed_dict(self, mode):
         feed_dict = {}
         for tf_in_socket, in_socket in self.matched_in_sockets:
             placeholder = tf_in_socket.pull(mode)
             value = in_socket.pull(mode)
-            feed_dict[placeholder] = value
+            value_type = in_socket.pull_value_type()
 
-        tf_outputs = self.session.run(self.outputs, feed_dict=feed_dict)
+            feed_value = value_type.format_for_tensorflow_input(value)
 
-        for i in range(len(self.matched_out_sockets)):
-            self.matched_out_sockets[i][1].set_cached_value(tf_outputs[i])
+            feed_dict[placeholder] = feed_value
+        return feed_dict
 
     def infer_types(self):
         for tf_out_socket, out_socket in self.matched_out_sockets:

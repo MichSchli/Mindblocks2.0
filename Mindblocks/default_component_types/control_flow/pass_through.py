@@ -15,11 +15,8 @@ class PassThrough(ComponentTypeModel):
     def execute(self, input_dictionary, value, mode):
         return {"output": input_dictionary["input"]}
 
-    def infer_types(self, input_types, value):
-        return {"output": input_types["input"]}
-
-    def infer_dims(self, input_dims, value):
-        return {"output": input_dims["input"]}
+    def build_value_type(self, input_types, value):
+        return {"output": input_types["input"].copy()}
 
 
 class PassThroughValue(ExecutionComponentValueModel):

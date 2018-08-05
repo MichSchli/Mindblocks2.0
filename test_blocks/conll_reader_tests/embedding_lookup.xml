@@ -39,6 +39,7 @@
         </edge>
 
         <component name="average" type="Mean" language="tensorflow">
+            <axis>1</axis>
         </component>
         <edge>
                 <source socket="output">embedding_lookup</source>

@@ -106,7 +106,7 @@ class TestConllReaderBlocks(unittest.TestCase):
         self.setup_holder.variable_repository.set_variable_value("embedding_file", embedding_filepath)
 
         component_spec = CreationComponentSpecifications()
-        component_spec.name = "average"
+        component_spec.name = "embedding_lookup"
         target = self.setup_holder.component_repository.get(component_spec)[0]
         target_socket = target.get_out_socket("output")
 
@@ -114,7 +114,14 @@ class TestConllReaderBlocks(unittest.TestCase):
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
 
-        result = run_graphs[0].execute()
-        self.assertEqual(2, len(result[0]))
+        results = run_graphs[0].execute()[0]
+        self.assertEqual(2, len(results))
 
-        print(result)
+        self.assertEqual(5, len(results[0]))
+        self.assertEqual(4, len(results[1]))
+
+        for r in results[0]:
+            self.assertEqual(2, len(r))
+
+        for r in results[1]:
+            self.assertEqual(2, len(r))

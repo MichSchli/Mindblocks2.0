@@ -18,6 +18,15 @@ class EmbeddingLookup(ComponentTypeModel):
         return {"output": tf.nn.embedding_lookup(input_dictionary["vectors"],
                                                  input_dictionary["indexes"])}
 
+    def build_value_type(self, input_types, value):
+        vector_type = input_types["vectors"]
+        index_type = input_types["indexes"]
+
+        new_type = index_type.copy()
+        new_type.set_data_type(vector_type.get_data_type())
+        new_type.extend_dims(vector_type.get_inner_dim())
+        return {"output": new_type}
+
     def infer_types(self, input_types, value):
         return {"output": input_types["vectors"]}
 

@@ -18,11 +18,9 @@ class DataSplitter(ComponentTypeModel):
         inp = np.array(inp)
         return {"left": inp[:,:value.pivot+1], "right": inp[:,value.pivot+1:]}
 
-    def infer_types(self, input_types, value):
-        return {"left": input_types["input"], "right": input_types["input"]}
-
-    def infer_dims(self, input_dims, value):
-        return {"left": "abc", "right": "abc"}
+    def build_value_type(self, input_types, value):
+        return {"left": input_types["input"].copy().set_inner_dim(None),
+                "right": input_types["input"].copy().set_inner_dim(None)}
 
 class DataSplitterValue(ExecutionComponentValueModel):
 

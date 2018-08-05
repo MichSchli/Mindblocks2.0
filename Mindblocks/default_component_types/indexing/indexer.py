@@ -19,11 +19,11 @@ class Indexer(ComponentTypeModel):
 
         return {"output": transformed_input}
 
-    def infer_types(self, input_types, value):
-        return {"output": "int"}
-
-    def infer_dims(self, input_dims, value):
-        return {"output": input_dims["input"]}
+    def build_value_type(self, input_types, value):
+        input_value_type = input_types["input"].copy()
+        input_value_type.set_data_type("int")
+        input_value_type.set_inner_dim(1)
+        return {"output": input_value_type}
 
 
 class IndexerValue(ExecutionComponentValueModel):

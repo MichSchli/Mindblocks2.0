@@ -2,6 +2,10 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import numpy as np
 
+from Mindblocks.model.value_type.index_type import IndexType
+from Mindblocks.model.value_type.tensor_type import TensorType
+
+
 class FileEmbeddings(ComponentTypeModel):
     name = "FileEmbeddings"
     out_sockets = ["index", "vectors"]
@@ -17,11 +21,9 @@ class FileEmbeddings(ComponentTypeModel):
         value.load()
         return {"index": value.get_index(), "vectors": value.get_vectors()}
 
-    def infer_types(self, input_types, value):
-        return {"index": "nonstandard", "vectors": "float"}
-
-    def infer_dims(self, input_dims, value):
-        return {"index": "nonstandard", "vectors": [None, None]}
+    def build_value_type(self, input_types, value):
+        return {"index": IndexType(),
+                "vectors": TensorType("float", [None, None])}
 
 
 class FileEmbeddingsValue(ExecutionComponentValueModel):

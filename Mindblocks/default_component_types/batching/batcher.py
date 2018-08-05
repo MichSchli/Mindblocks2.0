@@ -30,12 +30,6 @@ class Batcher(ComponentTypeModel):
         data_type.set_outer_dim_size(indexes_outer_dim)
         return {"output": data_type}
 
-    def infer_types(self, input_types, value):
-        return {"output": "string"}
-
-    def infer_dims(self, input_dims, value):
-        return {"output": [None, None]}
-
 
 class BatcherValue(ExecutionComponentValueModel):
 

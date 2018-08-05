@@ -22,9 +22,9 @@ class ExecutionComponentModel:
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)
 
-    def infer_types(self):
-        in_types = {k : in_socket.pull_type() for k,in_socket in self.in_sockets.items()}
-        output_types = self.execution_type.infer_types(in_types, self.execution_value)
+    def infer_value_types(self):
+        in_types = {k : in_socket.pull_value_type() for k,in_socket in self.in_sockets.items()}
+        output_types = self.execution_type.build_value_type(in_types, self.execution_value)
 
         for k,v in output_types.items():
             self.out_sockets[k].set_cached_type(v)

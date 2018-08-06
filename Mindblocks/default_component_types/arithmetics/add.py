@@ -12,10 +12,12 @@ class Add(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return AddValue()
 
-    def execute(self, input_dictionary, value, mode):
-        return {"output": input_dictionary["left"] + input_dictionary["right"]}
+    def execute(self, input_dictionary, value, output_value_models, mode):
+        result = input_dictionary["left"].get_value() + input_dictionary["right"].get_value()
+        output_value_models["output"].assign(result)
+        return output_value_models
 
-    def build_value_type(self, input_types, value):
+    def build_value_type_model(self, input_types, value):
         return {"output": input_types["left"].copy()}
 
 class AddValue(ExecutionComponentValueModel):

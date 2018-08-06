@@ -1,4 +1,4 @@
-from Mindblocks.model.value_type.abstract_value_type import AbstractValueType
+from Mindblocks.model.value_type.old.abstract_value_type import AbstractValueType
 import tensorflow as tf
 import numpy as np
 

@@ -12,7 +12,7 @@ class ExecutionGraphModel:
 
     def execute(self):
         self.clear_all_caches()
-        return self.head_component.pull(self.run_mode)
+        return [v.get_value() for v in self.head_component.pull(self.run_mode)]
 
     def clear_all_caches(self):
         self.head_component.clear_caches()
@@ -42,3 +42,6 @@ class ExecutionGraphModel:
     def enforce_value(self, component, socket, value):
         in_socket = self.get_in_socket(component, socket)
         in_socket.replace_value(value)
+
+    def initialize_type_models(self):
+        self.head_component.initialize_type_models()

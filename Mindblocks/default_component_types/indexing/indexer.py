@@ -13,13 +13,13 @@ class Indexer(ComponentTypeModel):
         return IndexerValue(value_dictionary["input_type"][0],
                             int(value_dictionary["input_column"][0]))
 
-    def execute(self, input_dictionary, value, mode):
-        transformed_input = value.apply_index(input_dictionary["input"],
-                                              input_dictionary["index"])
+    def execute(self, input_dictionary, value, output_value_models, mode):
+        transformed_input = value.apply_index(input_dictionary["input"].get_value(),
+                                              input_dictionary["index"].get_index())
+        output_value_models["output"].assign(transformed_input)
+        return output_value_models
 
-        return {"output": transformed_input}
-
-    def build_value_type(self, input_types, value):
+    def build_value_type_model(self, input_types, value):
         input_value_type = input_types["input"].copy()
         input_value_type.set_data_type("int")
         input_value_type.set_inner_dim(1)

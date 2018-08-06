@@ -13,14 +13,22 @@ class DataSplitter(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return DataSplitterValue(int(value_dictionary["pivot"][0]))
 
-    def execute(self, input_dictionary, value, mode):
-        inp = input_dictionary["input"]
+    def execute(self, input_dictionary, value, output_value_models, mode):
+        inp = input_dictionary["input"].get_value()
         inp = np.array(inp)
-        return {"left": inp[:,:value.pivot+1], "right": inp[:,value.pivot+1:]}
 
-    def build_value_type(self, input_types, value):
-        return {"left": input_types["input"].copy().set_inner_dim(None),
-                "right": input_types["input"].copy().set_inner_dim(None)}
+        output_value_models["left"].assign(inp[:,:value.pivot+1])
+        output_value_models["right"].assign(inp[:,value.pivot+1:])
+
+        return output_value_models
+
+    def build_value_type_model(self, input_types, value):
+        left = input_types["input"].copy()
+        right = input_types["input"].copy()
+        left.set_inner_dim(value.pivot+1)
+        right.set_inner_dim(right.dimensions[-1]-value.pivot-1)
+        return {"left": left,
+                "right": right}
 
 class DataSplitterValue(ExecutionComponentValueModel):
 

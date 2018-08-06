@@ -17,24 +17,21 @@ class ExecutionComponentModel:
 
     def execute(self, mode):
         input_dictionary = {k : in_socket.pull(mode) for k,in_socket in self.in_sockets.items()}
-        output_dictionary = self.execution_type.execute(input_dictionary, self.execution_value, mode)
+        output_value_models = {k : type_model.initialize_value_model() for k,type_model in self.output_type_models.items()}
+
+        print(self.execution_type.name)
+        output_dictionary = self.execution_type.execute(input_dictionary, self.execution_value, output_value_models, mode)
 
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)
 
-    def infer_value_types(self):
-        in_types = {k : in_socket.pull_value_type() for k,in_socket in self.in_sockets.items()}
-        output_types = self.execution_type.build_value_type(in_types, self.execution_value)
+    def infer_type_models(self):
+        in_types = {k : in_socket.pull_type_model() for k,in_socket in self.in_sockets.items()}
+        self.output_type_models = self.execution_type.build_value_type_model(in_types, self.execution_value)
 
-        for k,v in output_types.items():
+
+        for k,v in self.output_type_models.items():
             self.out_sockets[k].set_cached_type(v)
-
-    def infer_dims(self):
-        in_dims = {k : in_socket.pull_dim() for k,in_socket in self.in_sockets.items()}
-        output_dims = self.execution_type.infer_dims(in_dims, self.execution_value)
-
-        for k,v in output_dims.items():
-            self.out_sockets[k].set_cached_dims(v)
 
     def get_name(self):
         return self.name

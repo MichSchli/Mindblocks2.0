@@ -1,6 +1,8 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 import tensorflow as tf
 
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+
 
 class AdamUpdater(ComponentTypeModel):
 

@@ -14,14 +14,14 @@ class Softmax(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return SoftmaxValue()
 
-    def execute(self, input_dictionary, value, mode):
-        return {"output": tf.nn.softmax(input_dictionary["input"])}
+    def execute(self, input_dictionary, value, output_value_models, mode):
+        output_value_models["output"].assign(tf.nn.softmax(input_dictionary["input"]))
+        return output_value_models
 
-    def infer_types(self, input_types, value):
-        return {"output": input_types["input"]}
-
-    def infer_dims(self, input_dims, value):
-        return {"output": input_dims["input"]}
+    def build_value_type_model(self, input_types, value):
+        output_type = input_types["input"].copy()
+        output_type.set_inner_dim(1)
+        return {"output": output_type}
 
 class SoftmaxValue(ExecutionComponentValueModel):
 

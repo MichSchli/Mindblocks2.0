@@ -15,19 +15,17 @@ class Batcher(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return BatcherValue(value_dictionary["lazy"][0] == "True")
 
-    def execute(self, input_dictionary, value, mode):
-        data = np.array(input_dictionary["data"])
-        indexes = input_dictionary["indexes"]
+    def execute(self, input_dictionary, value, output_value_models, mode):
+        data = np.array(input_dictionary["data"].get_value())
+        indexes = input_dictionary["indexes"].get_value()
 
-        if value.lazy:
-            return {"output": data[indexes]}
+        output_value_models["output"].assign(data[indexes])
+        return output_value_models
 
-        return None
-
-    def build_value_type(self, input_types, value):
+    def build_value_type_model(self, input_types, value):
         data_type = input_types["data"].copy()
-        indexes_outer_dim = input_types["indexes"].get_outer_dim_size()
-        data_type.set_outer_dim_size(indexes_outer_dim)
+        indexes_outer_dim = input_types["indexes"].get_dimensions()[0]
+        data_type.subsample(indexes_outer_dim)
         return {"output": data_type}
 
 

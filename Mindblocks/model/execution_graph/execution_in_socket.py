@@ -18,8 +18,8 @@ class ExecutionInSocket:
 
         return self.source.pull(mode)
 
-    def pull_value_type(self):
-        source_type = self.source.pull_value_type()
+    def pull_type_model(self):
+        source_type = self.source.pull_type_model()
 
         if self.cast is not None:
             return source_type.cast(self.cast)

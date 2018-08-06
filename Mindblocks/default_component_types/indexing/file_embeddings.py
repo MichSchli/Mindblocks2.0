@@ -2,8 +2,8 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import numpy as np
 
-from Mindblocks.model.value_type.index_type import IndexType
-from Mindblocks.model.value_type.tensor_type import TensorType
+from Mindblocks.model.value_type.old.index_type import IndexType
+from Mindblocks.model.value_type.old.tensor_type import TensorType
 
 
 class FileEmbeddings(ComponentTypeModel):

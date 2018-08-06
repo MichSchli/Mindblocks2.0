@@ -21,14 +21,16 @@ class MultilayerPerceptron(ComponentTypeModel):
         return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"][0].split(",")],
                                          dropout_rate=dropout_rate)
 
-    def execute(self, input_dictionary, value, mode):
-        return {"output": value.transform(input_dictionary["input"], mode)}
+    def execute(self, input_dictionary, value, output_value_models, mode):
+        post_value = value.transform(input_dictionary["input"].get_value(), mode)
+        output_value_models["output"].assign(post_value)
+        return {"output": post_value}
 
-    def infer_types(self, input_types, value):
-        return {"output": input_types["input"]}
+    def build_value_type_model(self, input_types, value):
+        output_type = input_types["input"].copy()
+        output_type.set_inner_dim(value.dims[-1])
+        return {"output": output_type}
 
-    def infer_dims(self, input_dims, value):
-        return {"output": input_dims["input"][:-1]+[value.dims[-1]]}
 
 class MultilayerPerceptronValue(ExecutionComponentValueModel):
 

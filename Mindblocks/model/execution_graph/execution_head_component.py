@@ -21,3 +21,6 @@ class ExecutionHeadComponent:
             if not socket.has_batches():
                 return False
         return True
+
+    def initialize_type_models(self):
+        [socket.pull_type_model() for socket in self.run_output_sockets]

@@ -1,6 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.sequence_batch_type import SequenceBatchType
+from Mindblocks.model.value_type.old.sequence_batch_type import SequenceBatchType
 
 
 class ConllReader(ComponentTypeModel):

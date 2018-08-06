@@ -1,4 +1,4 @@
-from Mindblocks.model.value_type.abstract_value_type import AbstractValueType
+from Mindblocks.model.value_type.old.abstract_value_type import AbstractValueType
 import tensorflow as tf
 
 
@@ -21,6 +21,18 @@ class TensorType(AbstractValueType):
         if len(self.dims) > 0:
             return self.dims[-1]
 
+    def set_inner_dim(self, size):
+        if len(self.dims) > 0:
+            self.dims[-1] = size
+
+    def get_outer_dim_size(self):
+        if len(self.dims) > 0:
+            return self.dims[0]
+
+    def set_outer_dim_size(self, size):
+        if len(self.dims) > 0:
+            self.dims[0] = size
+
     def get_tensorflow_placeholder(self):
         tf_type = None
         if self.type == "float":
@@ -29,3 +41,6 @@ class TensorType(AbstractValueType):
             tf_type = tf.int32
 
         return tf.placeholder(tf_type, self.dims if len(self.dims) > 0 else ())
+
+    def format_from_tensorflow_output(self, value):
+        return value

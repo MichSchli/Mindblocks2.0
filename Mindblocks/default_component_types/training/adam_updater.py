@@ -2,6 +2,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 import tensorflow as tf
 
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.special.special_type_model import SpecialTypeModel
 
 
 class AdamUpdater(ComponentTypeModel):
@@ -14,17 +15,15 @@ class AdamUpdater(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return AdamUpdaterValue()
 
-    def execute(self, input_dictionary, value, mode):
+    def execute(self, input_dictionary, value, output_value_models, mode):
         adam = tf.train.AdamOptimizer(learning_rate=value.learning_rate)
-        grad_and_var_pairs = adam.compute_gradients(input_dictionary["loss"])
+        grad_and_var_pairs = adam.compute_gradients(input_dictionary["loss"].get_value())
         update = adam.apply_gradients(grad_and_var_pairs)
-        return {"update": update}
+        output_value_models["update"].assign(update)
+        return output_value_models
 
-    def infer_types(self, input_types, value):
-        return {"update": input_types["input"]}
-
-    def infer_dims(self, input_dims, value):
-        return {"update": input_dims["input"]}
+    def build_value_type_model(self, input_types, value):
+        return {"update": SpecialTypeModel()}
 
 class AdamUpdaterValue(ExecutionComponentValueModel):
 

@@ -17,7 +17,6 @@ class TensorTypeModel:
         return TensorValueModel(self.type, self.dimensions)
 
     def get_tensorflow_placeholder(self):
-        print("placeholder")
         placeholder_model = self.initialize_value_model()
 
         if self.cached_placeholder is None:

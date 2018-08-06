@@ -1,7 +1,11 @@
 <block>
+    <configuration>
+        <variable name="data_folder">
+        </variable>
+    </configuration>
     <canvas name="main">
         <component name="reader" type="CsvReader">
-            <file_path>/Users/micschli/Documents/Projects/Mindblocks/Mindblocks2.0/test_blocks/iris_tests/iris.data.txt</file_path>
+            <file_path>$data_folder/iris.data.txt</file_path>
             <columns>string,string,string,string,string</columns>
         </component>
         <component name="data_splitter" type="DataSplitter">

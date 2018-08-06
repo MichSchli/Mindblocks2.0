@@ -83,6 +83,9 @@ class GraphConverter:
         required_modes = []
 
         for k, v in component.component_value.items():
+            for mode, mode_value in versions.items():
+                versions[mode][k] = v
+
             for variable in self.get_all_variables():
                 ref = False
                 for val in v:
@@ -95,11 +98,7 @@ class GraphConverter:
                             required_modes.append(mode)
 
                     for mode, mode_value in versions.items():
-                        versions[mode][k] = [variable.replace_in_string(val, mode=mode) for val in v]
-
-            for mode, mode_value in versions.items():
-                if k not in versions[mode]:
-                    versions[mode][k] = v
+                        versions[mode][k] = [variable.replace_in_string(val, mode=mode) for val in versions[mode][k]]
 
         if len(required_modes) < 3:
             required_modes.append("default")

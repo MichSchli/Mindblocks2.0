@@ -19,7 +19,6 @@ class ExecutionComponentModel:
         input_dictionary = {k : in_socket.pull(mode) for k,in_socket in self.in_sockets.items()}
         output_value_models = {k : type_model.initialize_value_model() for k,type_model in self.output_type_models.items()}
 
-        print(self.execution_type.name)
         output_dictionary = self.execution_type.execute(input_dictionary, self.execution_value, output_value_models, mode)
 
         for k,v in output_dictionary.items():

@@ -15,6 +15,10 @@ class TestIrisBlocks(unittest.TestCase):
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
         component_spec = CreationComponentSpecifications()
         component_spec.name = "data_splitter"
         adder = self.setup_holder.component_repository.get(component_spec)[0]
@@ -34,6 +38,10 @@ class TestIrisBlocks(unittest.TestCase):
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
         component_spec = CreationComponentSpecifications()
         component_spec.name = "indexer"
         adder = self.setup_holder.component_repository.get(component_spec)[0]
@@ -52,6 +60,10 @@ class TestIrisBlocks(unittest.TestCase):
         filename = "iris_tests/batch_iris.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
 
         component_spec = CreationComponentSpecifications()
         component_spec.name = "data_batcher"
@@ -90,6 +102,10 @@ class TestIrisBlocks(unittest.TestCase):
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
         component_spec = CreationComponentSpecifications()
         component_spec.name = "accuracy"
         component = self.setup_holder.component_repository.get(component_spec)[0]
@@ -109,6 +125,10 @@ class TestIrisBlocks(unittest.TestCase):
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
         component_spec = CreationComponentSpecifications()
         component_spec.name = "accuracy"
         component = self.setup_holder.component_repository.get(component_spec)[0]
@@ -126,6 +146,10 @@ class TestIrisBlocks(unittest.TestCase):
         filename = "iris_tests/full_iris.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
 
         component_spec = CreationComponentSpecifications()
         component_spec.name = "adam_upd"
@@ -157,6 +181,10 @@ class TestIrisBlocks(unittest.TestCase):
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
         component_spec = CreationComponentSpecifications()
         c = self.setup_holder.component_repository.get(component_spec)[0]
         graph = c.get_graph()
@@ -172,6 +200,10 @@ class TestIrisBlocks(unittest.TestCase):
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
 
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
         component_spec = CreationComponentSpecifications()
         c = self.setup_holder.component_repository.get(component_spec)[0]
         graph = c.get_graph()
@@ -186,6 +218,10 @@ class TestIrisBlocks(unittest.TestCase):
         filename = "iris_tests/full_iris_with_three_datasets.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
         self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
 
         component_spec = CreationComponentSpecifications()
         c = self.setup_holder.component_repository.get(component_spec)[0]

@@ -34,6 +34,12 @@ class GraphModel:
                 out_socket = component.get_out_socket(socket_name)
                 return out_socket
 
+    def get_in_socket(self, component_name, socket_name):
+        for component in self.components:
+            if component.name == component_name:
+                in_socket = component.get_in_socket(socket_name)
+                return in_socket
+
     def get_marked_sockets(self):
         marked_sockets = {}
         for component in self.components:

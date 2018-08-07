@@ -7,6 +7,7 @@ class ExecutionInSocket:
     execution_component = None
 
     replaced_value = None
+    replaced_type = None
     cast = None
 
     def set_source(self, execution_out_socket):
@@ -19,6 +20,9 @@ class ExecutionInSocket:
         return self.source.pull(mode)
 
     def pull_type_model(self):
+        if self.replaced_type is not None:
+            return self.replaced_type
+
         source_type = self.source.pull_type_model()
 
         if self.cast is not None:
@@ -32,6 +36,9 @@ class ExecutionInSocket:
 
     def has_batches(self):
         return self.source.has_batches()
+
+    def replace_type(self, type):
+        self.replaced_type = type
 
     def replace_value(self, value):
         self.replaced_value = value

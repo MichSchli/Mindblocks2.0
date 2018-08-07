@@ -21,16 +21,15 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket]]
 
-        value_dictionary = self.setup_holder.graph_converter.build_value_dictionary(runs, ["train"])
+        value_dictionary = self.setup_holder.graph_converter.value_dictionary_builder.build_value_dictionary(runs, ["train"])
 
         self.assertIsNotNone(value_dictionary)
-        self.assertEqual(9, len(value_dictionary))
+        self.assertEqual(3, len(value_dictionary))
 
         keys = list(value_dictionary.keys())
 
         for component in list(self.setup_holder.component_repository.elements.values()):
-            self.assertIn(str(component.identifier) + "train", keys)
-            self.assertIsNotNone(value_dictionary[str(component.identifier) + "train"])
+            self.assertIn(component.identifier, keys)
 
     def testExcludesIrrelevantPartsFromValues(self):
         filename = "add_constants_with_extra_adder.xml"
@@ -44,17 +43,16 @@ class TestGraphConverter(unittest.TestCase):
 
         runs = [[target_socket]]
 
-        value_dictionary = self.setup_holder.graph_converter.build_value_dictionary(runs, ["train"])
+        value_dictionary = self.setup_holder.graph_converter.value_dictionary_builder.build_value_dictionary(runs, ["train"])
 
         self.assertIsNotNone(value_dictionary)
-        self.assertEqual(9, len(value_dictionary))
+        self.assertEqual(3, len(value_dictionary))
 
         keys = list(value_dictionary.keys())
 
         for component in list(self.setup_holder.component_repository.elements.values()):
             if component.name != "adder_2":
-                self.assertIn(str(component.identifier) + "train", keys)
-                self.assertIsNotNone(value_dictionary[str(component.identifier) + "train"])
+                self.assertIn(component.identifier, keys)
 
     def testCreatesExecutionGraphs(self):
         filename = "add_constants.xml"

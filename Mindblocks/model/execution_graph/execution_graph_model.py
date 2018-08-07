@@ -43,5 +43,9 @@ class ExecutionGraphModel:
         in_socket = self.get_in_socket(component, socket)
         in_socket.replace_value(value)
 
+    def enforce_type(self, component, socket, type):
+        in_socket = self.get_in_socket(component, socket)
+        in_socket.replace_type(type)
+
     def initialize_type_models(self):
-        self.head_component.initialize_type_models()
+        return self.head_component.initialize_type_models()

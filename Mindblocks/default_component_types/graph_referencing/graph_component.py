@@ -21,13 +21,19 @@ class GraphComponent(ComponentTypeModel):
             value.add_out_link(parts[1], parts[0])
         return value
 
-    def execute(self, input_dictionary, value, mode):
-        value.assign_input(input_dictionary, mode)
-        output = value.run_graph(mode)
-        return output
+    def execute(self, input_dictionary, value, output_models, mode):
+        value.assign_input(input_dictionary)
+        outputs = value.run_graph()
 
-    def build_value_type(self, input_types, value):
-        return None
+        for k,v in outputs.items():
+            output_models[k].assign(v)
+
+        return output_models
+
+    def build_value_type_model(self, input_types, value):
+        value.assign_input_types(input_types)
+        output_types = value.compute_types()
+        return output_types
 
 
 class GraphComponentValue(ExecutionComponentValueModel):
@@ -45,15 +51,23 @@ class GraphComponentValue(ExecutionComponentValueModel):
     def add_out_link(self, component_output, graph_output):
         self.out_links.append((component_output, graph_output))
 
-    def assign_input(self, input_dictionary, mode):
+    def assign_input_types(self, input_dictionary):
         for component_input, graph_input in self.in_links:
             parts = graph_input.split(":")
-            self.graph[mode].enforce_value(parts[0], parts[1], input_dictionary[component_input])
+            self.graph.enforce_type(parts[0], parts[1], input_dictionary[component_input])
 
-    def run_graph(self, mode):
-        results = self.graph[mode].execute()
+    def assign_input(self, input_dictionary):
+        for component_input, graph_input in self.in_links:
+            parts = graph_input.split(":")
+            self.graph.enforce_value(parts[0], parts[1], input_dictionary[component_input])
+
+    def run_graph(self,):
+        results = self.graph.execute()
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
+    def compute_types(self):
+        results = self.graph.initialize_type_models()
+        return {output[0]: result for output, result in zip(self.out_links, results)}
 
     def set_graph_name(self, name):
         self.graph_name = name
@@ -63,3 +77,6 @@ class GraphComponentValue(ExecutionComponentValueModel):
 
     def get_required_graph_outputs(self):
         return [(l[1].split(":")[0], l[1].split(":")[1]) for l in self.out_links]
+
+    def get_graph_inputs(self):
+        return [(l[1].split(":")[0], l[1].split(":")[1]) for l in self.in_links]

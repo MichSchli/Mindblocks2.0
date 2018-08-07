@@ -28,7 +28,6 @@ class ExecutionComponentModel:
         in_types = {k : in_socket.pull_type_model() for k,in_socket in self.in_sockets.items()}
         self.output_type_models = self.execution_type.build_value_type_model(in_types, self.execution_value)
 
-
         for k,v in self.output_type_models.items():
             self.out_sockets[k].set_cached_type(v)
 

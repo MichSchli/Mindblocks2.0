@@ -14,17 +14,25 @@ class Concat(ComponentTypeModel):
     def initialize_value(self, value_dictionary):
         return ConcatValue()
 
-    def execute(self, input_dictionary, value, mode):
-        # TODO: This is obviously wrong, but requires dim and typing refactoring
-        return {"output": np.concatenate(([input_dictionary["left"]], [input_dictionary["right"]]))}
+    def execute(self, input_dictionary, value, output_value_models, mode):
 
-    def infer_types(self, input_types, value):
-        return {"output": input_types["left"]}
+        if value.new_array:
+            result = np.array([input_dictionary["left"].get_value(), input_dictionary["right"].get_value()])
+        else:
+            result = np.concatenate((input_dictionary["left"].get_value(), input_dictionary["right"].get_value()))
+        output_value_models["output"].assign(result)
+        return output_value_models
 
-    def infer_dims(self, input_dims, value):
-        return {"output": input_dims["left"]}
+    def build_value_type_model(self, input_types, value):
+        left_dims = input_types["left"].get_dimensions()
+        right_dims = input_types["right"].get_dimensions()
+
+        if len(left_dims) == 0 and len(right_dims) == 0:
+            value.new_array = True
+
+        return {"output": input_types["left"].copy()}
 
 
 class ConcatValue(ExecutionComponentValueModel):
 
-    pass
+    new_array = False

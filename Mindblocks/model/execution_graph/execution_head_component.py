@@ -23,4 +23,4 @@ class ExecutionHeadComponent:
         return True
 
     def initialize_type_models(self):
-        [socket.pull_type_model() for socket in self.run_output_sockets]
+        return [socket.pull_type_model() for socket in self.run_output_sockets]

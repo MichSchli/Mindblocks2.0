@@ -13,12 +13,15 @@ from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepo
 from Mindblocks.repository.component_type_repository.component_type_repository import ComponentTypeRepository
 from Mindblocks.repository.creation_component_repository.creation_component_repository import CreationComponentRepository
 from Mindblocks.repository.graph.graph_repository import GraphRepository
+from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
 from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
 from Mindblocks.repository.variable_repository.variable_repository import VariableRepository
 
-class Interface:
+class BasicInterface:
 
-    def __init__(self):
+    ml_helper = None
+
+    def __init__(self, load_default_types=True):
         self.identifier_repository = IdentifierRepository()
         self.type_repository = ComponentTypeRepository(self.identifier_repository)
         self.canvas_repository = CanvasRepository(self.identifier_repository)
@@ -49,3 +52,19 @@ class Interface:
         self.graph_converter = GraphConverter(self.variable_repository)
 
         self.ml_helper_factory = MlHelperFactory(self.graph_converter, self.variable_repository)
+
+    def set_variable(self, name, value, mode=None):
+        self.variable_repository.set_variable_value(name, value, mode=mode)
+
+    def initialize(self):
+        graph = self.graph_repository.get(GraphSpecifications())[0]
+        self.ml_helper = self.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+    def load_file(self, filename):
+        self.block_loader.load(filename)
+
+    def train(self):
+        self.ml_helper.train()
+
+    def test(self):
+        self.ml_helper.evaluate()

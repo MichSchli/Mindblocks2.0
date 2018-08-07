@@ -171,8 +171,6 @@ class TestIrisBlocks(unittest.TestCase):
         ml_helper.train()
         performance = ml_helper.evaluate()
 
-        print(performance)
-
         self.assertGreaterEqual(1.0, performance)
         self.assertLess(0.9, performance)
 

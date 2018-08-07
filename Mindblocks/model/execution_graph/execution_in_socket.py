@@ -35,3 +35,7 @@ class ExecutionInSocket:
 
     def replace_value(self, value):
         self.replaced_value = value
+
+    def describe_graph(self, indent=0):
+        if self.source is not None:
+            self.source.describe_graph(indent=indent)

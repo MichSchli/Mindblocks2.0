@@ -2,8 +2,10 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import numpy as np
 
+from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
 from Mindblocks.model.value_type.old.index_type import IndexType
 from Mindblocks.model.value_type.old.tensor_type import TensorType
+from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
 class FileEmbeddings(ComponentTypeModel):
@@ -17,13 +19,17 @@ class FileEmbeddings(ComponentTypeModel):
             value.separator = value_dictionary["separator"][0]
         return value
 
-    def execute(self, input_dictionary, value, mode):
+    def execute(self, input_dictionary, value, output_models, mode):
         value.load()
-        return {"index": value.get_index(), "vectors": value.get_vectors()}
 
-    def build_value_type(self, input_types, value):
-        return {"index": IndexType(),
-                "vectors": TensorType("float", [None, None])}
+        output_models["index"].assign(value.get_index())
+        output_models["vectors"].assign(value.get_vectors())
+
+        return output_models
+
+    def build_value_type_model(self, input_types, value):
+        return {"index": IndexTypeModel(),
+                "vectors": TensorTypeModel("float", [None, None])}
 
 
 class FileEmbeddingsValue(ExecutionComponentValueModel):

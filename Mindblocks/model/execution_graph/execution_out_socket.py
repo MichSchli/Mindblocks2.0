@@ -35,3 +35,7 @@ class ExecutionOutSocket:
 
     def set_cached_type(self, type_model):
         self.cached_type = type_model
+
+    def describe_graph(self, indent=0):
+        if self.execution_component is not None:
+            self.execution_component.describe_graph(indent=indent+1)

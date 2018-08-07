@@ -30,6 +30,9 @@ class TensorTypeModel:
     def get_cached_placeholders(self):
         return [self.cached_placeholder]
 
+    def get_data_type(self):
+        return self.type
+
     def copy(self):
         return TensorTypeModel(self.type, self.dimensions)
 
@@ -46,6 +49,12 @@ class TensorTypeModel:
 
     def set_inner_dim(self, dimension):
         self.dimensions[-1] = dimension
+
+    def get_inner_dim(self):
+        if len(self.dimensions) == 0:
+            return 1
+        else:
+            return self.dimensions[-1]
 
     cached_casts = None
 

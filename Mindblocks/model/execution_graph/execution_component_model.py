@@ -51,3 +51,9 @@ class ExecutionComponentModel:
                 return False
 
         return self.execution_type.has_batches(self.execution_value)
+
+    def describe_graph(self, indent=0):
+        print("\t"*indent + self.execution_type.name)
+
+        for in_socket in self.get_in_sockets():
+            in_socket.describe_graph(indent=indent+1)

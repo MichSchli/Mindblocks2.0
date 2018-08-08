@@ -28,7 +28,7 @@
             <type>int</type>
         </component>
 
-        <component name="training_rnn" type="ScheduledSamplingRnn">
+        <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">initializer</socket>
             <socket type="out">logits</socket>
@@ -42,7 +42,7 @@
                 <target socket="initializer">training_rnn</target>
         </edge>
 
-        <component name="loss" type="SequenceLoss">
+        <component name="loss" type="SequenceCrossEntropy" language="tensorflow">
             <mark socket="output">loss</mark>
         </component>
         <edge>
@@ -64,21 +64,21 @@
     </canvas>
     <canvas name="decoder">
         <graph name="decoder-graph">
-            <component name="previous_c" type="PassThrough">
+            <component name="previous_c" type="PassThrough" language="tensorflow">
             </component>
-            <component name="previous_h" type="PassThrough">
+            <component name="previous_h" type="PassThrough" language="tensorflow">
             </component>
-            <component name="input_token" type="PassThrough">
+            <component name="input_token" type="PassThrough" language="tensorflow">
             </component>
 
-            <component name="encoder_embedding" type="Embedding">
+            <component name="encoder_embedding" type="Embedding" language="tensorflow">
             </component>
             <edge>
                 <source socket="output">input_token</source>
                 <target socket="indexes">encoder_embedding</target>
             </edge>
 
-            <component name="decoder_lstm" type="RnnCell">
+            <component name="decoder_lstm" type="RnnCell" language="tensorflow">
                 <cell>lstm</cell>
                 <dimension>20</dimension>
             </component>
@@ -109,7 +109,7 @@
                 <source socket="output">mlp</source>
                 <target socket="input">softmax</target>
             </edge>
-            <component name="argmax" type="Argmax" language="python">
+            <component name="argmax" type="Argmax" language="tensorflow">
             </component>
             <edge>
                 <source socket="output">softmax</source>

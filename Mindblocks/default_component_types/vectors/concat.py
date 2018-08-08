@@ -15,7 +15,6 @@ class Concat(ComponentTypeModel):
         return ConcatValue()
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-
         if value.new_array:
             result = np.array([input_dictionary["left"].get_value(), input_dictionary["right"].get_value()])
         else:

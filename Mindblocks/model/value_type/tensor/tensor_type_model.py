@@ -1,3 +1,4 @@
+from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import SequenceBatchTypeModel
 from Mindblocks.model.value_type.tensor.tensor_value_model import TensorValueModel
 
 
@@ -65,3 +66,6 @@ class TensorTypeModel:
 
     def set_data_type(self, new_type):
         self.type = new_type
+
+    def to_sequence_type(self):
+        return SequenceBatchTypeModel(self.type, self.dimensions, None)

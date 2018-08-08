@@ -1,6 +1,9 @@
 import tensorflow as tf
 import numpy as np
 
+from Mindblocks.model.value_type.tensor.tensor_value_model import TensorValueModel
+
+
 class SequenceBatchValueModel:
 
     type = None
@@ -83,3 +86,9 @@ class SequenceBatchValueModel:
 
     def is_value_type(self, test_type):
         return test_type == "sequence"
+
+    def get_token(self, batch, index):
+        token = self.sequences[batch][index]
+        tensor_value_model = TensorValueModel(self.type, self.item_shape)
+        tensor_value_model.assign(token)
+        return tensor_value_model

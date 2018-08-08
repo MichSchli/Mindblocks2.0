@@ -11,7 +11,7 @@ class DataSplitter(ComponentTypeModel):
     languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary):
-        return DataSplitterValue(int(value_dictionary["pivot"][0]))
+        return DataSplitterValue(int(value_dictionary["pivot"][0][0]))
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         inp = input_dictionary["input"].get_value()

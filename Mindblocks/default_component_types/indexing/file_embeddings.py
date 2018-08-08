@@ -14,9 +14,9 @@ class FileEmbeddings(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        value = FileEmbeddingsValue(value_dictionary["file_path"][0])
+        value = FileEmbeddingsValue(value_dictionary["file_path"][0][0])
         if "separator" in value_dictionary:
-            value.separator = value_dictionary["separator"][0]
+            value.separator = value_dictionary["separator"][0][0]
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):

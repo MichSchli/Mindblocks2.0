@@ -11,8 +11,8 @@ class CsvReader(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return CsvReaderValue(value_dictionary["file_path"][0],
-                              value_dictionary["columns"][0].split(","))
+        return CsvReaderValue(value_dictionary["file_path"][0][0],
+                              value_dictionary["columns"][0][0].split(","))
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         output_value_models["output"].assign(value.read())

@@ -1,4 +1,5 @@
 from Mindblocks.model.value_type.sequence_batch.sequence_batch_value_model import SequenceBatchValueModel
+from Mindblocks.model.value_type.tensor import tensor_type_model
 
 
 class SequenceBatchTypeModel:
@@ -65,3 +66,9 @@ class SequenceBatchTypeModel:
         value_model = self.initialize_value_model()
         value_model.assign(fixed_seqs)
         return value_model
+
+    def get_dimensions(self):
+        return self.item_shape
+
+    def get_single_token_type(self):
+        return tensor_type_model.TensorTypeModel(self.type, self.item_shape)

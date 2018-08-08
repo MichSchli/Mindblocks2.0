@@ -11,13 +11,13 @@ class GraphComponent(ComponentTypeModel):
 
     def initialize_value(self, value_dictionary):
         value = GraphComponentValue()
-        value.set_graph_name(value_dictionary["graph"][0])
+        value.set_graph_name(value_dictionary["graph"][0][0])
         for in_link in value_dictionary["in_link"]:
-            parts = in_link.split("->")
+            parts = in_link[0].split("->")
             value.add_in_link(parts[0], parts[1])
 
         for out_link in value_dictionary["out_link"]:
-            parts = out_link.split("->")
+            parts = out_link[0].split("->")
             value.add_out_link(parts[1], parts[0])
         return value
 
@@ -61,7 +61,7 @@ class GraphComponentValue(ExecutionComponentValueModel):
             parts = graph_input.split(":")
             self.graph.enforce_value(parts[0], parts[1], input_dictionary[component_input])
 
-    def run_graph(self,):
+    def run_graph(self):
         results = self.graph.execute()
         return {output[0]: result for output, result in zip(self.out_links, results)}
 

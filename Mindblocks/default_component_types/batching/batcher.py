@@ -13,7 +13,7 @@ class Batcher(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return BatcherValue(value_dictionary["lazy"][0] == "True")
+        return BatcherValue(value_dictionary["lazy"][0][0] == "True")
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         data = np.array(input_dictionary["data"].get_value())

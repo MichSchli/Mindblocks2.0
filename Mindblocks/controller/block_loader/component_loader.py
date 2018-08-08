@@ -45,12 +45,13 @@ class ComponentLoader:
                 next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
             elif current_value_line_id is None:
                 current_value_line_id = next_symbol
+                current_value_line_attributes = attributes
                 if not current_value_line_id in value_lines:
                     value_lines[current_value_line_id] = []
             elif next_symbol == "/" + current_value_line_id:
                 current_value_line_id = None
             else:
-                value_lines[current_value_line_id] += [next_symbol]
+                value_lines[current_value_line_id] += [(next_symbol, current_value_line_attributes)]
 
             next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 

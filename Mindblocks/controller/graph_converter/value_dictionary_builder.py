@@ -106,6 +106,6 @@ class ValueDictionaryBuilder:
             updated_dict[k] = v
 
             for variable in self.get_all_variables():
-                updated_dict[k] = [variable.replace_in_string(val, mode=mode) for val in updated_dict[k]]
+                updated_dict[k] = [(variable.replace_in_string(val[0], mode=mode), val[1]) for val in updated_dict[k]]
 
         return component.component_type.initialize_value(updated_dict)

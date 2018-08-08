@@ -12,8 +12,8 @@ class ConllReader(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return ConllReaderValue(value_dictionary["file_path"][0],
-                                value_dictionary["columns"][0].split(","))
+        return ConllReaderValue(value_dictionary["file_path"][0][0],
+                                value_dictionary["columns"][0][0].split(","))
 
     def execute(self, input_dictionary, value, output_models, mode):
         output_models["output"].assign(value.read())

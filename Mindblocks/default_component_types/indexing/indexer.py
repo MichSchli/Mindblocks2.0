@@ -10,8 +10,8 @@ class Indexer(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary):
-        return IndexerValue(value_dictionary["input_type"][0],
-                            int(value_dictionary["input_column"][0]))
+        return IndexerValue(value_dictionary["input_type"][0][0],
+                            int(value_dictionary["input_column"][0][0]))
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         transformed_input = value.apply_index(input_dictionary["input"].get_value(),

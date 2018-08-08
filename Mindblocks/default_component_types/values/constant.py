@@ -12,8 +12,8 @@ class Constant(ComponentTypeModel):
     languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary):
-        return ConstantValue(value_dictionary["value"][0],
-                             value_dictionary["type"][0])
+        return ConstantValue(value_dictionary["value"][0][0],
+                             value_dictionary["type"][0][0])
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         output_value_models["output"].assign(value.value)
@@ -35,4 +35,11 @@ class ConstantValue(ExecutionComponentValueModel):
             self.tensor = True
         elif value_type == "float":
             self.value = float(value)
+            self.value_type = value_type
+        elif tensor and value_type == "int":
+            self.value = np.array(value, dtype=np.int32)
+            self.value_type = value_type
+            self.tensor = True
+        elif value_type == "int":
+            self.value = int(value)
             self.value_type = value_type

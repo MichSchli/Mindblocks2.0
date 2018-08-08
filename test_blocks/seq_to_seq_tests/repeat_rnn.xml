@@ -19,18 +19,28 @@
                 <target socket="index">indexer</target>
         </edge>
 
+        <component name="initializer" type="Constant">
+            <value>0</value>
+            <type>int</type>
+        </component>
 
-        <component name="deindexer" type="DeIndexer">
-            <input_type>sequence</input_type>
-            <input_column>1</input_column>
+        <component name="cell" type="BasicRecurrence">
+            <graph canvas="inner">graph</graph>
+            <socket type="in">input_sequences</socket>
+            <socket type="in">initializer</socket>
+            <socket type="out">output_sequences</socket>
+            <in_link feed="initializer">initializer->previous_output:input</in_link>
+            <in_link feed="loop">input_sequences->input:input</in_link>
+            <out_link feed="loop">concat:output->output_sequences</out_link>
+            <recurrence>input:output->previous_output:input</recurrence>
         </component>
         <edge>
                 <source socket="output">indexer</source>
-                <target socket="input">deindexer</target>
+                <target socket="input_sequences">cell</target>
         </edge>
         <edge>
-                <source socket="index">index</source>
-                <target socket="index">deindexer</target>
+                <source socket="output">initializer</source>
+                <target socket="initializer">cell</target>
         </edge>
     </canvas>
 
@@ -44,7 +54,7 @@
             <component name="concat" type="Concat">
             </component>
             <edge>
-                <source socket="output">previous_input</source>
+                <source socket="output">previous_output</source>
                 <target socket="left">concat</target>
             </edge>
             <edge>

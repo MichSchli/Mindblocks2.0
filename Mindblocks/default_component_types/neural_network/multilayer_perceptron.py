@@ -14,11 +14,11 @@ class MultilayerPerceptron(ComponentTypeModel):
 
     def initialize_value(self, value_dictionary):
         if "dropout_rate" in value_dictionary:
-            dropout_rate = float(value_dictionary["dropout_rate"][0])
+            dropout_rate = float(value_dictionary["dropout_rate"][0][0])
         else:
             dropout_rate = 0.0
 
-        return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"][0].split(",")],
+        return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"][0][0].split(",")],
                                          dropout_rate=dropout_rate)
 
     def execute(self, input_dictionary, value, output_value_models, mode):

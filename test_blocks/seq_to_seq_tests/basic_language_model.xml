@@ -1,0 +1,120 @@
+<block>
+    <configuration>
+        <variable name="data_folder">
+        </variable>
+    </configuration>
+    <canvas name="main">
+        <component name="reader" type="ConllReader">
+            <file_path>$data_folder/test_conll_file.conll</file_path>
+            <columns>int,string</columns>
+        </component>
+        <component name="index" type="Index">
+        </component>
+        <component name="indexer" type="Indexer">
+            <input_type>sequence</input_type>
+            <input_column>1</input_column>
+        </component>
+        <edge>
+                <source socket="output">reader</source>
+                <target socket="input">indexer</target>
+        </edge>
+        <edge>
+                <source socket="index">index</source>
+                <target socket="index">indexer</target>
+        </edge>
+
+        <component name="initializer" type="Constant">
+            <value>[0,1]</value>
+            <type>int</type>
+        </component>
+
+        <component name="training_rnn" type="ScheduledSamplingRnn">
+            <graph canvas="decoder">decoder-graph</graph>
+            <socket type="in">initializer</socket>
+            <socket type="out">logits</socket>
+            <in_link feed="initializer">initializer->previous_output:input</in_link>
+            <recurrence>decoder_lstm:output_c->previous_c:input</recurrence>
+            <recurrence>decoder_lstm:output_h->previous_h:input</recurrence>
+            <recurrence>argmax:output->input_token:input</recurrence>
+        </component>
+        <edge>
+                <source socket="output">initializer</source>
+                <target socket="initializer">training_rnn</target>
+        </edge>
+
+        <component name="loss" type="SequenceLoss">
+            <mark socket="output">loss</mark>
+        </component>
+        <edge>
+                <source socket="logits">training_rnn</source>
+                <target socket="predictions">loss</target>
+        </edge>
+        <edge>
+                <source socket="output">target_indexer</source>
+                <target socket="labels">loss</target>
+        </edge>
+        <component name="adam_upd" type="AdamUpdater" language="tensorflow">
+            <mark socket="update">update</mark>
+        </component>
+        <edge>
+                <source socket="output">loss</source>
+                <target socket="loss">adam_upd</target>
+        </edge>
+
+    </canvas>
+    <canvas name="decoder">
+        <graph name="decoder-graph">
+            <component name="previous_c" type="PassThrough">
+            </component>
+            <component name="previous_h" type="PassThrough">
+            </component>
+            <component name="input_token" type="PassThrough">
+            </component>
+
+            <component name="encoder_embedding" type="Embedding">
+            </component>
+            <edge>
+                <source socket="output">input_token</source>
+                <target socket="indexes">encoder_embedding</target>
+            </edge>
+
+            <component name="decoder_lstm" type="RnnCell">
+                <cell>lstm</cell>
+                <dimension>20</dimension>
+            </component>
+            <edge>
+                <source socket="output">encoder_embedding</source>
+                <target socket="input_x">decoder_lstm</target>
+            </edge>
+            <edge>
+                <source socket="output">previous_c</source>
+                <target socket="previous_c">decoder_lstm</target>
+            </edge>
+            <edge>
+                <source socket="output">previous_h</source>
+                <target socket="previous_h">decoder_lstm</target>
+            </edge>
+
+            <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
+            <dimensions>20, 1</dimensions>
+            </component>
+            <edge cast="float">
+                <source socket="output_h">decoder_lstm</source>
+                <target socket="input">mlp</target>
+            </edge>
+
+            <component name="softmax" type="Softmax" language="tensorflow">
+            </component>
+            <edge>
+                <source socket="output">mlp</source>
+                <target socket="input">softmax</target>
+            </edge>
+            <component name="argmax" type="Argmax" language="python">
+            </component>
+            <edge>
+                <source socket="output">softmax</source>
+                <target socket="input">argmax</target>
+            </edge>
+        </graph>
+    </canvas>
+</block>

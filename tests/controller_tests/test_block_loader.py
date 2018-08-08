@@ -109,8 +109,8 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEqual(1, len(components))
         self.assertEqual("constant_1", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual(["5.17"], components[0].component_value["value"])
-        self.assertEqual(["float"], components[0].component_value["type"])
+        self.assertEqual([("5.17", {})], components[0].component_value["value"])
+        self.assertEqual([("float", {})], components[0].component_value["type"])
 
     def testLoadsSimpleCanvas(self):
         component_type_spec = ComponentTypeSpecifications()
@@ -145,8 +145,8 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEqual(1, len(components))
         self.assertEqual("constant_1", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual(["5.17"], components[0].component_value["value"])
-        self.assertEqual(["float"], components[0].component_value["type"])
+        self.assertEqual([("5.17", {})], components[0].component_value["value"])
+        self.assertEqual([("float", {})], components[0].component_value["type"])
 
         self.assertEqual(1, canvases[0].count_components())
         self.assertEqual(components[0], canvases[0].components[0])
@@ -189,8 +189,8 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEqual(1, len(components))
         self.assertEqual("constant_1", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual(["5.17"], components[0].component_value["value"])
-        self.assertEqual(["float"], components[0].component_value["type"])
+        self.assertEqual([("5.17", {})], components[0].component_value["value"])
+        self.assertEqual([("float", {})], components[0].component_value["type"])
         self.assertEqual(canvases[0], components[0].canvas)
 
         spec.name = "constant_2"
@@ -200,8 +200,8 @@ class TestBlockLoader(unittest.TestCase):
         self.assertEqual(1, len(components))
         self.assertEqual("constant_2", components[0].name)
         self.assertEqual("Constant", components[0].get_component_type_name())
-        self.assertEqual(["8.14"], components[0].component_value["value"])
-        self.assertEqual(["float"], components[0].component_value["type"])
+        self.assertEqual([("8.14", {})], components[0].component_value["value"])
+        self.assertEqual([("float", {})], components[0].component_value["type"])
         self.assertEqual(canvases[0], components[0].canvas)
 
     def testLoadsSimpleCanvasWithEdge(self):

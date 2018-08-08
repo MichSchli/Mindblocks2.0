@@ -1,4 +1,4 @@
-from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import SequenceBatchTypeModel
+from Mindblocks.model.value_type.sequence_batch import sequence_batch_type_model
 from Mindblocks.model.value_type.tensor.tensor_value_model import TensorValueModel
 
 
@@ -68,4 +68,4 @@ class TensorTypeModel:
         self.type = new_type
 
     def to_sequence_type(self):
-        return SequenceBatchTypeModel(self.type, self.dimensions, None)
+        return sequence_batch_type_model.SequenceBatchTypeModel(self.type, self.dimensions, None)

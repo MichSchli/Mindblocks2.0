@@ -89,7 +89,7 @@ class ValueDictionaryBuilder:
             for variable in self.get_all_variables():
                 ref = False
                 for val in v:
-                    if variable.referenced_in(val):
+                    if variable.referenced_in(val[0]):
                         ref = True
                         break
                 if ref:

@@ -8,7 +8,9 @@
             <file_path>$data_folder/test_conll_file.conll</file_path>
             <columns>int,string</columns>
         </component>
-        <component name="index" type="Index">
+        <component name="embedding" type="FileEmbeddings">
+            <file_path>$embedding_file</file_path>
+            <separator> </separator>
         </component>
         <component name="indexer" type="Indexer">
             <input_type>sequence</input_type>
@@ -19,7 +21,7 @@
                 <target socket="input">indexer</target>
         </edge>
         <edge>
-                <source socket="index">index</source>
+                <source socket="index">embedding</source>
                 <target socket="index">indexer</target>
         </edge>
 
@@ -28,11 +30,13 @@
             <type>int</type>
         </component>
 
+
         <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">initializer</socket>
             <socket type="out">logits</socket>
             <in_link feed="initializer">initializer->previous_output:input</in_link>
+            <out_link feed="loop">mlp:output->logits</out_link>
             <recurrence>decoder_lstm:output_c->previous_c:input</recurrence>
             <recurrence>decoder_lstm:output_h->previous_h:input</recurrence>
             <recurrence>argmax:output->input_token:input</recurrence>
@@ -47,10 +51,10 @@
         </component>
         <edge>
                 <source socket="logits">training_rnn</source>
-                <target socket="predictions">loss</target>
+                <target socket="logits">loss</target>
         </edge>
         <edge>
-                <source socket="output">target_indexer</source>
+                <source socket="output">indexer</source>
                 <target socket="labels">loss</target>
         </edge>
         <component name="adam_upd" type="AdamUpdater" language="tensorflow">
@@ -71,15 +75,14 @@
             <component name="input_token" type="PassThrough" language="tensorflow">
             </component>
 
-            <component name="encoder_embedding" type="Embedding" language="tensorflow">
+            <component name="encoder_embedding" type="EmbeddingLookup" language="tensorflow">
             </component>
             <edge>
                 <source socket="output">input_token</source>
                 <target socket="indexes">encoder_embedding</target>
             </edge>
 
-            <component name="decoder_lstm" type="RnnCell" language="tensorflow">
-                <cell>lstm</cell>
+            <component name="decoder_lstm" type="LstmCell" language="tensorflow">
                 <dimension>20</dimension>
             </component>
             <edge>

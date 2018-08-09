@@ -77,6 +77,8 @@ class TestSimpleBlocks(unittest.TestCase):
         ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
 
         ml_helper.train()
+
+        print("AIPHEFEAIJFAEHPIFEHPA")
         loss = ml_helper.validate()
 
         print(loss)

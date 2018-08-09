@@ -20,7 +20,8 @@ class FileEmbeddings(ComponentTypeModel):
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
-        value.load()
+        if not value.loaded:
+            value.load()
 
         output_models["index"].assign(value.get_index())
         output_models["vectors"].assign(value.get_vectors())
@@ -38,12 +39,14 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     vectors = None
     file_path = None
     separator = None
+    loaded = None
 
     def __init__(self, file_path, width):
         self.index = {"forward": {}, "backward": {}}
         self.file_path = file_path
         self.separator = ","
         self.width = width
+        self.loaded = False
 
     def load(self):
         f = open(self.file_path, "r")
@@ -54,6 +57,8 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
                 parts = line.split(self.separator)
                 self.add_to_index(parts[0])
                 self.add_to_vectors([float(t) for t in parts[1:]])
+
+        self.loaded = True
 
     def add_to_index(self, label):
         self.index["forward"][label] = len(self.index["forward"])

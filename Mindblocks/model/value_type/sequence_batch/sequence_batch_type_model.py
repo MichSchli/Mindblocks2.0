@@ -42,6 +42,8 @@ class SequenceBatchTypeModel:
 
     def get_tensorflow_placeholder(self):
         placeholder_model = self.initialize_value_model()
+        placeholder_model.batch_size = 2
+        placeholder_model.max_length = 5 # TODO: Hardcoded
 
         if self.cached_seq_placeholder is None:
             placeholder_model.initialize_as_tensorflow_placeholder()

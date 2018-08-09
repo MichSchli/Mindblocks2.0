@@ -1,3 +1,5 @@
+from tensorflow.python.ops import tensor_array_ops
+
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
@@ -111,16 +113,21 @@ class ScheduledSamplingRnnComponentValue:
         in_socket.replace_value(value_model)
 
     def body(self, *args):
-        for n,arg in enumerate(args):
-            if n >= len(self.out_links):
-                self.set_nths_input(n - len(self.out_links), arg)
-
         print(args)
+        for n,arg in enumerate(args):
+            if n > len(self.out_links):
+                self.set_nths_input(n - len(self.out_links) - 1, arg)
+
         results = self.graph.execute(discard_value_models=True)
-        print(results)
 
-        return tuple(results)
+        for i in range(len(results)):
+            if i < len(self.out_links):
+                results[i] = self.write_to_tensor_array(args[i+1],results[i], args[0])
 
+        return (args[0] + 1, ) + tuple(results)
+
+    def write_to_tensor_array(self, array, item, index):
+        return array.write(index, item)
 
     def cond(self, *args):
         print("cond")
@@ -167,27 +174,41 @@ class ScheduledSamplingRnnComponentValue:
 
         loop_vars = tuple(x[2] for x in loop_var_initializers)
 
+        maximum_iterations = 5
         for _, graph_output, _ in self.out_links:
+            # use tensor arrays
             parts = graph_output.split(":")
             socket = self.graph.get_out_socket(parts[0], parts[1])
             out_type = socket.pull_type_model()
             dims = out_type.get_dimensions()
-            tf_value = tf.zeros(dims)
+            tf_value = tensor_array_ops.TensorArray(
+                dtype=tf.float32,
+                size=0 if maximum_iterations is None else maximum_iterations,
+                dynamic_size=maximum_iterations is None,
+                element_shape=dims)
             loop_vars = (tf_value, ) + loop_vars
 
         print(sequence_sockets)
         print(sequence_feeds)
         print(loop_var_initializers)
 
-        loop_vars = loop_vars
+        loop_vars = (0,) + loop_vars
 
-        maximum_iterations = 20
         loop = tf.while_loop(
             self.cond,
             self.body,
             loop_vars=loop_vars,
             maximum_iterations=maximum_iterations
         )
+
+        loop = list(loop)[1:]
+
+        batch_size = 2
+
+        for i in range(len(loop)):
+            if i < len(self.out_links):
+                loop[i] = tf.reshape(loop[i].stack(), [batch_size, maximum_iterations, -1])
+
         return {self.out_links[i][0]: loop[i] for i in range(len(self.out_links))}
 
     def count_recurrences(self):

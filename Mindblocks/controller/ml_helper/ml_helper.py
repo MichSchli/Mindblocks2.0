@@ -45,6 +45,7 @@ class MlHelper:
         batch = 0
         loss_tracker = 0
         while self.update_and_loss_function.has_batches():
+            print("EXECUTRE")
             _, loss = self.update_and_loss_function.execute()
 
             loss_tracker += loss

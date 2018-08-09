@@ -12,7 +12,7 @@ class MultilayerPerceptron(ComponentTypeModel):
     out_sockets = ["output"]
     languages = ["tensorflow"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         if "dropout_rate" in value_dictionary:
             dropout_rate = float(value_dictionary["dropout_rate"][0][0])
         else:

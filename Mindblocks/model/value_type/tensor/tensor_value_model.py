@@ -49,6 +49,10 @@ class TensorValueModel:
     def get_tensorflow_output_tensors(self):
         return [self.value]
 
+
+    def is_value_type(self, test_type):
+        return test_type == "tensor"
+
     def cast(self, new_type):
         if new_type == "float":
             new_value_model = TensorValueModel("float", self.dimensions)

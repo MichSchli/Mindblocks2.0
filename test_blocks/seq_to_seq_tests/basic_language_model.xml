@@ -9,7 +9,8 @@
             <columns>int,string</columns>
         </component>
         <component name="embedding" type="FileEmbeddings">
-            <file_path>$embedding_file</file_path>
+            <file_path>$data_folder/test_embeddings.txt</file_path>
+            <width>2</width>
             <separator> </separator>
         </component>
         <component name="indexer" type="Indexer">
@@ -26,24 +27,28 @@
         </edge>
 
         <component name="initializer" type="Constant">
-            <value>[0,1]</value>
+            <value>0 1</value>
             <type>int</type>
         </component>
-
 
         <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">initializer</socket>
+            <socket type="in">embedding_vectors</socket>
             <socket type="out">logits</socket>
-            <in_link feed="initializer">initializer->previous_output:input</in_link>
+            <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <out_link feed="loop">mlp:output->logits</out_link>
-            <recurrence>decoder_lstm:output_c->previous_c:input</recurrence>
-            <recurrence>decoder_lstm:output_h->previous_h:input</recurrence>
-            <recurrence>argmax:output->input_token:input</recurrence>
+            <recurrence init="zero_tensor:20">decoder_lstm:output_c->previous_c:input</recurrence>
+            <recurrence init="zero_tensor:20">decoder_lstm:output_h->previous_h:input</recurrence>
+            <recurrence init="socket:initializer">argmax:output->input_token:input</recurrence>
         </component>
         <edge>
                 <source socket="output">initializer</source>
                 <target socket="initializer">training_rnn</target>
+        </edge>
+        <edge>
+                <source socket="vectors">embedding</source>
+                <target socket="embedding_vectors">training_rnn</target>
         </edge>
 
         <component name="loss" type="SequenceCrossEntropy" language="tensorflow">

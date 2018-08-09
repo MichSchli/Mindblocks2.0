@@ -10,7 +10,7 @@ class CsvReader(ComponentTypeModel):
     out_sockets = ["output", "count"]
     languages = ["python"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return CsvReaderValue(value_dictionary["file_path"][0][0],
                               value_dictionary["columns"][0][0].split(","))
 

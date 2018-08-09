@@ -11,7 +11,7 @@ class EmbeddingLookup(ComponentTypeModel):
     out_sockets = ["output"]
     languages = ["tensorflow"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return EmbeddingLookupValue()
 
     def execute(self, input_dictionary, value, output_models, mode):

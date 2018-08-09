@@ -9,7 +9,7 @@ class Indexer(ComponentTypeModel):
     out_sockets = ["output"]
     languages = ["python"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return IndexerValue(value_dictionary["input_type"][0][0],
                             int(value_dictionary["input_column"][0][0]))
 

@@ -9,7 +9,7 @@ class GraphComponent(ComponentTypeModel):
     out_sockets = []
     languages = ["python", "tensorflow"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         value = GraphComponentValue()
         value.set_graph_name(value_dictionary["graph"][0][0])
         for in_link in value_dictionary["in_link"]:

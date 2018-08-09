@@ -12,7 +12,7 @@ class Accuracy(ComponentTypeModel):
     out_sockets = ["output"]
     languages = ["python"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return AccuracyValue()
 
     def execute(self, input_dictionary, value, output_value_models, mode):

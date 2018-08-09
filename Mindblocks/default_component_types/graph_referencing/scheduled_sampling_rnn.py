@@ -1,6 +1,7 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-
+from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+import tensorflow as tf
 
 class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
@@ -9,7 +10,7 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
     out_sockets = []
     languages = ["tensorflow"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         value = ScheduledSamplingRnnComponentValue()
         value.set_graph_name(value_dictionary["graph"][0][0])
         for in_link in value_dictionary["in_link"]:
@@ -19,12 +20,13 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
         for out_link in value_dictionary["out_link"]:
             parts = out_link[0].split("->")
-            feed_type = in_link[1]["feed"] if "feed" in in_link[1] else None
+            feed_type = out_link[1]["feed"] if "feed" in out_link[1] else None
             value.add_out_link(parts[1], parts[0], feed_type=feed_type)
 
         for recurrence in value_dictionary["recurrence"]:
             parts = recurrence[0].split("->")
-            value.add_recurrence(parts[0], parts[1])
+            init = recurrence[1]["init"] if "init" in recurrence[1] else None
+            value.add_recurrence(parts[0], parts[1], init=init)
 
         return value
 
@@ -32,7 +34,9 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
         outputs = value.assign_and_run(input_dictionary)
 
         for k,v in outputs.items():
-            output_models[k].assign(v)
+            output_models[k].assign(v, language="tensorflow")
+
+        print(output_models)
 
         return output_models
 
@@ -59,8 +63,8 @@ class ScheduledSamplingRnnComponentValue:
     def add_out_link(self, component_output, graph_output, feed_type=None):
         self.out_links.append((component_output, graph_output, feed_type))
 
-    def add_recurrence(self, graph_output, graph_input):
-        self.recurrences.append((graph_output, graph_input))
+    def add_recurrence(self, graph_output, graph_input, init):
+        self.recurrences.append((graph_output, graph_input, init))
 
     def assign_input_types(self, input_dictionary):
         for component_input, graph_input, feed_type in self.in_links:
@@ -69,58 +73,122 @@ class ScheduledSamplingRnnComponentValue:
 
             if feed_type == "loop":
                 graph_input_type = source_input_type.get_single_token_type()
+            elif feed_type == "initializer":
+                graph_input_type = source_input_type
+                batch_dim = graph_input_type.get_dimensions()[0]
+                if batch_dim is not None:
+                    batch_size = batch_dim
             else:
                 graph_input_type = source_input_type
 
             self.graph.enforce_type(parts[0], parts[1], graph_input_type)
 
+        for graph_output, graph_input, init in self.recurrences:
+            if init is not None and init.startswith("socket:"):
+                input_type = input_dictionary[init[7:]]
+                parts = graph_input.split(":")
+                self.graph.enforce_type(parts[0], parts[1], graph_input_type)
+
+                batch_dim = input_type.get_dimensions()[0]
+                if batch_dim is not None:
+                    batch_size = batch_dim
+
+        for graph_output, graph_input, init in self.recurrences:
+            if init is not None and init.startswith("zero_tensor"):
+                parts = graph_input.split(":")
+                dims = [batch_size] + [int(v) for v in init[12:].split(",")]
+                tensor_type = TensorTypeModel("float", dims)
+                self.graph.enforce_type(parts[0], parts[1], tensor_type)
+
+    def set_nths_input(self, n, value):
+        if n >= len(self.list_of_in_sockets):
+            return
+
+        in_socket = self.list_of_in_sockets[n]
+        type = in_socket.replaced_type
+        value_model = type.initialize_value_model()
+        value_model.assign(value)
+        in_socket.replace_value(value_model)
+
+    def body(self, *args):
+        for n,arg in enumerate(args):
+            if n >= len(self.out_links):
+                self.set_nths_input(n - len(self.out_links), arg)
+
+        print(args)
+        results = self.graph.execute(discard_value_models=True)
+        print(results)
+
+        return tuple(results)
+
+
+    def cond(self, *args):
+        print("cond")
+        return True
+
     def assign_and_run(self, input_dictionary):
+        print(input_dictionary)
         # INITIALIZE
         sequence_feeds = []
         sequence_sockets = []
-        required_output_length = len(self.out_links)
+
+        print(self.in_links)
+
+        loop_var_initializers = []
+
+        self.list_of_in_sockets = []
 
         for component_input, graph_input, feed_type in self.in_links:
             parts = graph_input.split(":")
             if feed_type == "loop":
                 sequence_feeds.append(input_dictionary[component_input])
                 sequence_sockets.append((parts[0], parts[1]))
+            elif feed_type == "initializer":
+                loop_var_initializers.append((parts[0], parts[1], input_dictionary[component_input].get_value()))
+                self.list_of_in_sockets.append(self.graph.get_in_socket(parts[0], parts[1]))
             else:
                 self.graph.enforce_value(parts[0], parts[1], input_dictionary[component_input])
 
-        # LOOP
-        output_sequences = [[] for _ in range(required_output_length)]
-        for i in range(sequence_feeds[0].get_batch_size()):
-            seq_len = sequence_feeds[0].get_sequence_lengths()[i]
-
-            for o in output_sequences:
-                o.append([None]*seq_len)
-
-            for component_input, graph_input, feed_type in self.in_links:
+        for graph_output, graph_input, init in self.recurrences:
+            if init is not None and init.startswith("zero_tensor"):
                 parts = graph_input.split(":")
-                if not feed_type == "loop":
-                    self.graph.enforce_value(parts[0], parts[1], input_dictionary[component_input])
+                in_socket = self.graph.get_in_socket(parts[0], parts[1])
+                dims = in_socket.replaced_type.get_dimensions()
+                tf_value = tf.zeros(dims)
+                loop_var_initializers.append((parts[0], parts[1], tf_value))
+                self.list_of_in_sockets.append(in_socket)
+            elif init is not None and init.startswith("socket"):
+                parts = graph_input.split(":")
+                in_socket = self.graph.get_in_socket(parts[0], parts[1])
+                linked_socket = input_dictionary[init[7:]]
 
-            for token_index in range(seq_len):
-                for feed, socket_dec in zip(sequence_feeds, sequence_sockets):
-                    current_batch_feed = feed.get_token(i, token_index)
-                    self.graph.enforce_value(socket_dec[0], socket_dec[1], current_batch_feed)
+                loop_var_initializers.append((parts[0], parts[1], linked_socket.get_value()))
+                self.list_of_in_sockets.append(in_socket)
 
-                results = self.graph.execute(discard_value_models=False)
-                to_output = results[:self.count_recurrences()]
+        loop_vars = tuple(x[2] for x in loop_var_initializers)
 
-                recurring_outputs = results[self.count_recurrences():]
-                for rec, output in zip(self.recurrences, recurring_outputs):
-                    parts = rec[1].split(":")
-                    self.graph.enforce_value(parts[0], parts[1], output)
+        for _, graph_output, _ in self.out_links:
+            parts = graph_output.split(":")
+            socket = self.graph.get_out_socket(parts[0], parts[1])
+            out_type = socket.pull_type_model()
+            dims = out_type.get_dimensions()
+            tf_value = tf.zeros(dims)
+            loop_vars = (tf_value, ) + loop_vars
 
-                for j in range(required_output_length):
-                    output_sequences[j][i][token_index] = to_output[j].get_value()
+        print(sequence_sockets)
+        print(sequence_feeds)
+        print(loop_var_initializers)
 
-        out_dict = {}
-        for i in range(required_output_length):
-            out_dict[self.out_links[i][0]] = output_sequences[i]
-        return out_dict
+        loop_vars = loop_vars
+
+        maximum_iterations = 20
+        loop = tf.while_loop(
+            self.cond,
+            self.body,
+            loop_vars=loop_vars,
+            maximum_iterations=maximum_iterations
+        )
+        return {self.out_links[i][0]: loop[i] for i in range(len(self.out_links))}
 
     def count_recurrences(self):
         return len(self.recurrences)

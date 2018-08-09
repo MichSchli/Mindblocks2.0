@@ -28,11 +28,17 @@ class SequenceBatchValueModel:
     def get_sequence_lengths(self):
         return self.sequence_lengths
 
-    def assign(self, sequence_batch):
+    def assign(self, sequence_batch, language="python"):
         self.sequences = sequence_batch
-        self.sequence_lengths = [len(s) for s in sequence_batch]
-        self.batch_size = len(sequence_batch)
-        self.max_length = max(self.sequence_lengths)
+
+        if language == "python":
+            self.sequence_lengths = [len(s) for s in sequence_batch]
+            self.batch_size = len(sequence_batch)
+            self.max_length = max(self.sequence_lengths)
+        else:
+            self.sequence_lengths = [20,20]
+            self.batch_size = 2
+            self.max_length = 20
 
     def assign_with_lengths(self, sequence_batch, length_batch):
         self.sequences = sequence_batch

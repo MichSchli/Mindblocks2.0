@@ -1,6 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 import numpy as np
-
+import tensorflow as tf
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
@@ -9,13 +9,16 @@ class Argmax(ComponentTypeModel):
     name = "Argmax"
     in_sockets = ["input"]
     out_sockets = ["output"]
-    languages = ["python"]
+    languages = ["python", "tensorflow"]
 
-    def initialize_value(self, value_dictionary):
-        return ArgmaxValue()
+    def initialize_value(self, value_dictionary, language):
+        return ArgmaxValue(language)
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-        argmax = np.argmax(input_dictionary["input"].get_value(), axis=-1)
+        if value.language == "tensorflow":
+            argmax = tf.argmax(input_dictionary["input"].get_value(), axis=-1, output_type=tf.int32)
+        else:
+            argmax = np.argmax(input_dictionary["input"].get_value(), axis=-1)
         output_value_models["output"].assign(argmax)
 
         return output_value_models
@@ -27,4 +30,7 @@ class Argmax(ComponentTypeModel):
 
 class ArgmaxValue(ExecutionComponentValueModel):
 
-    pass
+    language = None
+
+    def __init__(self, language):
+        self.language = language

@@ -11,7 +11,7 @@ class Constant(ComponentTypeModel):
     out_sockets = ["output"]
     languages = ["python", "tensorflow"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return ConstantValue(value_dictionary["value"][0][0],
                              value_dictionary["type"][0][0])
 
@@ -29,6 +29,9 @@ class ConstantValue(ExecutionComponentValueModel):
     tensor = False
 
     def __init__(self, value, value_type, tensor=False):
+        if " " in value:
+            tensor = True
+
         if tensor and value_type == "float":
             self.value = np.array(value, dtype=np.float32)
             self.value_type = value_type
@@ -37,7 +40,7 @@ class ConstantValue(ExecutionComponentValueModel):
             self.value = float(value)
             self.value_type = value_type
         elif tensor and value_type == "int":
-            self.value = np.array(value, dtype=np.int32)
+            self.value = np.fromstring(value, dtype=np.int32, sep=" ")
             self.value_type = value_type
             self.tensor = True
         elif value_type == "int":

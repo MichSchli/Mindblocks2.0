@@ -51,6 +51,9 @@ class TensorTypeModel:
     def set_inner_dim(self, dimension):
         self.dimensions[-1] = dimension
 
+    def extend_dims(self, dimension):
+        self.dimensions.append(dimension)
+
     def get_inner_dim(self):
         if len(self.dimensions) == 0:
             return 1

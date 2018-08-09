@@ -12,7 +12,7 @@ class Batcher(ComponentTypeModel):
     out_sockets = ["output"]
     languages = ["python"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return BatcherValue(value_dictionary["lazy"][0][0] == "True")
 
     def execute(self, input_dictionary, value, output_value_models, mode):

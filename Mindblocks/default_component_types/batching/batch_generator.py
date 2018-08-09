@@ -12,7 +12,7 @@ class BatchGenerator(ComponentTypeModel):
     out_sockets = ["batch"]
     languages = ["python"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return BatchGeneratorValue(int(value_dictionary["batch_size"][0][0]))
 
     def execute(self, input_dictionary, value, output_value_models, mode):

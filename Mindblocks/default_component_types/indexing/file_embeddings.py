@@ -13,8 +13,8 @@ class FileEmbeddings(ComponentTypeModel):
     out_sockets = ["index", "vectors"]
     languages = ["python"]
 
-    def initialize_value(self, value_dictionary):
-        value = FileEmbeddingsValue(value_dictionary["file_path"][0][0])
+    def initialize_value(self, value_dictionary, language):
+        value = FileEmbeddingsValue(value_dictionary["file_path"][0][0], int(value_dictionary["width"][0][0]))
         if "separator" in value_dictionary:
             value.separator = value_dictionary["separator"][0][0]
         return value
@@ -29,7 +29,7 @@ class FileEmbeddings(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value):
         return {"index": IndexTypeModel(),
-                "vectors": TensorTypeModel("float", [None, None])}
+                "vectors": TensorTypeModel("float", [None, value.get_width()])}
 
 
 class FileEmbeddingsValue(ExecutionComponentValueModel):
@@ -39,10 +39,11 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     file_path = None
     separator = None
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, width):
         self.index = {"forward": {}, "backward": {}}
         self.file_path = file_path
         self.separator = ","
+        self.width = width
 
     def load(self):
         f = open(self.file_path, "r")
@@ -66,3 +67,6 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
 
     def get_vectors(self):
         return np.array(self.vectors, dtype=np.float32)
+
+    def get_width(self):
+        return self.width

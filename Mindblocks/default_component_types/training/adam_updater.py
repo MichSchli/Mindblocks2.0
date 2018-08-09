@@ -12,7 +12,7 @@ class AdamUpdater(ComponentTypeModel):
     out_sockets = ["update"]
     languages = ["tensorflow"]
 
-    def initialize_value(self, value_dictionary):
+    def initialize_value(self, value_dictionary, language):
         return AdamUpdaterValue()
 
     def execute(self, input_dictionary, value, output_value_models, mode):

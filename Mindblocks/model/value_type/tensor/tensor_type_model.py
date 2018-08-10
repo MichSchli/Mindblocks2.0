@@ -72,3 +72,6 @@ class TensorTypeModel:
 
     def to_sequence_type(self):
         return sequence_batch_type_model.SequenceBatchTypeModel(self.type, self.dimensions, None)
+
+    def is_value_type(self, test_type):
+        return test_type == "tensor"

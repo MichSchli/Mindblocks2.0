@@ -37,7 +37,7 @@ class TensorValueModel:
             np_type = np.float32
         return np_type
 
-    def assign(self, value, tensorflow=False):
+    def assign(self, value, language=None):
         self.value = value
 
     def get_value(self):

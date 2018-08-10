@@ -74,3 +74,6 @@ class SequenceBatchTypeModel:
 
     def get_single_token_type(self):
         return tensor_type_model.TensorTypeModel(self.type, self.item_shape)
+
+    def is_value_type(self, test_type):
+        return test_type == "sequence"

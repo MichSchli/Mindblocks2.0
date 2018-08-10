@@ -79,8 +79,10 @@ class ScheduledSamplingRnnComponentValue:
 
             if feed_type == "loop":
                 graph_input_type = source_input_type.get_single_token_type()
-            elif feed_type == "initializer":
+            elif feed_type == "per_batch" or feed_type=="initializer":
                 graph_input_type = source_input_type
+                print(component_input)
+                print(graph_input_type.get_dimensions())
                 batch_dim = graph_input_type.get_dimensions()[0]
                 if batch_dim is not None:
                     self.batch_size = batch_dim

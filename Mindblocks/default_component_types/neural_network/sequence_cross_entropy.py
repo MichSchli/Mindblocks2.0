@@ -16,13 +16,7 @@ class SequenceCrossEntropy(ComponentTypeModel):
         return SequenceCrossEntropyValue()
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-        print("I WAS CALLED")
         mask = tf.sequence_mask(input_dictionary["labels"].get_sequence_lengths(), dtype=tf.float32)
-        print(input_dictionary["logits"].get_value())
-        print(input_dictionary["labels"].get_value())
-        mask = tf.Print(mask, [input_dictionary["logits"].get_value()], summarize=40, message="logits")
-        mask = tf.Print(mask, [input_dictionary["labels"].get_value()], summarize=40, message="exec")
-        print(input_dictionary["labels"].get_value())
         cross_entropy = tf.contrib.seq2seq.sequence_loss(
                 logits=input_dictionary["logits"].get_value(),
                 targets=input_dictionary["labels"].get_value(),

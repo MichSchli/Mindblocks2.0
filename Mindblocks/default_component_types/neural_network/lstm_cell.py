@@ -22,10 +22,6 @@ class LstmCell(ComponentTypeModel):
         previous_c = input_dictionary["previous_c"].get_value()
         previous_h = input_dictionary["previous_h"].get_value()
 
-        print(input_x)
-        print(previous_c)
-        print(previous_h)
-
         cell_input = (previous_c, previous_h)
 
         new_h, new_state = execution_value.cell(input_x, cell_input)

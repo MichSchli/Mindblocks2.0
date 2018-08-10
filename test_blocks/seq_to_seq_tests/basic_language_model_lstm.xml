@@ -1,0 +1,163 @@
+<block>
+    <configuration>
+        <variable name="max_iterations">
+            <default_value>2000</default_value>
+        </variable>
+        <variable name="report_loss_every_n">
+            <default_value>10</default_value>
+        </variable>
+        <variable name="data_folder">
+        </variable>
+        <variable name="data_file">
+        </variable>
+    </configuration>
+    <canvas name="main">
+        <component name="reader" type="ConllReader">
+            <file_path>$data_folder/$data_file</file_path>
+            <columns>int,string</columns>
+        </component>
+        <component name="embedding" type="FileEmbeddings">
+            <file_path>$data_folder/test_embeddings.txt</file_path>
+            <width>2</width>
+            <separator> </separator>
+        </component>
+        <component name="indexer" type="Indexer">
+            <input_type>sequence</input_type>
+            <input_column>1</input_column>
+        </component>
+        <edge>
+                <source socket="output">reader</source>
+                <target socket="input">indexer</target>
+        </edge>
+        <edge>
+                <source socket="index">embedding</source>
+                <target socket="index">indexer</target>
+        </edge>
+
+        <component name="embedding_lookup" type="EmbeddingLookup" language="tensorflow">
+        </component>
+        <edge>
+                <source socket="output">indexer</source>
+                <target socket="indexes">embedding_lookup</target>
+        </edge>
+        <edge>
+                <source socket="vectors">embedding</source>
+                <target socket="vectors">embedding_lookup</target>
+        </edge>
+
+        <component name="encoder" type="BiRnn" language="tensorflow">
+            <cell>lstm</cell>
+            <dimension>100</dimension>
+        </component>
+        <edge>
+                <source socket="output">embedding_lookup</source>
+                <target socket="input">encoder</target>
+        </edge>
+
+        <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">
+            <graph canvas="decoder">decoder-graph</graph>
+            <socket type="in">embedding_vectors</socket>
+            <socket type="in">sentence_embeddings</socket>
+            <socket type="out">logits</socket>
+            <in_link feed="per_batch">sentence_embeddings->concat:right</in_link>
+            <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
+            <out_link feed="loop">mlp:output->logits</out_link>
+            <recurrence init="zero_tensor:50">decoder_lstm:output_c->previous_c:input</recurrence>
+            <recurrence init="zero_tensor:50">decoder_lstm:output_h->previous_h:input</recurrence>
+            <recurrence init="zero_tensor:|int">argmax:output->input_token:input</recurrence>
+        </component>
+        <edge>
+                <source socket="vectors">embedding</source>
+                <target socket="embedding_vectors">training_rnn</target>
+        </edge>
+        <edge>
+                <source socket="final_state">encoder</source>
+                <target socket="sentence_embeddings">training_rnn</target>
+        </edge>
+        <edge>
+                <source socket="output">indexer</source>
+                <target socket="teacher_inputs">training_rnn</target>
+        </edge>
+
+        <component name="loss" type="SequenceCrossEntropy" language="tensorflow">
+            <mark socket="output">loss</mark>
+        </component>
+        <edge>
+                <source socket="logits">training_rnn</source>
+                <target socket="logits">loss</target>
+        </edge>
+        <edge>
+                <source socket="output">indexer</source>
+                <target socket="labels">loss</target>
+        </edge>
+        <component name="adam_upd" type="AdamUpdater" language="tensorflow">
+            <mark socket="update">update</mark>
+        </component>
+        <edge>
+                <source socket="output">loss</source>
+                <target socket="loss">adam_upd</target>
+        </edge>
+
+    </canvas>
+    <canvas name="decoder">
+        <graph name="decoder-graph">
+            <component name="previous_c" type="PassThrough" language="tensorflow">
+            </component>
+            <component name="previous_h" type="PassThrough" language="tensorflow">
+            </component>
+            <component name="input_token" type="PassThrough" language="tensorflow">
+            </component>
+
+            <component name="encoder_embedding" type="EmbeddingLookup" language="tensorflow">
+            </component>
+            <edge>
+                <source socket="output">input_token</source>
+                <target socket="indexes">encoder_embedding</target>
+            </edge>
+
+            <component name="concat" type="Concat" language="tensorflow">
+            </component>
+            <edge>
+                <source socket="output">encoder_embedding</source>
+                <target socket="left">concat</target>
+            </edge>
+
+            <component name="decoder_lstm" type="LstmCell" language="tensorflow">
+                <dimension>50</dimension>
+            </component>
+            <edge>
+                <source socket="output">concat</source>
+                <target socket="input_x">decoder_lstm</target>
+            </edge>
+            <edge>
+                <source socket="output">previous_c</source>
+                <target socket="previous_c">decoder_lstm</target>
+            </edge>
+            <edge>
+                <source socket="output">previous_h</source>
+                <target socket="previous_h">decoder_lstm</target>
+            </edge>
+
+            <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
+            <dimensions>50,7</dimensions>
+            </component>
+            <edge>
+                <source socket="output_h">decoder_lstm</source>
+                <target socket="input">mlp</target>
+            </edge>
+
+            <component name="softmax" type="Softmax" language="tensorflow">
+            </component>
+            <edge>
+                <source socket="output">mlp</source>
+                <target socket="input">softmax</target>
+            </edge>
+            <component name="argmax" type="Argmax" language="tensorflow">
+            </component>
+            <edge>
+                <source socket="output">softmax</source>
+                <target socket="input">argmax</target>
+            </edge>
+        </graph>
+    </canvas>
+</block>

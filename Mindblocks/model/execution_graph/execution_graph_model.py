@@ -27,9 +27,11 @@ class ExecutionGraphModel:
         self.components.append(execution_component)
 
     def init_batches(self):
-        for component in self.components:
-            if component.execution_type is not None and component.execution_type.name == "BatchGenerator":
-                component.execution_value.init_batches()
+        #for component in self.components:
+        #    if component.execution_type is not None and component.execution_type.name == "BatchGenerator":
+        #        component.execution_value.init_batches()
+        self.clear_all_caches()
+        self.head_component.init_batches()
 
     def has_batches(self):
         return self.head_component.has_batches()

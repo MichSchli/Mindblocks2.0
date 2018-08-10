@@ -39,3 +39,6 @@ class ExecutionOutSocket:
     def describe_graph(self, indent=0):
         if self.execution_component is not None:
             self.execution_component.describe_graph(indent=indent+1)
+
+    def init_batches(self):
+        self.execution_component.init_batches()

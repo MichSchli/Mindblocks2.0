@@ -22,5 +22,9 @@ class ExecutionHeadComponent:
                 return False
         return True
 
+    def init_batches(self):
+        for socket in self.run_output_sockets:
+            socket.init_batches()
+
     def initialize_type_models(self):
         return [socket.pull_type_model() for socket in self.run_output_sockets]

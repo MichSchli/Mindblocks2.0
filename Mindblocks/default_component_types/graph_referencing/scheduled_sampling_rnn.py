@@ -30,6 +30,9 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
             init = recurrence[1]["init"] if "init" in recurrence[1] else None
             value.add_recurrence(parts[0], parts[1], init=init)
 
+        if "batch_size" in value_dictionary:
+            value.batch_size = int(value_dictionary["batch_size"][0][0])
+
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
@@ -53,6 +56,7 @@ class ScheduledSamplingRnnComponentValue:
 
     graph_name = None
     graph = None
+    batch_size = None
 
     def __init__(self):
         self.in_links = []
@@ -79,7 +83,7 @@ class ScheduledSamplingRnnComponentValue:
                 graph_input_type = source_input_type
                 batch_dim = graph_input_type.get_dimensions()[0]
                 if batch_dim is not None:
-                    batch_size = batch_dim
+                    self.batch_size = batch_dim
             else:
                 graph_input_type = source_input_type
 
@@ -93,13 +97,16 @@ class ScheduledSamplingRnnComponentValue:
 
                 batch_dim = input_type.get_dimensions()[0]
                 if batch_dim is not None:
-                    batch_size = batch_dim
+                    self.batch_size = batch_dim
 
         for graph_output, graph_input, init in self.recurrences:
             if init is not None and init.startswith("zero_tensor"):
                 parts = graph_input.split(":")
-                dims = [batch_size] + [int(v) for v in init[12:].split(",")]
-                tensor_type = TensorTypeModel("float", dims)
+                init_info = init[12:].split("|")
+                init_type = init_info[1] if len(init_info) > 1 else "float"
+
+                dims = [self.batch_size] + [int(v) for v in init_info[0].split(",")] if len(init_info[0]) > 0 else [self.batch_size]
+                tensor_type = TensorTypeModel(init_type, dims)
                 self.graph.enforce_type(parts[0], parts[1], tensor_type)
 
     def set_nths_input(self, n, value):
@@ -161,7 +168,8 @@ class ScheduledSamplingRnnComponentValue:
                 parts = graph_input.split(":")
                 in_socket = self.graph.get_in_socket(parts[0], parts[1])
                 dims = in_socket.replaced_type.get_dimensions()
-                tf_value = tf.zeros(dims)
+                tf_type = tf.int32 if in_socket.replaced_type.type == "int" else tf.float32
+                tf_value = tf.zeros(dims, dtype=tf_type)
                 loop_var_initializers.append((parts[0], parts[1], tf_value))
                 self.list_of_in_sockets.append(in_socket)
             elif init is not None and init.startswith("socket"):

@@ -81,6 +81,11 @@ class MlHelperFactory:
             runs.append(evaluate_socket)
             run_interpretations.append("validate")
             run_modes.append("validate")
+        elif loss is not None:
+            evaluate_socket = [loss]
+            runs.append(evaluate_socket)
+            run_interpretations.append("validate")
+            run_modes.append("validate")
         if prediction is not None:
             prediction_socket = [prediction]
             runs.append(prediction_socket)

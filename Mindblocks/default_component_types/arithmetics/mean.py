@@ -17,7 +17,7 @@ class Mean(ComponentTypeModel):
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         mean = tf.reduce_mean(input_dictionary["input"].get_value(), axis=-1)
-        output_value_models["output"].assign(mean)
+        output_value_models["output"].assign(mean, language="tensorflow")
 
         return output_value_models
 

@@ -46,3 +46,7 @@ class ExecutionInSocket:
     def describe_graph(self, indent=0):
         if self.source is not None:
             self.source.describe_graph(indent=indent)
+
+    def init_batches(self):
+        if self.source is not None:
+            self.source.init_batches()

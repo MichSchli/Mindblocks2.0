@@ -20,5 +20,8 @@ class ComponentTypeModel:
     def get_in_sockets(self):
         return self.in_sockets
 
-    def has_batches(self, value):
+    def has_batches(self, value, previous_values):
+        for inp in previous_values.values():
+            if not inp:
+                return False
         return True

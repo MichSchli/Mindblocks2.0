@@ -24,6 +24,11 @@ class ConllReader(ComponentTypeModel):
         return {"output": SequenceBatchTypeModel("string", [value.count_columns()], None),
                 "count": TensorTypeModel("int", [])}
 
+    def has_batches(self, value, previous_values):
+        has_batch = value.has_batch
+        value.has_batch = False
+        return has_batch
+
 
 class ConllReaderValue(ExecutionComponentValueModel):
 
@@ -33,6 +38,10 @@ class ConllReaderValue(ExecutionComponentValueModel):
     def __init__(self, filepath, column_info):
         self.filepath = filepath
         self.column_info = column_info
+        self.has_batch = True
+
+    def init_batches(self):
+        self.has_batch = True
 
     def count(self):
         return self.size

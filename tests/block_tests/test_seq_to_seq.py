@@ -60,7 +60,6 @@ class TestSimpleBlocks(unittest.TestCase):
                 for k in range(len(should_be[i][j])):
                     self.assertEqual(should_be[i][j][k], output[i][j][k])
 
-
     def testBasicLanguageModel(self):
         filename = "seq_to_seq_tests/basic_language_model.xml"
 
@@ -78,8 +77,29 @@ class TestSimpleBlocks(unittest.TestCase):
 
         ml_helper.train()
 
-        print("AIPHEFEAIJFAEHPIFEHPA")
         loss = ml_helper.validate()
 
-        print(loss)
-        self.assertTrue(False)
+        self.assertLess(0.0, loss)
+        self.assertGreater(0.05, loss)
+
+    def testBasicLanguageModelWithEmbedding(self):
+        filename = "seq_to_seq_tests/basic_language_model_with_embedding.xml"
+
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "conll_reader_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+
+        loss = ml_helper.validate()
+
+        self.assertLess(0.0, loss)
+        self.assertGreater(0.05, loss)

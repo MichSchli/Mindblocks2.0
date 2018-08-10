@@ -1,7 +1,9 @@
 import tensorflow as tf
 
+from Mindblocks.model.execution_graph.execution_component_model import ExecutionComponentModel
 
-class TensorflowSection:
+
+class TensorflowSection(ExecutionComponentModel):
 
     components = None
     outputs = None
@@ -24,6 +26,9 @@ class TensorflowSection:
 
     def map_in_socket(self, in_socket, new_in_socket):
         self.matched_in_sockets.append((in_socket, new_in_socket))
+
+    def get_in_sockets(self):
+        return [m[1] for m in self.matched_in_sockets]
 
     def compile(self, mode):
         self.outputs = [tf_out_socket.pull(mode).get_tensorflow_output_tensors() for tf_out_socket, _ in self.matched_out_sockets]
@@ -68,3 +73,8 @@ class TensorflowSection:
             if not in_socket.has_batches():
                 return False
         return True
+
+    def init_batches(self):
+        #TODO: We are not initing in graph
+        for in_socket in self.get_in_sockets():
+            in_socket.init_batches()

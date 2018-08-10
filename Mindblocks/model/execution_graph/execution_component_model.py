@@ -41,18 +41,26 @@ class ExecutionComponentModel:
         return list(self.out_sockets.values())
 
     def clear_caches(self):
+        self.cached_has_batches = None
         for in_socket in self.get_in_sockets():
             in_socket.clear_caches()
 
-    def has_batches(self):
-        for in_socket in self.get_in_sockets():
-            if not in_socket.has_batches():
-                return False
+    cached_has_batches = None
 
-        return self.execution_type.has_batches(self.execution_value)
+    def has_batches(self):
+        if self.cached_has_batches is None:
+            in_batches = {k:v.has_batches() for k,v in self.in_sockets.items()}
+            self.cached_has_batches = self.execution_type.has_batches(self.execution_value, in_batches)
+
+        return self.cached_has_batches
 
     def describe_graph(self, indent=0):
         print("\t"*indent + self.execution_type.name)
 
         for in_socket in self.get_in_sockets():
             in_socket.describe_graph(indent=indent+1)
+
+    def init_batches(self):
+        for in_socket in self.get_in_sockets():
+            in_socket.init_batches()
+        self.execution_value.init_batches()

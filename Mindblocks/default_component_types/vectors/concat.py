@@ -1,6 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 import numpy as np
-
+import tensorflow as tf
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
 
@@ -12,10 +12,12 @@ class Concat(ComponentTypeModel):
     languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return ConcatValue()
+        return ConcatValue(language)
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-        if value.new_array:
+        if value.language == "tensorflow":
+            result = tf.concat([input_dictionary["left"].get_value(), input_dictionary["right"].get_value()], axis=-1)
+        elif value.new_array:
             result = np.array([input_dictionary["left"].get_value(), input_dictionary["right"].get_value()])
         else:
             result = np.concatenate((input_dictionary["left"].get_value(), input_dictionary["right"].get_value()))
@@ -35,3 +37,6 @@ class Concat(ComponentTypeModel):
 class ConcatValue(ExecutionComponentValueModel):
 
     new_array = False
+
+    def __init__(self, language):
+        self.language = language

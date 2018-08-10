@@ -7,6 +7,8 @@ class MlHelper:
 
     configuration = None
 
+    model = None
+
     def set_evaluate_function(self, execution_graph):
         self.evaluate_function = execution_graph
 
@@ -26,11 +28,17 @@ class MlHelper:
             performance += self.evaluate_function.execute()[0]
         return performance
 
+    def validate(self):
+        return self.do_validate()
+
+    def should_validate(self):
+        return self.validate_function is not None
+
     def train(self):
         for i in range(self.configuration.max_iterations):
             self.do_train_iteration()
 
-            if i % self.configuration.validate_every_n == 0:
+            if self.should_validate() and i % self.configuration.validate_every_n == 0:
                 print(self.do_validate())
 
     def do_validate(self):
@@ -42,10 +50,9 @@ class MlHelper:
 
     def do_train_iteration(self):
         self.update_and_loss_function.init_batches()
-        batch = 0
+        batch = 1
         loss_tracker = 0
         while self.update_and_loss_function.has_batches():
-            print("EXECUTRE")
             _, loss = self.update_and_loss_function.execute()
 
             loss_tracker += loss

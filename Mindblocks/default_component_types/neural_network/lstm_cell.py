@@ -11,7 +11,7 @@ class LstmCell(ComponentTypeModel):
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return LstmCellValue()
+        return LstmCellValue(value_dictionary["dimension"][0][0])
 
     def build_value_type_model(self, in_types, execution_value):
         return {"output_c": in_types["previous_c"].copy(),
@@ -21,6 +21,10 @@ class LstmCell(ComponentTypeModel):
         input_x = input_dictionary["input_x"].get_value()
         previous_c = input_dictionary["previous_c"].get_value()
         previous_h = input_dictionary["previous_h"].get_value()
+
+        print(input_x)
+        print(previous_c)
+        print(previous_h)
 
         cell_input = (previous_c, previous_h)
 
@@ -35,5 +39,5 @@ class LstmCell(ComponentTypeModel):
 
 class LstmCellValue(ExecutionComponentValueModel):
 
-    def __init__(self):
-        self.cell = tf.nn.rnn_cell.LSTMCell(20)
+    def __init__(self, dimension):
+        self.cell = tf.nn.rnn_cell.LSTMCell(int(dimension))

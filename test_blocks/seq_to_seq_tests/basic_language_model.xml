@@ -56,6 +56,10 @@
                 <source socket="vectors">embedding</source>
                 <target socket="embedding_vectors">training_rnn</target>
         </edge>
+        <edge>
+                <source socket="output">indexer</source>
+                <target socket="teacher_inputs">training_rnn</target>
+        </edge>
 
         <component name="loss" type="SequenceCrossEntropy" language="tensorflow">
             <mark socket="output">loss</mark>

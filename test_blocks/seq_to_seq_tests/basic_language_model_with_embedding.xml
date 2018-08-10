@@ -1,7 +1,7 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>1000</default_value>
+            <default_value>5000</default_value>
         </variable>
         <variable name="report_loss_every_n">
             <default_value>10</default_value>
@@ -61,8 +61,8 @@
             <in_link feed="per_batch">sentence_embeddings->concat:right</in_link>
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <out_link feed="loop">mlp:output->logits</out_link>
-            <recurrence init="zero_tensor:20">decoder_lstm:output_c->previous_c:input</recurrence>
-            <recurrence init="zero_tensor:20">decoder_lstm:output_h->previous_h:input</recurrence>
+            <recurrence init="zero_tensor:50">decoder_lstm:output_c->previous_c:input</recurrence>
+            <recurrence init="zero_tensor:50">decoder_lstm:output_h->previous_h:input</recurrence>
             <recurrence init="zero_tensor:|int">argmax:output->input_token:input</recurrence>
         </component>
         <edge>
@@ -72,6 +72,10 @@
         <edge>
                 <source socket="output">average</source>
                 <target socket="sentence_embeddings">training_rnn</target>
+        </edge>
+        <edge>
+                <source socket="output">indexer</source>
+                <target socket="teacher_inputs">training_rnn</target>
         </edge>
 
         <component name="loss" type="SequenceCrossEntropy" language="tensorflow">
@@ -118,7 +122,7 @@
             </edge>
 
             <component name="decoder_lstm" type="LstmCell" language="tensorflow">
-                <dimension>20</dimension>
+                <dimension>50</dimension>
             </component>
             <edge>
                 <source socket="output">concat</source>
@@ -134,9 +138,9 @@
             </edge>
 
             <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
-            <dimensions>20, 7</dimensions>
+            <dimensions>50,7</dimensions>
             </component>
-            <edge cast="float">
+            <edge>
                 <source socket="output_h">decoder_lstm</source>
                 <target socket="input">mlp</target>
             </edge>

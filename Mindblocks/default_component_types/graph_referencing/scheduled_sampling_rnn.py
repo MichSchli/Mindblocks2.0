@@ -8,7 +8,7 @@ import tensorflow as tf
 class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
     name = "ScheduledSamplingRnn"
-    in_sockets = []
+    in_sockets = ["teacher_inputs"]
     out_sockets = []
     languages = ["tensorflow"]
 
@@ -73,19 +73,17 @@ class ScheduledSamplingRnnComponentValue:
         self.recurrences.append((graph_output, graph_input, init))
 
     def assign_input_types(self, input_dictionary):
+        batch_size = input_dictionary["teacher_inputs"].get_batch_size()
+        max_sequence_length = input_dictionary["teacher_inputs"].get_maximum_sequence_length()
+
         for component_input, graph_input, feed_type in self.in_links:
             parts = graph_input.split(":")
             source_input_type = input_dictionary[component_input]
 
             if feed_type == "loop":
                 graph_input_type = source_input_type.get_single_token_type()
-            elif feed_type == "per_batch" or feed_type=="initializer":
+            elif feed_type == "per_batch" or feed_type == "initializer":
                 graph_input_type = source_input_type
-                print(component_input)
-                print(graph_input_type.get_dimensions())
-                batch_dim = graph_input_type.get_dimensions()[0]
-                if batch_dim is not None:
-                    self.batch_size = batch_dim
             else:
                 graph_input_type = source_input_type
 
@@ -93,13 +91,8 @@ class ScheduledSamplingRnnComponentValue:
 
         for graph_output, graph_input, init in self.recurrences:
             if init is not None and init.startswith("socket:"):
-                input_type = input_dictionary[init[7:]]
                 parts = graph_input.split(":")
                 self.graph.enforce_type(parts[0], parts[1], graph_input_type)
-
-                batch_dim = input_type.get_dimensions()[0]
-                if batch_dim is not None:
-                    self.batch_size = batch_dim
 
         for graph_output, graph_input, init in self.recurrences:
             if init is not None and init.startswith("zero_tensor"):
@@ -107,7 +100,7 @@ class ScheduledSamplingRnnComponentValue:
                 init_info = init[12:].split("|")
                 init_type = init_info[1] if len(init_info) > 1 else "float"
 
-                dims = [self.batch_size] + [int(v) for v in init_info[0].split(",")] if len(init_info[0]) > 0 else [self.batch_size]
+                dims = [batch_size] + [int(v) for v in init_info[0].split(",")] if len(init_info[0]) > 0 else [batch_size]
                 tensor_type = TensorTypeModel(init_type, dims)
                 self.graph.enforce_type(parts[0], parts[1], tensor_type)
 
@@ -143,15 +136,13 @@ class ScheduledSamplingRnnComponentValue:
         return True
 
     def assign_and_run(self, input_dictionary):
-        print(input_dictionary)
-        # INITIALIZE
+        batch_size = input_dictionary["teacher_inputs"].get_batch_size()
+        maximum_iterations = input_dictionary["teacher_inputs"].get_maximum_sequence_length()
+
         sequence_feeds = []
         sequence_sockets = []
 
-        print(self.in_links)
-
         loop_var_initializers = []
-
         self.list_of_in_sockets = []
 
         for component_input, graph_input, feed_type in self.in_links:
@@ -184,7 +175,6 @@ class ScheduledSamplingRnnComponentValue:
 
         loop_vars = tuple(x[2] for x in loop_var_initializers)
 
-        maximum_iterations = 5
         for _, graph_output, _ in self.out_links:
             # use tensor arrays
             parts = graph_output.split(":")
@@ -212,8 +202,6 @@ class ScheduledSamplingRnnComponentValue:
         )
 
         loop = list(loop)[1:]
-
-        batch_size = 2
 
         for i in range(len(loop)):
             if i < len(self.out_links):

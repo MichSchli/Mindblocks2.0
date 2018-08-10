@@ -54,6 +54,12 @@ class TensorTypeModel:
     def extend_dims(self, dimension):
         self.dimensions.append(dimension)
 
+    def extend_outer_dim(self, dimension):
+        self.dimensions = [dimension] + self.dimensions
+
+    def get_batch_size(self):
+        return self.dimensions[0]
+
     def get_inner_dim(self):
         if len(self.dimensions) == 0:
             return 1
@@ -71,7 +77,7 @@ class TensorTypeModel:
         self.type = new_type
 
     def to_sequence_type(self):
-        return sequence_batch_type_model.SequenceBatchTypeModel(self.type, self.dimensions, None)
+        return sequence_batch_type_model.SequenceBatchTypeModel(self.type, self.dimensions, None, None)
 
     def is_value_type(self, test_type):
         return test_type == "tensor"

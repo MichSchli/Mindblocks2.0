@@ -22,7 +22,7 @@ class DeIndexer(ComponentTypeModel):
         return output_models
 
     def build_value_type_model(self, input_types, value):
-        return {"output": SequenceBatchTypeModel("string", [], input_types["input"].get_batch_size())}
+        return {"output": SequenceBatchTypeModel("string", [], input_types["input"].get_batch_size(), input_types["input"].get_maximum_sequence_length())}
 
 
 class DeIndexerValue(ExecutionComponentValueModel):

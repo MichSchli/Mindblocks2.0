@@ -28,17 +28,19 @@ class SequenceBatchValueModel:
     def get_sequence_lengths(self):
         return self.sequence_lengths
 
+    def get_batch_size(self):
+        return self.batch_size
+
+    def get_maximum_sequence_length(self):
+        return self.maximum_sequence_length
+
     def assign(self, sequence_batch, language="python"):
         self.sequences = sequence_batch
 
         if language == "python":
             self.sequence_lengths = [len(s) for s in sequence_batch]
-            self.batch_size = len(sequence_batch)
-            self.max_length = max(self.sequence_lengths)
         else:
-            self.sequence_lengths = [20,20]
-            self.batch_size = 2
-            self.max_length = 20
+            pass
 
     def assign_with_lengths(self, sequence_batch, length_batch):
         self.sequences = sequence_batch
@@ -48,7 +50,7 @@ class SequenceBatchValueModel:
         return self.sequences
 
     def format_for_tensorflow_input(self):
-        shape = [self.get_batch_size(), self.get_max_length()] + self.item_shape
+        shape = [self.get_batch_size(), self.get_maximum_sequence_length()] + self.item_shape
         seq_input = np.zeros(shape, dtype= self.get_numpy_type())
 
         for i in range(len(self.sequences)):
@@ -65,14 +67,8 @@ class SequenceBatchValueModel:
 
     def initialize_as_tensorflow_placeholder(self):
         tf_type = self.get_tensorflow_type()
-        self.sequences = tf.placeholder(tf_type, shape=[self.get_batch_size(), self.get_max_length()] + self.item_shape)
+        self.sequences = tf.placeholder(tf_type, shape=[self.get_batch_size(), self.get_maximum_sequence_length()] + self.item_shape)
         self.sequence_lengths = tf.placeholder(tf.int32, shape=[self.get_batch_size()])
-
-    def get_batch_size(self):
-        return self.batch_size
-
-    def get_max_length(self):
-        return self.max_length
 
     def get_tensorflow_type(self):
         tf_type = None

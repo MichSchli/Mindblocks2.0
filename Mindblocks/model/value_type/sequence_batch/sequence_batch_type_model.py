@@ -11,16 +11,21 @@ class SequenceBatchTypeModel:
     cached_seq_placeholder = None
     cached_len_placeholder = None
 
-    def __init__(self, type, item_shape, batch_size):
+    def __init__(self, type, item_shape, batch_size, maximum_sequence_length):
         self.type = type
         self.item_shape = item_shape[:]
         self.batch_size = batch_size
+        self.maximum_sequence_length = maximum_sequence_length
 
     def initialize_value_model(self):
-        return SequenceBatchValueModel(self.type, self.item_shape)
+        value_model = SequenceBatchValueModel(self.type, self.item_shape)
+        value_model.maximum_sequence_length = self.maximum_sequence_length
+        value_model.batch_size = self.batch_size
+
+        return value_model
 
     def copy(self):
-        return SequenceBatchTypeModel(self.type, self.item_shape, self.batch_size)
+        return SequenceBatchTypeModel(self.type, self.item_shape, self.batch_size, self.maximum_sequence_length)
 
     def subsample(self, dimension):
         self.batch_size = dimension
@@ -37,13 +42,16 @@ class SequenceBatchTypeModel:
     def get_batch_size(self):
         return self.batch_size
 
+    def get_maximum_sequence_length(self):
+        return self.maximum_sequence_length
+
     def extend_dims(self, dim):
         self.item_shape.append(dim)
 
     def get_tensorflow_placeholder(self):
         placeholder_model = self.initialize_value_model()
-        placeholder_model.batch_size = 2
-        placeholder_model.max_length = 5 # TODO: Hardcoded
+        placeholder_model.batch_size = self.batch_size
+        placeholder_model.max_length = None
 
         if self.cached_seq_placeholder is None:
             placeholder_model.initialize_as_tensorflow_placeholder()

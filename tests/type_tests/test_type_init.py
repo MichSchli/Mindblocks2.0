@@ -68,7 +68,7 @@ class TestTypeInit(unittest.TestCase):
     Sequences:
     """
     def testScalarSequenceBatchTypeInitReturnsCorrectValueInt(self):
-        type_model = SequenceBatchTypeModel("int", [], None)
+        type_model = SequenceBatchTypeModel("int", [], None, None)
         value_model = type_model.initialize_value_model()
 
         self.assertEqual("int", value_model.type)
@@ -76,7 +76,7 @@ class TestTypeInit(unittest.TestCase):
         self.assertEqual([], value_model.get_sequence_lengths())
 
     def testScalarSequenceBatchTypeInitReturnsCorrectValueFloat(self):
-        type_model = SequenceBatchTypeModel("float", [], None)
+        type_model = SequenceBatchTypeModel("float", [], None, None)
         value_model = type_model.initialize_value_model()
 
         self.assertEqual("float", value_model.type)

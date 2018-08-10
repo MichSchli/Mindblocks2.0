@@ -22,6 +22,7 @@ class Constant(ComponentTypeModel):
     def build_value_type_model(self, input_types, value):
         return {"output": TensorTypeModel(value.value_type, [] if not value.tensor else [v for v in value.value.shape])}
 
+
 class ConstantValue(ExecutionComponentValueModel):
 
     value = None
@@ -33,7 +34,7 @@ class ConstantValue(ExecutionComponentValueModel):
             tensor = True
 
         if tensor and value_type == "float":
-            self.value = np.array(value, dtype=np.float32)
+            self.value = np.array([np.fromstring(v, dtype=np.float32, sep=" ") for v in value.split(",")])
             self.value_type = value_type
             self.tensor = True
         elif value_type == "float":

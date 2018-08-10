@@ -37,7 +37,7 @@ class TestTypeUsage(unittest.TestCase):
         spec.name = "Constant"
         constant_type = self.setup_holder.type_repository.get(spec)[0]
 
-        value = ConstantValue("5 2.7, 1, 20", "float", tensor=True)
+        value = ConstantValue("5 2.7, 1 20", "float", tensor=True)
 
         type = constant_type.build_value_type_model({}, value)["output"]
 

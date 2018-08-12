@@ -12,8 +12,14 @@ class ConllReader(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary, language):
-        return ConllReaderValue(value_dictionary["file_path"][0][0],
+        value = ConllReaderValue(value_dictionary["file_path"][0][0],
                                 value_dictionary["columns"][0][0].split(","))
+
+        if "start_token" in value_dictionary:
+            value.set_start_token(value_dictionary["start_token"][0][0])
+            value.set_stop_token(value_dictionary["stop_token"][0][0])
+
+        return value
 
     def execute(self, input_dictionary, value, output_models, mode):
         output_models["output"].assign(value.read())
@@ -34,11 +40,29 @@ class ConllReaderValue(ExecutionComponentValueModel):
 
     filepath = None
     size = None
+    start_token = None
+    stop_token = None
 
     def __init__(self, filepath, column_info):
         self.filepath = filepath
         self.column_info = column_info
         self.has_batch = True
+
+    def set_start_token(self, token):
+        self.start_token = token
+
+    def set_stop_token(self, token):
+        self.stop_token = token
+
+    def get_start_token_part(self):
+        parts = ["_" for _ in range(self.count_columns())]
+        parts[1] = self.start_token
+        return parts
+
+    def get_stop_token_part(self):
+        parts = ["_" for _ in range(self.count_columns())]
+        parts[1] = self.stop_token
+        return parts
 
     def init_batches(self):
         self.has_batch = True
@@ -64,7 +88,13 @@ class ConllReaderValue(ExecutionComponentValueModel):
 
                 lines[-1].append(line_parts)
             else:
-                lines.append([])
+                if self.stop_token is not None:
+                    lines[-1].append(self.get_stop_token_part())
+
+                if self.start_token is not None:
+                    lines.append([self.get_start_token_part()])
+                else:
+                    lines.append([])
 
         if not lines[-1]:
             lines = lines[-1]

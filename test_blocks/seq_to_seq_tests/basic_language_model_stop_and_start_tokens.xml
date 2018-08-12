@@ -1,18 +1,22 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>2000</default_value>
+            <default_value>3000</default_value>
         </variable>
         <variable name="report_loss_every_n">
             <default_value>10</default_value>
         </variable>
         <variable name="data_folder">
         </variable>
+        <variable name="data_file">
+        </variable>
     </configuration>
     <canvas name="main">
         <component name="reader" type="ConllReader">
-            <file_path>$data_folder/test_conll_file.conll</file_path>
+            <file_path>$data_folder/$data_file</file_path>
             <columns>int,string</columns>
+            <start_token>_START_</start_token>
+            <stop_token>_STOP_</stop_token>
         </component>
         <component name="embedding" type="FileEmbeddings">
             <file_path>$data_folder/test_embeddings.txt</file_path>
@@ -32,29 +36,45 @@
                 <target socket="index">indexer</target>
         </edge>
 
-        <component name="initializer" type="Constant">
-            <value>0 1</value>
-            <type>int</type>
-        </component>
-
-        <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">
-            <graph canvas="decoder">decoder-graph</graph>
-            <socket type="in">initializer</socket>
-            <socket type="in">embedding_vectors</socket>
-            <socket type="out">logits</socket>
-            <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
-            <out_link feed="loop">mlp:output->logits</out_link>
-            <recurrence init="zero_tensor:20">decoder_lstm:output_c->previous_c:input</recurrence>
-            <recurrence init="zero_tensor:20">decoder_lstm:output_h->previous_h:input</recurrence>
-            <recurrence init="socket:initializer">argmax:output->input_token:input</recurrence>
+        <component name="embedding_lookup" type="EmbeddingLookup" language="tensorflow">
         </component>
         <edge>
-                <source socket="output">initializer</source>
-                <target socket="initializer">training_rnn</target>
+                <source socket="output">indexer</source>
+                <target socket="indexes">embedding_lookup</target>
         </edge>
         <edge>
                 <source socket="vectors">embedding</source>
+                <target socket="vectors">embedding_lookup</target>
+        </edge>
+
+        <component name="encoder" type="BiRnn" language="tensorflow">
+            <cell>lstm</cell>
+            <dimension>100</dimension>
+        </component>
+        <edge>
+                <source socket="output">embedding_lookup</source>
+                <target socket="input">encoder</target>
+        </edge>
+
+        <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">
+            <graph canvas="decoder">decoder-graph</graph>
+            <socket type="in">embedding_vectors</socket>
+            <socket type="in">sentence_embeddings</socket>
+            <socket type="out">logits</socket>
+            <in_link feed="per_batch">sentence_embeddings->concat:right</in_link>
+            <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
+            <out_link feed="loop">mlp:output->logits</out_link>
+            <recurrence init="zero_tensor:50">decoder_lstm:output_c->previous_c:input</recurrence>
+            <recurrence init="zero_tensor:50">decoder_lstm:output_h->previous_h:input</recurrence>
+            <recurrence init="zero_tensor:|int">argmax:output->input_token:input</recurrence>
+        </component>
+        <edge>
+                <source socket="vectors">embedding</source>
                 <target socket="embedding_vectors">training_rnn</target>
+        </edge>
+        <edge>
+                <source socket="final_state">encoder</source>
+                <target socket="sentence_embeddings">training_rnn</target>
         </edge>
         <edge>
                 <source socket="output">indexer</source>
@@ -97,11 +117,18 @@
                 <target socket="indexes">encoder_embedding</target>
             </edge>
 
-            <component name="decoder_lstm" type="LstmCell" language="tensorflow">
-                <dimension>20</dimension>
+            <component name="concat" type="Concat" language="tensorflow">
             </component>
             <edge>
                 <source socket="output">encoder_embedding</source>
+                <target socket="left">concat</target>
+            </edge>
+
+            <component name="decoder_lstm" type="LstmCell" language="tensorflow">
+                <dimension>50</dimension>
+            </component>
+            <edge>
+                <source socket="output">concat</source>
                 <target socket="input_x">decoder_lstm</target>
             </edge>
             <edge>
@@ -114,9 +141,9 @@
             </edge>
 
             <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
-            <dimensions>20, 9</dimensions>
+            <dimensions>50,9</dimensions>
             </component>
-            <edge cast="float">
+            <edge>
                 <source socket="output_h">decoder_lstm</source>
                 <target socket="input">mlp</target>
             </edge>

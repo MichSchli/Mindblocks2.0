@@ -18,7 +18,7 @@
         </component>
         <component name="embedding" type="FileEmbeddings">
             <file_path>$data_folder/test_embeddings.txt</file_path>
-            <width>2</width>
+            <width>3</width>
             <separator> </separator>
         </component>
         <component name="indexer" type="Indexer">
@@ -138,7 +138,7 @@
             </edge>
 
             <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
-            <dimensions>50,7</dimensions>
+            <dimensions>50,9</dimensions>
             </component>
             <edge>
                 <source socket="output_h">decoder_lstm</source>

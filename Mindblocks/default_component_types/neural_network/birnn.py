@@ -47,8 +47,8 @@ class BiRnnValue(ExecutionComponentValueModel):
 
     def __init__(self, cell_size):
         self.cell_size = int(cell_size)
-        self.cell_forward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2)
-        self.cell_backward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2)
+        self.cell_forward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name="forward")
+        self.cell_backward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name="backward")
 
     def get_final_cell_size(self):
         return self.cell_size

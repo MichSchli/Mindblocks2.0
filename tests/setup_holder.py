@@ -16,11 +16,14 @@ from Mindblocks.repository.creation_component_repository.creation_component_repo
 from Mindblocks.repository.graph.graph_repository import GraphRepository
 from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
 from Mindblocks.repository.variable_repository.variable_repository import VariableRepository
+import tensorflow as tf
 
 
 class SetupHolder:
 
     def __init__(self, load_default_types=True):
+        tf.reset_default_graph()
+
         self.identifier_repository = IdentifierRepository()
         self.type_repository = ComponentTypeRepository(self.identifier_repository)
         self.canvas_repository = CanvasRepository(self.identifier_repository)

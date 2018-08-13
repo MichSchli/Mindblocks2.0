@@ -5,6 +5,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import tensorflow as tf
+from tensorflow.python.ops import math_ops
 
 class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
@@ -63,6 +64,8 @@ class ScheduledSamplingRnnComponentValue:
     final_teacher_probability = 0.5
     decay_rate = 0.999
 
+    stop_symbol = 8
+
     def __init__(self):
         self.teacher_probability = tf.Variable(initial_value=self.initial_teacher_probability, trainable=False)
 
@@ -93,6 +96,16 @@ class ScheduledSamplingRnnComponentValue:
         counter = args[-1]
         for i in range(n_rec, n_rec+n_out):
             results[i] = self.write_to_tensor_array(args[i],results[i], counter)
+
+        should_stop = tf.equal(results[self.teacher_index], self.stop_symbol)
+        new_finished = tf.logical_or(args[-2], should_stop)
+        new_finished = tf.Print(new_finished, [self.get_teacher_value(args[-1])], summarize=100, message="teach ")
+        new_finished = tf.Print(new_finished, [results[self.teacher_index]], summarize=100, message="pred ")
+        new_finished = tf.Print(new_finished, [should_stop], summarize=100, message="should ")
+
+        #TODO: fix lengths
+
+        results += [new_finished]
         results += [counter + 1]
 
         return tuple(results)
@@ -101,8 +114,8 @@ class ScheduledSamplingRnnComponentValue:
         return array.write(index, item)
 
     def cond(self, *args):
-        print("cond")
-        return True
+        finished = args[-2]
+        return math_ops.logical_not(math_ops.reduce_all(finished))
 
     def get_teacher_value(self, index):
         return self.teacher_values[index]
@@ -129,6 +142,7 @@ class ScheduledSamplingRnnComponentValue:
         rnn_helper.add_recurrency_initializers(self.rnn_model, input_dictionary)
         rnn_helper.add_sequence_outputs(self.rnn_model, maximum_iterations)
 
+        self.rnn_model.add_finished_var()
         self.rnn_model.add_counter_loop_var()
 
         loop = tf.while_loop(
@@ -145,7 +159,9 @@ class ScheduledSamplingRnnComponentValue:
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
         for i in range(n_rec, n_rec + n_out):
-            loop[i] = tf.reshape(loop[i].stack(), [self.rnn_model.batch_size, maximum_iterations, -1])
+            print(loop[i])
+            loop[i] = tf.transpose(loop[i].stack(), perm=[1,0,2])
+            #loop[i] = tf.reshape(loop[i].stack(), [self.rnn_model.batch_size, maximum_iterations, -1])
         return {self.rnn_model.out_links[i][0]: loop[i + n_rec] for i in range(len(self.rnn_model.out_links))}
 
     def count_recurrences(self):

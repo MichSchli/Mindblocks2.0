@@ -15,8 +15,10 @@ class ConllReader(ComponentTypeModel):
         value = ConllReaderValue(value_dictionary["file_path"][0][0],
                                 value_dictionary["columns"][0][0].split(","))
 
+        print(value_dictionary)
         if "start_token" in value_dictionary:
             value.set_start_token(value_dictionary["start_token"][0][0])
+        if "stop_token" in value_dictionary:
             value.set_stop_token(value_dictionary["stop_token"][0][0])
 
         return value
@@ -74,7 +76,7 @@ class ConllReaderValue(ExecutionComponentValueModel):
         return len(self.column_info)
 
     def read(self):
-        lines = [[]]
+        lines = [[]] if self.start_token is None else [[self.get_start_token_part()]]
         f = open(self.filepath, 'r')
         for line in f:
             line = line.strip()
@@ -96,7 +98,7 @@ class ConllReaderValue(ExecutionComponentValueModel):
                 else:
                     lines.append([])
 
-        if not lines[-1]:
+        if not lines[-1] or lines[-1] == [self.get_start_token_part()]:
             lines = lines[-1]
 
         self.size = len(lines)

@@ -44,7 +44,7 @@ class ExecutionGraphBuilder:
 
                 execution_graph = self.build_execution_graph(run, run_mode, value_dictionary)
 
-                value.graph = execution_graph
+                value.set_graph(execution_graph)
 
         return value
 

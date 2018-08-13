@@ -13,7 +13,6 @@ class TensorflowSectionContractor:
 
         tensorflow_session.run(tf.global_variables_initializer())
 
-
     def contract_tensorflow_sections(self, execution_graph, mode, tensorflow_session):
         tensorflow_sections = self.find_tensorflow_sections(execution_graph)
         for tensorflow_section in tensorflow_sections:
@@ -46,6 +45,8 @@ class TensorflowSectionContractor:
                     self.expand_tensorflow_section(target.execution_component, tensorflow_section, tensorflow_section_map)
 
     def replace_tensorflow_section(self, execution_graph, tensorflow_section, mode):
+        print("replace")
+        print(mode)
         execution_graph.add_execution_component(tensorflow_section)
         for component in tensorflow_section.components:
             for out_socket in component.get_out_sockets():

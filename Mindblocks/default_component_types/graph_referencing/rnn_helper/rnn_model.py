@@ -1,0 +1,81 @@
+class RnnModel:
+
+    in_links = None
+    out_links = None
+    recurrences = None
+    inner_graph = None
+    inner_graph_name = None
+    batch_size = None
+    loop_vars = None
+
+    def __init__(self, inner_graph_name):
+        self.in_links = []
+        self.out_links = []
+        self.recurrences = []
+        self.inner_graph_name = inner_graph_name
+        self.loop_vars = []
+
+    def add_counter_loop_var(self):
+        self.loop_vars.append(0)
+
+    def add_loop_var(self, var):
+        self.loop_vars.append(var)
+
+    def add_in_link(self, component_input, graph_input, feed_type=None):
+        self.in_links.append((component_input, graph_input, feed_type))
+
+    def add_out_link(self, component_output, graph_output, feed_type=None):
+        self.out_links.append((component_output, graph_output, feed_type))
+
+    def add_recurrence(self, graph_output, graph_input, init):
+        self.recurrences.append((graph_output, graph_input, init))
+
+    def set_inner_graph(self, graph):
+        self.inner_graph = graph
+
+    def get_graph_name(self):
+        return self.inner_graph_name
+
+    def get_required_graph_outputs(self):
+        return [(l[0].split(":")[0], l[0].split(":")[1]) for l in self.recurrences] +\
+               [(l[1].split(":")[0], l[1].split(":")[1]) for l in self.out_links]
+
+    def get_required_graph_inputs(self):
+        return [(l[1].split(":")[0], l[1].split(":")[1]) for l in self.in_links]
+
+    def get_batch_size(self):
+        return self.batch_size
+
+    def set_batch_size(self, batch_size):
+        self.batch_size = batch_size
+
+    def count_recurrent_links(self):
+        return len(self.recurrences)
+
+    def count_output_links(self):
+        return len(self.out_links)
+
+    def set_nths_input(self, n, value):
+        in_socket = self.list_of_in_sockets[n]
+        type = in_socket.replaced_type
+        value_model = type.initialize_value_model()
+        value_model.assign(value)
+        in_socket.replace_value(value_model)
+
+    def get_inner_graph_output_types(self):
+        results = self.inner_graph.initialize_type_models()
+        out_type_dict = {}
+        for output, result in zip(self.out_links, results):
+            component_output, _, feed_type = output
+
+            if feed_type == "loop":
+                out_type = result.to_sequence_type()
+            else:
+                out_type = result
+
+            out_type_dict[component_output] = out_type
+        return out_type_dict
+
+    def run(self):
+        results = self.inner_graph.execute(discard_value_models=True)
+        return results

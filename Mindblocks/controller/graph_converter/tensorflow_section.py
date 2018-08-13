@@ -31,6 +31,8 @@ class TensorflowSection(ExecutionComponentModel):
         return [m[1] for m in self.matched_in_sockets]
 
     def compile(self, mode):
+        print("COMPILE")
+        print(mode)
         self.outputs = [tf_out_socket.pull(mode).get_tensorflow_output_tensors() for tf_out_socket, _ in self.matched_out_sockets]
 
     def initialize_placeholders(self):

@@ -121,7 +121,7 @@ class TestConllReaderBlocks(unittest.TestCase):
         self.assertEqual(4, len(results[1]))
 
         for r in results[0]:
-            self.assertEqual(2, len(r))
+            self.assertEqual(3, len(r))
 
         for r in results[1]:
-            self.assertEqual(2, len(r))
+            self.assertEqual(3, len(r))

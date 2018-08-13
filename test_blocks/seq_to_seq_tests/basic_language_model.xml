@@ -46,7 +46,7 @@
             <out_link feed="loop">mlp:output->logits</out_link>
             <recurrence init="zero_tensor:20">decoder_lstm:output_c->previous_c:input</recurrence>
             <recurrence init="zero_tensor:20">decoder_lstm:output_h->previous_h:input</recurrence>
-            <recurrence init="socket:initializer">argmax:output->input_token:input</recurrence>
+            <recurrence init="socket:initializer" teacher="true">argmax:output->input_token:input</recurrence>
         </component>
         <edge>
                 <source socket="output">initializer</source>

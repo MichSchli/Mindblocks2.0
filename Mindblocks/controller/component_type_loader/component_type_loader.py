@@ -33,6 +33,10 @@ class ComponentTypeLoader:
         for line in class_file:
             f_string += line
         class_file.close()
+
+        if "(ComponentTypeModel)" not in f_string:
+            return
+
         class_name_end_index = f_string.index("(ComponentTypeModel)")
         class_name = f_string[:class_name_end_index].split(" ")[-1]
         loaded_file = importlib.machinery.SourceFileLoader("module", f).load_module()

@@ -13,7 +13,7 @@
         <component name="glove" type="FileEmbeddings">
             <file_path>$embedding_file</file_path>
             <separator> </separator>
-            <width>2</width>
+            <width>3</width>
         </component>
         <component name="indexer" type="Indexer">
             <input_type>sequence</input_type>

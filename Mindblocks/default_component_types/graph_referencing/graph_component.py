@@ -41,6 +41,9 @@ class GraphComponentValue(ExecutionComponentValueModel):
     graph_name = None
     graph = None
 
+    def set_graph(self, graph):
+        self.graph = graph
+
     def __init__(self):
         self.in_links = []
         self.out_links = []

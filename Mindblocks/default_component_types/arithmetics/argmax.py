@@ -17,7 +17,6 @@ class Argmax(ComponentTypeModel):
     def execute(self, input_dictionary, value, output_value_models, mode):
         if value.language == "tensorflow":
             argmax = tf.argmax(input_dictionary["input"].get_value(), axis=-1, output_type=tf.int32)
-            argmax = tf.Print(argmax, [input_dictionary["input"].get_value()], message="logits", summarize=100)
         else:
             argmax = np.argmax(input_dictionary["input"].get_value(), axis=-1)
         output_value_models["output"].assign(argmax)

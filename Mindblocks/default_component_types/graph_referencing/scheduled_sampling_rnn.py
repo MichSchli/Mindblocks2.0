@@ -22,9 +22,7 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
         # Find the teacher:
         counter = 0
         for recurrence in value_dictionary["recurrence"]:
-            print(recurrence[1])
             if "teacher" in recurrence[1]:
-                print("abc")
                 value.set_teacher_index(counter)
 
             counter += 1
@@ -32,13 +30,13 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
-        print(mode)
-        outputs = value.assign_and_run(input_dictionary)
+        outputs, lengths = value.assign_and_run(input_dictionary)
 
         for k,v in outputs.items():
-            output_models[k].assign(v, language="tensorflow")
-
-        print(output_models)
+            if output_models[k].is_value_type("sequence"):
+                output_models[k].assign_with_lengths(v, lengths)
+            else:
+                output_models[k].assign(v, language="tensorflow")
 
         return output_models
 
@@ -79,32 +77,35 @@ class ScheduledSamplingRnnComponentValue:
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
 
+        counter = args[-1]
+
         for i in range(n_rec):
             if i == self.teacher_index:
-                next_teacher_value = self.get_teacher_value(args[-1])
+                next_teacher_value = self.get_teacher_value(args[-1]-1)
                 student_suggestion = args[self.teacher_index]
 
                 coin_flip = tf.random_uniform([self.rnn_model.batch_size], minval=0, maxval=1)
                 chosen_input = tf.where(coin_flip < self.teacher_probability, x=next_teacher_value, y=student_suggestion)
 
-                self.rnn_model.set_nths_input(i, chosen_input)
+                actual_input = tf.where(counter > 0, x=chosen_input, y=student_suggestion)
+
+                self.rnn_model.set_nths_input(i, actual_input)
             else:
                 self.rnn_model.set_nths_input(i, args[i])
 
         results = self.rnn_model.run()
 
-        counter = args[-1]
         for i in range(n_rec, n_rec+n_out):
             results[i] = self.write_to_tensor_array(args[i],results[i], counter)
 
-        should_stop = tf.equal(results[self.teacher_index], self.stop_symbol)
-        new_finished = tf.logical_or(args[-2], should_stop)
-        new_finished = tf.Print(new_finished, [self.get_teacher_value(args[-1])], summarize=100, message="teach ")
-        new_finished = tf.Print(new_finished, [results[self.teacher_index]], summarize=100, message="pred ")
-        new_finished = tf.Print(new_finished, [should_stop], summarize=100, message="should ")
+        should_stop_prediction = tf.equal(results[self.teacher_index], self.stop_symbol)
+        old_finished = args[-2]
+        new_finished = tf.logical_or(old_finished, should_stop_prediction)
 
-        #TODO: fix lengths
+        old_lengths = args[-3]
+        new_lengths = tf.where(tf.logical_not(old_finished), old_lengths + 1, old_lengths)
 
+        results += [new_lengths]
         results += [new_finished]
         results += [counter + 1]
 
@@ -142,6 +143,7 @@ class ScheduledSamplingRnnComponentValue:
         rnn_helper.add_recurrency_initializers(self.rnn_model, input_dictionary)
         rnn_helper.add_sequence_outputs(self.rnn_model, maximum_iterations)
 
+        self.rnn_model.add_length_var()
         self.rnn_model.add_finished_var()
         self.rnn_model.add_counter_loop_var()
 
@@ -156,13 +158,13 @@ class ScheduledSamplingRnnComponentValue:
         return self.order_output(loop, maximum_iterations)
 
     def order_output(self, loop, maximum_iterations):
+        lengths = loop[-3]
+
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
         for i in range(n_rec, n_rec + n_out):
-            print(loop[i])
             loop[i] = tf.transpose(loop[i].stack(), perm=[1,0,2])
-            #loop[i] = tf.reshape(loop[i].stack(), [self.rnn_model.batch_size, maximum_iterations, -1])
-        return {self.rnn_model.out_links[i][0]: loop[i + n_rec] for i in range(len(self.rnn_model.out_links))}
+        return {self.rnn_model.out_links[i][0]: loop[i + n_rec] for i in range(len(self.rnn_model.out_links))}, lengths
 
     def count_recurrences(self):
         return len(self.recurrences)

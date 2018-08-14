@@ -21,6 +21,10 @@ class RnnModel:
     def add_counter_loop_var(self):
         self.loop_vars.append(0)
 
+    def add_length_var(self):
+        length_var = tf.zeros(self.batch_size, dtype=tf.int32)
+        self.loop_vars.append(length_var)
+
     def add_finished_var(self):
         finished_var = tf.zeros(self.batch_size, dtype=tf.bool)
         self.loop_vars.append(finished_var)

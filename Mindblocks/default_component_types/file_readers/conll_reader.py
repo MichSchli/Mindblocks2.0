@@ -101,6 +101,9 @@ class ConllReaderValue(ExecutionComponentValueModel):
         if not lines[-1] or lines[-1] == [self.get_start_token_part()]:
             lines = lines[-1]
 
+        if self.stop_token is not None and len(lines) > 0 and lines[-1][-1] != self.get_stop_token_part():
+            lines[-1].append(self.get_stop_token_part())
+
         self.size = len(lines)
 
         f.close()

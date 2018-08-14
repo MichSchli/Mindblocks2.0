@@ -22,10 +22,7 @@ class SequenceCrossEntropy(ComponentTypeModel):
                 targets=input_dictionary["labels"].get_value(),
                 weights=mask
         )
-        cross_entropy = tf.Print(cross_entropy, [input_dictionary["labels"].get_value()],
-                                 message="labels", summarize=100)
 
-        cross_entropy = tf.Print(cross_entropy, [tf.nn.softmax(input_dictionary["logits"].get_value(), axis=-1)], message="loss logits", summarize=100)
         output_value_models["output"].assign(cross_entropy)
         return output_value_models
 

@@ -31,6 +31,8 @@ class CreationComponentModel:
         socket.place_mark(mark)
 
     def get_marked_sockets(self):
+        print(self)
+        print(self.out_sockets)
         marked = {}
         for socket in list(self.out_sockets.values()):
             if socket.marked():

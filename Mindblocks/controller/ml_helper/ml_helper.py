@@ -4,6 +4,7 @@ class MlHelper:
     update_and_loss_function = None
     loss_function = None
     validate_function = None
+    prediction_function = None
 
     configuration = None
 
@@ -30,6 +31,14 @@ class MlHelper:
 
     def validate(self):
         return self.do_validate()
+
+    def predict(self):
+        predictions = []
+
+        while self.prediction_function.has_batches():
+            predictions.extend(self.prediction_function.execute()[0])
+
+        return predictions
 
     def should_validate(self):
         return self.validate_function is not None

@@ -60,6 +60,12 @@ class TensorTypeModel:
     def get_batch_size(self):
         return self.dimensions[0]
 
+    def set_outer_dim(self, dimension):
+        if len(self.dimensions) == 0:
+            self.dimensions = [dimension]
+        else:
+            self.dimensions[0] = dimension
+
     def get_inner_dim(self):
         if len(self.dimensions) == 0:
             return 1

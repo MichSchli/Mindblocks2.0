@@ -11,6 +11,8 @@ class RnnModel:
     batch_size = None
     loop_vars = None
 
+    tiling_factor = None
+
     def __init__(self, inner_graph_name):
         self.in_links = []
         self.out_links = []
@@ -18,15 +20,17 @@ class RnnModel:
         self.inner_graph_name = inner_graph_name
         self.loop_vars = []
 
+        self.tiling_factor = 1
+
     def add_counter_loop_var(self):
         self.loop_vars.append(0)
 
     def add_length_var(self):
-        length_var = tf.zeros(self.batch_size, dtype=tf.int32)
+        length_var = tf.zeros(self.batch_size * self.tiling_factor, dtype=tf.int32)
         self.loop_vars.append(length_var)
 
     def add_finished_var(self):
-        finished_var = tf.zeros(self.batch_size, dtype=tf.bool)
+        finished_var = tf.zeros(self.batch_size * self.tiling_factor, dtype=tf.bool)
         self.loop_vars.append(finished_var)
 
     def add_loop_var(self, var):
@@ -65,6 +69,20 @@ class RnnModel:
 
     def count_output_links(self):
         return len(self.out_links)
+
+    def build_loop_var(self, description, name="var", extend_to_batch=True):
+        parts = description.split("|")
+        tf_type = tf.int32 if parts[1] == "int" else tf.float32
+
+        dim_string = parts[0].split(":")[1]
+        dims = [int(v) for v in dim_string.split(",")] if len(dim_string) > 0 else []
+
+        if extend_to_batch:
+            dims = [self.batch_size * self.tiling_factor] + dims
+
+        tf_value = tf.zeros(dims, dtype=tf_type, name=name)
+
+        self.add_loop_var(tf_value)
 
     def set_nths_input(self, n, value):
         in_socket = self.list_of_in_sockets[n]

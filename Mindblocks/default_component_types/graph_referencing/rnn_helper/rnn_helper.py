@@ -10,24 +10,30 @@ class RnnHelper:
     def __init__(self):
         pass
 
+    def tile_batches(self, rnn_model, tiling_factor):
+        rnn_model.tiling_factor = 3
+
     def create_rnn_model(self, value_dictionary):
         graph_name = value_dictionary["graph"][0][0]
         rnn_model = RnnModel(graph_name)
 
-        for in_link in value_dictionary["in_link"]:
-            parts = in_link[0].split("->")
-            feed_type = in_link[1]["feed"] if "feed" in in_link[1] else None
-            rnn_model.add_in_link(parts[0], parts[1], feed_type=feed_type)
+        if "in_link" in value_dictionary:
+            for in_link in value_dictionary["in_link"]:
+                parts = in_link[0].split("->")
+                feed_type = in_link[1]["feed"] if "feed" in in_link[1] else None
+                rnn_model.add_in_link(parts[0], parts[1], feed_type=feed_type)
 
-        for out_link in value_dictionary["out_link"]:
-            parts = out_link[0].split("->")
-            feed_type = out_link[1]["feed"] if "feed" in out_link[1] else None
-            rnn_model.add_out_link(parts[1], parts[0], feed_type=feed_type)
+        if "out_link" in value_dictionary:
+            for out_link in value_dictionary["out_link"]:
+                parts = out_link[0].split("->")
+                feed_type = out_link[1]["feed"] if "feed" in out_link[1] else None
+                rnn_model.add_out_link(parts[1], parts[0], feed_type=feed_type)
 
-        for recurrence in value_dictionary["recurrence"]:
-            parts = recurrence[0].split("->")
-            init = recurrence[1]["init"] if "init" in recurrence[1] else None
-            rnn_model.add_recurrence(parts[0], parts[1], init=init)
+        if "recurrence" in value_dictionary:
+            for recurrence in value_dictionary["recurrence"]:
+                parts = recurrence[0].split("->")
+                init = recurrence[1]["init"] if "init" in recurrence[1] else None
+                rnn_model.add_recurrence(parts[0], parts[1], init=init)
 
         if "batch_size" in value_dictionary:
             rnn_model.batch_size = int(value_dictionary["batch_size"][0][0])
@@ -37,7 +43,17 @@ class RnnHelper:
     def assign_static_inputs(self, rnn_model, input_dictionary):
         for component_input, graph_input, feed_type in rnn_model.in_links:
             parts = graph_input.split(":")
-            if feed_type != "loop":
+            if feed_type == "per_batch" and rnn_model.tiling_factor > 1:
+                input_value = input_dictionary[component_input].get_value()
+                parts = graph_input.split(":")
+                in_socket = rnn_model.inner_graph.get_in_socket(parts[0], parts[1])
+                value = in_socket.replaced_type.initialize_value_model()
+
+                tf_inp = tf.contrib.seq2seq.tile_batch(input_value, rnn_model.tiling_factor)
+                value.assign(tf_inp, language="tensorflow")
+
+                rnn_model.inner_graph.enforce_value(parts[0], parts[1], value)
+            elif feed_type != "loop":
                 rnn_model.inner_graph.enforce_value(parts[0], parts[1], input_dictionary[component_input])
 
     def add_sequence_outputs(self, rnn_model, maximum_iterations):
@@ -101,6 +117,16 @@ class RnnHelper:
     def handle_input_types(self, rnn_model, input_type_dictionary):
         batch_size = rnn_model.get_batch_size()
 
+        if batch_size is None:
+            for component_input, graph_input, feed_type in rnn_model.in_links:
+                if feed_type == "per_batch":
+                    source_input_type = input_type_dictionary[component_input]
+                    batch_size = source_input_type.get_batch_size()
+
+                    rnn_model.set_batch_size(batch_size)
+
+        batch_size *= rnn_model.tiling_factor
+
         for component_input, graph_input, feed_type in rnn_model.in_links:
             parts = graph_input.split(":")
             source_input_type = input_type_dictionary[component_input]
@@ -108,7 +134,8 @@ class RnnHelper:
             if feed_type == "loop":
                 graph_input_type = source_input_type.get_single_token_type()
             elif feed_type == "per_batch" or feed_type == "initializer":
-                graph_input_type = source_input_type
+                graph_input_type = source_input_type.copy()
+                graph_input_type.set_outer_dim(batch_size)
             else:
                 graph_input_type = source_input_type
 
@@ -126,4 +153,6 @@ class RnnHelper:
                 rnn_model.inner_graph.enforce_type(parts[0], parts[1], tensor_type)
             elif init is not None and init.startswith("socket:"):
                 parts = graph_input.split(":")
-                rnn_model.inner_graph.enforce_type(parts[0], parts[1], graph_input_type)
+                input_type = graph_input_type.copy()
+                input_type.set_outer_dim(batch_size)
+                rnn_model.inner_graph.enforce_type(parts[0], parts[1], input_type)

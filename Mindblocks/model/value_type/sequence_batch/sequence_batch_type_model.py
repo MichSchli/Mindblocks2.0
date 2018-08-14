@@ -42,6 +42,9 @@ class SequenceBatchTypeModel:
     def get_batch_size(self):
         return self.batch_size
 
+    def set_outer_dim(self, dimension):
+        self.batch_size = dimension
+
     def get_maximum_sequence_length(self):
         return self.maximum_sequence_length
 

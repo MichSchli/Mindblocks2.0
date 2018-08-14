@@ -64,3 +64,6 @@ class ExecutionComponentModel:
         for in_socket in self.get_in_sockets():
             in_socket.init_batches()
         self.execution_value.init_batches()
+
+    def __str__(self):
+        return "Unknown" if self.execution_type is None else self.execution_type.name

@@ -28,3 +28,8 @@ class ExecutionHeadComponent:
 
     def initialize_type_models(self):
         return [socket.pull_type_model() for socket in self.run_output_sockets]
+
+    def describe_graph(self, indent=0):
+        print("\t"*indent + "Graph: ")
+        for socket in self.run_output_sockets:
+            socket.describe_graph(indent=indent+1)

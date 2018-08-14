@@ -108,15 +108,15 @@
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <recurrence init="zero_tensor:50">decoder_lstm:output_c->previous_c:input</recurrence>
             <recurrence init="zero_tensor:50">decoder_lstm:output_h->previous_h:input</recurrence>
-            <beam init="zero_tensor:|int">softmax:output->input_token:input</beam>
+            <beam>softmax:output->input_token:input</beam>
         </component>
         <edge>
                 <source socket="vectors">embedding</source>
-                <target socket="embedding_vectors">training_rnn</target>
+                <target socket="embedding_vectors">beam_search</target>
         </edge>
         <edge>
                 <source socket="final_state">encoder</source>
-                <target socket="sentence_embeddings">training_rnn</target>
+                <target socket="sentence_embeddings">beam_search</target>
         </edge>
 
     </canvas>

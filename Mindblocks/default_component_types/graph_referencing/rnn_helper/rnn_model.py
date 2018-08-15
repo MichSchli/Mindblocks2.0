@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow.python.ops import tensor_array_ops
 
 
 class RnnModel:
@@ -81,6 +82,25 @@ class RnnModel:
             dims = [self.batch_size * self.tiling_factor] + dims
 
         tf_value = tf.zeros(dims, dtype=tf_type, name=name)
+
+        self.add_loop_var(tf_value)
+
+    def build_tensor_array_loop_var(self, description, name="var", extend_to_batch=True, maximum_iterations=None):
+        parts = description.split("|")
+        tf_type = tf.int32 if parts[1] == "int" else tf.float32
+
+        dim_string = parts[0].split(":")[1]
+        dims = [int(v) for v in dim_string.split(",")] if len(dim_string) > 0 else []
+
+        if extend_to_batch:
+            dims = [self.batch_size * self.tiling_factor] + dims
+
+        tf_value = tensor_array_ops.TensorArray(
+            dtype=tf_type,
+            size=0 if maximum_iterations is None else maximum_iterations,
+            dynamic_size=maximum_iterations is None,
+            element_shape=dims,
+            name=name)
 
         self.add_loop_var(tf_value)
 

@@ -22,6 +22,9 @@ class MlHelper:
     def set_validate_function(self, execution_graph):
         self.validate_function = execution_graph
 
+    def set_prediction_function(self, prediction_graph):
+        self.prediction_function = prediction_graph
+
     def evaluate(self):
         self.evaluate_function.init_batches()
         performance = 0.0
@@ -33,6 +36,7 @@ class MlHelper:
         return self.do_validate()
 
     def predict(self):
+        self.prediction_function.init_batches()
         predictions = []
 
         while self.prediction_function.has_batches():

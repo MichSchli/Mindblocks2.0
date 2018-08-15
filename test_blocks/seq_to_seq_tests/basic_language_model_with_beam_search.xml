@@ -1,7 +1,7 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>2000</default_value>
+            <default_value>5000</default_value>
         </variable>
         <variable name="report_loss_every_n">
             <default_value>10</default_value>
@@ -15,6 +15,7 @@
         <component name="reader" type="ConllReader">
             <file_path>$data_folder/$data_file</file_path>
             <columns>int,string</columns>
+            <stop_token>_STOP_</stop_token>
         </component>
         <component name="embedding" type="FileEmbeddings">
             <file_path>$data_folder/test_embeddings.txt</file_path>
@@ -108,7 +109,7 @@
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <recurrence init="zero_tensor:50">decoder_lstm:output_c->previous_c:input</recurrence>
             <recurrence init="zero_tensor:50">decoder_lstm:output_h->previous_h:input</recurrence>
-            <beam>softmax:output->input_token:input</beam>
+            <beam>mlp:output->input_token:input</beam>
         </component>
         <edge>
                 <source socket="vectors">embedding</source>

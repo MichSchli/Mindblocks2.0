@@ -23,8 +23,6 @@ class ExecutionInSocket:
         if self.replaced_type is not None:
             return self.replaced_type
 
-        print(self.execution_component)
-
         source_type = self.source.pull_type_model()
 
         if self.cast is not None:

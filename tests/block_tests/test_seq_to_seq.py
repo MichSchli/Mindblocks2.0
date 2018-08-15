@@ -274,16 +274,16 @@ class TestSimpleBlocks(unittest.TestCase):
         ml_helper.train()
 
         predictions = ml_helper.predict()
-        gold_sentences = ["this is a sentence . _STOP_",
-                          "so is this . _STOP_",
-                          "also this . _STOP_",
-                          "this is also a sentence . _STOP_",
-                          "also this is a sentence . _STOP_",
-                          "sentence . . . _STOP_",
-                          "this . is . a . sentence . _STOP_",
-                          "this . _STOP_",
-                          "this sentence . _STOP_",
-                          "this is a sentence also . _STOP_"]
+        gold_sentences = ["this is a sentence . EOS",
+                          "so is this . EOS",
+                          "also this . EOS",
+                          "this is also a sentence . EOS",
+                          "also this is a sentence . EOS",
+                          "sentence . . . EOS",
+                          "this . is . a . sentence . EOS",
+                          "this . EOS",
+                          "this sentence . EOS",
+                          "this is a sentence also . EOS"]
 
         self.assertEqual(10, len(predictions))
 

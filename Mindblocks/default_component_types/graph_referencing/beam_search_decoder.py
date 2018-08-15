@@ -36,6 +36,9 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         if "stop_token" in value_dictionary:
             value.set_stop_token(int(value_dictionary["stop_token"][0][0]))
 
+        if "vocabulary_size" in value_dictionary:
+            value.set_vocabulary_size(int(value_dictionary["vocabulary_size"][0][0]))
+
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
@@ -65,10 +68,10 @@ class BeamSearchDecoderComponentValue:
     beam_width = None
     n_to_output = None
     stop_symbol = None
+    vocab_size = None
 
     beam_index = 2
     maximum_iterations = 50
-    vocab_size = 9
     length_penalty = 0.6 # Check google nmt: 0.6-0/7 best
 
     def __init__(self):
@@ -84,6 +87,9 @@ class BeamSearchDecoderComponentValue:
 
     def set_beam_width(self, beams):
         self.beam_width = beams
+
+    def set_vocabulary_size(self, size):
+        self.vocab_size = size
 
     def set_graph(self, graph):
         self.rnn_model.set_inner_graph(graph)

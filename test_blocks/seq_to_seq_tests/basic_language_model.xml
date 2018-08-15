@@ -38,6 +38,7 @@
         </component>
 
         <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">
+            <stop_token>8</stop_token>
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">initializer</socket>
             <socket type="in">embedding_vectors</socket>

@@ -27,6 +27,9 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
             counter += 1
 
+        if "stop_token" in value_dictionary:
+            value.set_stop_token(int(value_dictionary["stop_token"][0][0]))
+
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
@@ -62,10 +65,14 @@ class ScheduledSamplingRnnComponentValue:
     final_teacher_probability = 0.5
     decay_rate = 0.999
 
-    stop_symbol = 8
+    stop_symbol = None
 
     def __init__(self):
         self.teacher_probability = tf.Variable(initial_value=self.initial_teacher_probability, trainable=False)
+        self.stop_symbol = 0
+
+    def set_stop_token(self, symbol):
+        self.stop_symbol = symbol
 
     def set_teacher_index(self, index):
         self.teacher_index = index

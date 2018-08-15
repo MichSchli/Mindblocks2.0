@@ -19,7 +19,7 @@ class FileEmbeddings(ComponentTypeModel):
             value.separator = value_dictionary["separator"][0][0]
 
         if "token_list" in value_dictionary:
-            pass
+            value.token_list = value_dictionary["token_list"][0][0]
 
         if "stop_token" in value_dictionary:
             index = int(value_dictionary["stop_token"][0][1]["index"]) if "index" in value_dictionary["stop_token"][0][1] else 0
@@ -52,6 +52,8 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     stop_token = None
     stop_token_index = None
 
+    token_list = None
+
     def __init__(self, file_path, width):
         self.index = {"forward": {}, "backward": {}}
         self.file_path = file_path
@@ -67,15 +69,36 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         if index == 0:
             self.add_to_index(token)
 
+    def load_token_list(self):
+        token_list = []
+        f = open(self.token_list)
+        for line in f:
+            line = line.strip()
+            if line:
+                token_list.append(line)
+
+        return token_list
+
     def load(self):
+        token_list = None
+        if self.token_list is not None:
+            token_list = self.load_token_list()
+
         f = open(self.file_path, "r")
         self.vectors = []
         for line in f:
             line = line.strip()
             if line:
                 parts = line.split(self.separator)
+
+                if token_list is not None and parts[0] not in token_list:
+                    continue
+
                 self.add_to_index(parts[0])
                 self.add_to_vectors([float(t) for t in parts[1:]])
+
+                if token_list is not None and len(self.vectors) == len(token_list):
+                    break
 
         self.loaded = True
 

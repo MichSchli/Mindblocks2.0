@@ -60,6 +60,7 @@
             <socket type="in">embedding_vectors</socket>
             <socket type="in">sentence_embeddings</socket>
             <socket type="out">logits</socket>
+            <stop_token>8</stop_token>
             <in_link feed="per_batch">sentence_embeddings->concat:right</in_link>
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <out_link feed="loop">mlp:output->logits</out_link>
@@ -105,6 +106,7 @@
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">embedding_vectors</socket>
             <socket type="in">sentence_embeddings</socket>
+            <vocabulary_size>9</vocabulary_size>
             <in_link feed="per_batch">sentence_embeddings->concat:right</in_link>
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <recurrence init="zero_tensor:50">decoder_lstm:output_c->previous_c:input</recurrence>

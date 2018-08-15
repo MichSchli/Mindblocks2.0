@@ -57,7 +57,7 @@ class BeamSearchDecoderComponentValue:
     stop_symbol = 8
     beam_width = 3
 
-    maximum_iterations = 10
+    maximum_iterations = 50
 
     vocab_size = 9
 
@@ -124,8 +124,6 @@ class BeamSearchDecoderComponentValue:
                                                                  lambda: self.calculate_initial_iteration_word_and_beam_pointers(scores),
                                                                  lambda: self.calculate_word_and_beam_pointers(scores))
 
-        parent_beam_ids = tf.Print(parent_beam_ids, [parent_beam_ids], summarize=100, message="next beam ids")
-        next_word_ids = tf.Print(next_word_ids, [next_word_ids], summarize=100, message="next word ids")
 
         # Select recurrent states from the appropriate beam
         range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width, 1)
@@ -212,12 +210,7 @@ class BeamSearchDecoderComponentValue:
         predictions = tf.reshape(loop[prediction_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
         backpointers = tf.reshape(loop[backpointer_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
 
-
-        predictions = tf.Print(predictions, [predictions[-1]], summarize=200, message="predictions: ")
-        backpointers = tf.Print(backpointers, [backpointers[-1]], summarize=200, message="backpointers: ")
-
         lengths = loop[-3]
-        lengths = tf.Print(lengths, [lengths], summarize=100, message="length")
         decoded_sequences = tf.transpose(tf.reshape(self.decode(predictions, backpointers, tf.reshape(lengths, [-1, self.beam_width])), [-1, 30]), [1,0])
 
         return decoded_sequences, lengths
@@ -228,8 +221,6 @@ class BeamSearchDecoderComponentValue:
                                                       backpointers,
                                                       tf.reduce_max(lengths, axis=-1),
                                                       self.stop_symbol)
-
-        decoded_seqs = tf.Print(decoded_seqs, [decoded_seqs], summarize=100, message="decoded: ")
 
         return decoded_seqs
 

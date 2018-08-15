@@ -45,8 +45,6 @@ class TensorflowSectionContractor:
                     self.expand_tensorflow_section(target.execution_component, tensorflow_section, tensorflow_section_map)
 
     def replace_tensorflow_section(self, execution_graph, tensorflow_section, mode):
-        print("replace")
-        print(mode)
         execution_graph.add_execution_component(tensorflow_section)
         for component in tensorflow_section.components:
             for out_socket in component.get_out_sockets():

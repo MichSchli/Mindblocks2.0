@@ -100,7 +100,6 @@
         </edge>
 
         <component name="beam_search" type="BeamSearchDecoder" language="tensorflow">
-            <mark socket="predictions">prediction</mark>
             <n_beams>3</n_beams>
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">embedding_vectors</socket>
@@ -120,6 +119,18 @@
                 <target socket="sentence_embeddings">beam_search</target>
         </edge>
 
+        <component name="deindexer" type="DeIndexer">
+            <mark socket="output">prediction</mark>
+            <input_type>sequence</input_type>
+        </component>
+        <edge>
+                <source socket="predictions">beam_search</source>
+                <target socket="input">deindexer</target>
+        </edge>
+        <edge>
+                <source socket="index">embedding</source>
+                <target socket="index">deindexer</target>
+        </edge>
     </canvas>
     <canvas name="decoder">
         <graph name="decoder-graph">

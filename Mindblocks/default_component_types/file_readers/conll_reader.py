@@ -15,7 +15,6 @@ class ConllReader(ComponentTypeModel):
         value = ConllReaderValue(value_dictionary["file_path"][0][0],
                                 value_dictionary["columns"][0][0].split(","))
 
-        print(value_dictionary)
         if "start_token" in value_dictionary:
             value.set_start_token(value_dictionary["start_token"][0][0])
         if "stop_token" in value_dictionary:

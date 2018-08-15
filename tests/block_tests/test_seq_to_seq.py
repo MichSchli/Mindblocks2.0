@@ -193,6 +193,25 @@ class TestSimpleBlocks(unittest.TestCase):
         ml_helper.train()
 
         predictions = ml_helper.predict()
+        gold_sentences = ["this is a sentence . _STOP_",
+                          "so is this . _STOP_",
+                          "also this . _STOP_",
+                          "this is also a sentence . _STOP_",
+                          "also this is a sentence . _STOP_",
+                          "sentence . . . _STOP_",
+                          "this . is . a . sentence . _STOP_",
+                          "this . _STOP_",
+                          "this sentence . _STOP_",
+                          "this is a sentence also . _STOP_"]
 
-        print(predictions)
-        self.assertTrue(False)
+        self.assertEqual(30, len(predictions))
+
+        for i, s in enumerate(gold_sentences):
+            pred_sent = " ".join(predictions[i*3])
+            self.assertEqual(s, pred_sent)
+
+            pred_sent = " ".join(predictions[i*3 + 1])
+            self.assertNotEqual(s, pred_sent)
+
+            pred_sent = " ".join(predictions[i*3 + 2])
+            self.assertNotEqual(s, pred_sent)

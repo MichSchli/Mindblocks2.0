@@ -35,15 +35,9 @@ class EmbeddingLookup(ComponentTypeModel):
         vector_type = input_types["vectors"]
         index_type = input_types["indexes"]
 
-        print("heyo")
-        print(vector_type.get_dimensions())
-        print(index_type.get_dimensions())
-
         new_type = index_type.copy()
         new_type.set_data_type(vector_type.get_data_type())
         new_type.extend_dims(vector_type.get_inner_dim())
-
-        print(new_type.get_dimensions())
 
         return {"output": new_type}
 

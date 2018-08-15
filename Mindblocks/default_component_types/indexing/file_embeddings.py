@@ -17,6 +17,14 @@ class FileEmbeddings(ComponentTypeModel):
         value = FileEmbeddingsValue(value_dictionary["file_path"][0][0], int(value_dictionary["width"][0][0]))
         if "separator" in value_dictionary:
             value.separator = value_dictionary["separator"][0][0]
+
+        if "token_list" in value_dictionary:
+            pass
+
+        if "stop_token" in value_dictionary:
+            index = int(value_dictionary["stop_token"][0][1]["index"]) if "index" in value_dictionary["stop_token"][0][1] else 0
+            value.add_stop_token(value_dictionary["stop_token"][0][0], index)
+
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
@@ -41,12 +49,23 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     separator = None
     loaded = None
 
+    stop_token = None
+    stop_token_index = None
+
     def __init__(self, file_path, width):
         self.index = {"forward": {}, "backward": {}}
         self.file_path = file_path
         self.separator = ","
         self.width = width
+
         self.loaded = False
+
+    def add_stop_token(self, token, index):
+        self.stop_token = token
+        self.stop_token_index = index
+
+        if index == 0:
+            self.add_to_index(token)
 
     def load(self):
         f = open(self.file_path, "r")
@@ -60,12 +79,23 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
 
         self.loaded = True
 
+        if self.stop_token is not None:
+            self.insert_stop_token()
+
     def add_to_index(self, label):
         self.index["forward"][label] = len(self.index["forward"])
         self.index["backward"][len(self.index["backward"])] = label
 
+        if self.stop_token is not None and len(self.index["forward"]) == self.stop_token_index:
+            self.index["forward"][self.stop_token] = len(self.index["forward"])
+            self.index["backward"][len(self.index["backward"])] = self.stop_token
+
     def add_to_vectors(self, vector):
         self.vectors.append(vector)
+
+    def insert_stop_token(self):
+        stop_token_vector = [0] * self.width
+        self.vectors.insert(self.stop_token_index, stop_token_vector)
 
     def get_index(self):
         return self.index

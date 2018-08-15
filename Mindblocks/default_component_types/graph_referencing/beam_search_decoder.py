@@ -27,6 +27,15 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         init = beam_input[1]["init"] if "init" in beam_input[1] else "zero_tensor:|int"
         value.rnn_model.add_recurrence(parts[0], parts[1], init=init)
 
+        if "n_beams" in value_dictionary:
+            value.set_beam_width(int(value_dictionary["n_beams"][0][0]))
+
+        if "output_top_n" in value_dictionary:
+            value.set_n_to_output(int(value_dictionary["output_top_n"][0][0]))
+
+        if "stop_token" in value_dictionary:
+            value.set_stop_token(int(value_dictionary["stop_token"][0][0]))
+
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
@@ -53,15 +62,28 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
 class BeamSearchDecoderComponentValue:
 
     rnn_model = None
+    beam_width = None
+    n_to_output = None
+    stop_symbol = None
+
     beam_index = 2
-    stop_symbol = 8
-    beam_width = 3
-
     maximum_iterations = 50
-
     vocab_size = 9
-
     length_penalty = 0.6 # Check google nmt: 0.6-0/7 best
+
+    def __init__(self):
+        self.beam_width = 1
+        self.n_to_output = 1
+        self.stop_symbol = 0
+
+    def set_stop_token(self, symbol):
+        self.stop_symbol = symbol
+
+    def set_n_to_output(self, n):
+        self.n_to_output = n
+
+    def set_beam_width(self, beams):
+        self.beam_width = beams
 
     def set_graph(self, graph):
         self.rnn_model.set_inner_graph(graph)
@@ -205,13 +227,20 @@ class BeamSearchDecoderComponentValue:
         n_rec = self.rnn_model.count_recurrent_links()
         prediction_index = n_rec
         backpointer_index = n_rec + 1
-        score_index = n_rec + 2
 
         predictions = tf.reshape(loop[prediction_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
         backpointers = tf.reshape(loop[backpointer_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
 
         lengths = loop[-3]
-        decoded_sequences = tf.transpose(tf.reshape(self.decode(predictions, backpointers, tf.reshape(lengths, [-1, self.beam_width])), [-1, 30]), [1,0])
+        decoded_sequences = self.decode(predictions, backpointers, tf.reshape(lengths, [-1, self.beam_width]))
+
+        if self.n_to_output < self.beam_width:
+            decoded_sequences = decoded_sequences[:,:,:self.n_to_output]
+            lengths = tf.reshape(lengths, [-1, self.beam_width])
+            lengths = lengths[:, :self.n_to_output]
+            lengths = tf.reshape(lengths, [-1])
+
+        decoded_sequences = tf.transpose(tf.reshape(decoded_sequences, [-1, self.rnn_model.batch_size * self.n_to_output]), [1,0])
 
         return decoded_sequences, lengths
 

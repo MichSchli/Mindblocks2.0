@@ -1,0 +1,16 @@
+this is a toast .
+this dataset is real !
+be happy
+i am trying everything
+definitely something else
+sure this will work .
+if you know
+you better test on a fake dataset
+like this toy dataset .
+it is real .
+haha got me .
+there are many sentences
+in this dataset .
+they are not written .
+with long words .
+they are in the data .

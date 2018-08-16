@@ -145,6 +145,8 @@ class RnnHelper:
                 rnn_model.inner_graph.enforce_type(parts[0], parts[1], tensor_type)
             elif init is not None and init.startswith("socket:"):
                 parts = graph_input.split(":")
-                input_type = graph_input_type.copy()
+                init_info = init.split(":")[1]
+                source_input_type = input_type_dictionary[init_info]
+                input_type = source_input_type.copy()
                 input_type.set_outer_dim(batch_size)
                 rnn_model.inner_graph.enforce_type(parts[0], parts[1], input_type)

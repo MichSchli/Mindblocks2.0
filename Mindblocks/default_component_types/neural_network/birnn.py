@@ -11,23 +11,37 @@ class BiRnn(ComponentTypeModel):
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return BiRnnValue(value_dictionary["dimension"][0][0])
+        layers = 1
+        if "layers" in value_dictionary:
+            layers = int(value_dictionary["layers"][0][0])
+
+        value = BiRnnValue(value_dictionary["dimension"][0][0], layers=layers)
+
+        if "layer_dropout" in value_dictionary:
+            value.set_layer_dropout(float(value_dictionary["layer_dropout"][0][0]))
+
+        return value
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-        cell_forward = value.cell_forward
-        cell_backward = value.cell_backward
-
         sequences = input_dictionary["input"].get_sequences()
         lengths = input_dictionary["input"].get_sequence_lengths()
 
-        rnn_output = tf.nn.bidirectional_dynamic_rnn(cell_forward,
-                                                     cell_backward,
-                                                     sequences,
-                                                     dtype=tf.float32,
-                                                     sequence_length=lengths)
+        for layer in range(value.layers):
+            cell_forward = value.cells_forward[layer]
+            cell_backward = value.cells_backward[layer]
 
+            rnn_output = tf.nn.bidirectional_dynamic_rnn(cell_forward,
+                                                         cell_backward,
+                                                         sequences,
+                                                         dtype=tf.float32,
+                                                         sequence_length=lengths)
 
-        out_sequences = tf.concat(rnn_output[0], -1)
+            out_sequences = tf.concat(rnn_output[0], axis=-1)
+            sequences = out_sequences
+
+            if mode == "train" and value.layer_dropout_keep_prob is not None:
+                sequences = tf.nn.dropout(sequences, value.layer_dropout_keep_prob)
+
         final_states = tf.concat([rnn_output[1][i][1] for i in [0,1]], -1)
 
         output_value_models["output"].assign(out_sequences, language="tensorflow")
@@ -38,17 +52,32 @@ class BiRnn(ComponentTypeModel):
         new_type = input_types["input"].copy()
         new_type.set_inner_dim(value.get_final_cell_size())
 
-        final_state_type = input_types["input"].get_single_token_type()
+        final_state_type = new_type.get_single_token_type()
         final_state_type.extend_outer_dim(input_types["input"].get_batch_size())
         return {"output": new_type,
                 "final_state": final_state_type}
 
 class BiRnnValue(ExecutionComponentValueModel):
 
-    def __init__(self, cell_size):
+    layers = None
+    layer_dropout_keep_prob = None
+
+    def __init__(self, cell_size, layers=1):
+        self.layers = layers
         self.cell_size = int(cell_size)
+
+        self.cells_forward = [None] * layers
+        self.cells_backward = [None] * layers
+
+        for i in range(layers):
+            self.cells_forward[i] = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name="forward_"+str(i))
+            self.cells_backward[i] = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name="backward_"+str(i))
+
         self.cell_forward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name="forward")
         self.cell_backward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name="backward")
+
+    def set_layer_dropout(self, dropout):
+        self.layer_dropout_keep_prob = 1 - dropout
 
     def get_final_cell_size(self):
         return self.cell_size

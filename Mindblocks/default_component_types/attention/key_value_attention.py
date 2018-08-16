@@ -49,12 +49,7 @@ class KeyValueAttentionComponent(ComponentTypeModel):
         transformed_key = tf.reshape(transformed_key, [previous_shape[0], previous_shape[1], value.attention_heads, dim])
         transformed_value = tf.reshape(transformed_value, [previous_shape[0], previous_shape[1], value.attention_heads, dim])
 
-        print(mode)
-        print(transformed_key)
-        print(key)
-
         transformed_context_key = value.key_input_transform.transform(key, mode)
-        print(transformed_context_key)
         transformed_key *= tf.reshape(transformed_context_key, [previous_shape[0], 1, value.attention_heads, dim])
 
         norm_factor = np.sqrt(dim)
@@ -70,6 +65,7 @@ class KeyValueAttentionComponent(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value):
         output_type = input_types["key"].copy()
+        output_type.set_inner_dim(value.output_dimension)
 
         return {"output": output_type}
 

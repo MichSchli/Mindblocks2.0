@@ -1,6 +1,6 @@
 from Mindblocks.model.value_type.sequence_batch.sequence_batch_value_model import SequenceBatchValueModel
 from Mindblocks.model.value_type.tensor import tensor_type_model
-
+import tensorflow as tf
 
 class SequenceBatchTypeModel:
 
@@ -10,6 +10,7 @@ class SequenceBatchTypeModel:
 
     cached_seq_placeholder = None
     cached_len_placeholder = None
+    tensorflow_batch_size = None
 
     def __init__(self, type, item_shape, batch_size, maximum_sequence_length):
         self.type = type
@@ -20,12 +21,13 @@ class SequenceBatchTypeModel:
     def initialize_value_model(self):
         value_model = SequenceBatchValueModel(self.type, self.item_shape)
         value_model.maximum_sequence_length = self.maximum_sequence_length
-        value_model.batch_size = self.batch_size
+        #value_model.batch_size = self.batch_size
 
         return value_model
 
     def copy(self):
-        return SequenceBatchTypeModel(self.type, self.item_shape, self.batch_size, self.maximum_sequence_length)
+        copy = SequenceBatchTypeModel(self.type, self.item_shape, self.batch_size, self.maximum_sequence_length)
+        return copy
 
     def subsample(self, dimension):
         self.batch_size = dimension
@@ -53,7 +55,6 @@ class SequenceBatchTypeModel:
 
     def get_tensorflow_placeholder(self):
         placeholder_model = self.initialize_value_model()
-        placeholder_model.batch_size = self.batch_size
         placeholder_model.max_length = None
 
         if self.cached_seq_placeholder is None:
@@ -64,6 +65,9 @@ class SequenceBatchTypeModel:
             placeholder_model.assign_with_lengths(self.cached_seq_placeholder, self.cached_len_placeholder)
 
         return placeholder_model
+
+    def get_tensorflow_batch_size(self):
+        return self.tensorflow_batch_size
 
     def get_cached_placeholders(self):
         return [self.cached_seq_placeholder, self.cached_len_placeholder]

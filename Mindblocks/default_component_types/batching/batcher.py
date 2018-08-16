@@ -28,6 +28,9 @@ class Batcher(ComponentTypeModel):
         data_type.subsample(indexes_outer_dim)
         return {"output": data_type}
 
+    def has_batches(self, value, previous_values):
+        return previous_values["indexes"]
+
 
 class BatcherValue(ExecutionComponentValueModel):
 

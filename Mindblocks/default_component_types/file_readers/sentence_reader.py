@@ -23,7 +23,7 @@ class SentenceReader(ComponentTypeModel):
 
     def execute(self, input_dictionary, value, output_models, mode):
         output_models["output"].assign(value.read())
-        output_models["count"].assign(value.count)
+        output_models["count"].assign(value.count())
         return output_models
 
     def build_value_type_model(self, input_types, value):

@@ -31,6 +31,9 @@ class SequenceBatchValueModel:
     def get_batch_size(self):
         return self.batch_size
 
+    def get_inner_dim(self):
+        return self.item_shape[-1] if len(self.item_shape) > 0 else 1
+
     def get_maximum_sequence_length(self):
         return self.maximum_sequence_length
 
@@ -39,6 +42,7 @@ class SequenceBatchValueModel:
 
         if language == "python":
             self.sequence_lengths = [len(s) for s in sequence_batch]
+            self.batch_size = len(sequence_batch)
         else:
             pass
 

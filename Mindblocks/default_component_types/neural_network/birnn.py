@@ -36,7 +36,7 @@ class BiRnn(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value):
         new_type = input_types["input"].copy()
-        new_type.out_dim = value.get_final_cell_size()
+        new_type.set_inner_dim(value.get_final_cell_size())
 
         final_state_type = input_types["input"].get_single_token_type()
         final_state_type.extend_outer_dim(input_types["input"].get_batch_size())

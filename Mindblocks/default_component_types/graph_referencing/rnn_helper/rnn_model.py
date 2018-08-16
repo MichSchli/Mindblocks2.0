@@ -93,7 +93,8 @@ class RnnModel:
         dims = [int(v) for v in dim_string.split(",")] if len(dim_string) > 0 else []
 
         if extend_to_batch:
-            dims = [self.batch_size * self.tiling_factor] + dims
+            #dims = [self.batch_size * self.tiling_factor] + dims
+            dims = [None] + dims
 
         tf_value = tensor_array_ops.TensorArray(
             dtype=tf_type,

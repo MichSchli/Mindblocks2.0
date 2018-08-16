@@ -20,6 +20,7 @@ class Indexer(ComponentTypeModel):
     def execute(self, input_dictionary, value, output_value_models, mode):
         transformed_input = value.apply_index(input_dictionary["input"].get_value(),
                                               input_dictionary["index"].get_index())
+
         output_value_models["output"].assign(transformed_input)
         return output_value_models
 

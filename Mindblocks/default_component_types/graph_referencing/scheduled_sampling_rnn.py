@@ -44,9 +44,6 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
         return output_models
 
     def build_value_type_model(self, input_types, value):
-        batch_size = input_types["teacher_inputs"].get_batch_size()
-        value.rnn_model.set_batch_size(batch_size)
-
         rnn_helper = RnnHelper()
         rnn_helper.handle_input_types(value.rnn_model, input_types)
 
@@ -91,7 +88,9 @@ class ScheduledSamplingRnnComponentValue:
                 next_teacher_value = self.get_teacher_value(args[-1]-1)
                 student_suggestion = args[self.teacher_index]
 
-                coin_flip = tf.random_uniform([self.rnn_model.batch_size], minval=0, maxval=1)
+                teacher_shape = tf.shape(next_teacher_value)
+
+                coin_flip = tf.random_uniform([teacher_shape[0]], minval=0, maxval=1)
                 chosen_input = tf.where(coin_flip < self.teacher_probability, x=next_teacher_value, y=student_suggestion)
 
                 actual_input = tf.where(counter > 0, x=chosen_input, y=student_suggestion)
@@ -129,6 +128,9 @@ class ScheduledSamplingRnnComponentValue:
         return self.teacher_values[index]
 
     def assign_and_run(self, input_dictionary):
+        batch_size = tf.shape(input_dictionary["teacher_inputs"].get_value())[0]
+        self.rnn_model.set_batch_size(batch_size)
+
         self.teacher_probability = tf.assign(self.teacher_probability,
                                         value=tf.reduce_max([self.teacher_probability * self.decay_rate,
                                                              self.final_teacher_probability]))

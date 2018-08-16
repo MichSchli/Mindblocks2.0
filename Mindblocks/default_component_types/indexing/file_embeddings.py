@@ -25,6 +25,10 @@ class FileEmbeddings(ComponentTypeModel):
             index = int(value_dictionary["stop_token"][0][1]["index"]) if "index" in value_dictionary["stop_token"][0][1] else 0
             value.add_stop_token(value_dictionary["stop_token"][0][0], index)
 
+        if "unk_token" in value_dictionary:
+            index = int(value_dictionary["unk_token"][0][1]["index"]) if "index" in value_dictionary["unk_token"][0][1] else value.stop_token_index + 1
+            value.add_unk_token(value_dictionary["unk_token"][0][0], index)
+
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
@@ -52,6 +56,9 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     stop_token = None
     stop_token_index = None
 
+    unk_token = None
+    unk_token_index = None
+
     token_list = None
 
     def __init__(self, file_path, width):
@@ -67,6 +74,13 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         self.stop_token_index = index
 
         if index == 0:
+            self.add_to_index(token)
+
+    def add_unk_token(self, token, index):
+        self.unk_token = token
+        self.unk_token_index = index
+
+        if index == len(self.index["forward"]):
             self.add_to_index(token)
 
     def load_token_list(self):
@@ -112,6 +126,10 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         if self.stop_token is not None and len(self.index["forward"]) == self.stop_token_index:
             self.index["forward"][self.stop_token] = len(self.index["forward"])
             self.index["backward"][len(self.index["backward"])] = self.stop_token
+
+        if self.unk_token is not None and len(self.index["forward"]) == self.unk_token_index:
+            self.index["forward"][self.unk_token] = len(self.index["forward"])
+            self.index["backward"][len(self.index["backward"])] = self.unk_token
 
     def add_to_vectors(self, vector):
         self.vectors.append(vector)

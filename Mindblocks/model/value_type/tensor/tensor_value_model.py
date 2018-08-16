@@ -37,6 +37,9 @@ class TensorValueModel:
             np_type = np.float32
         return np_type
 
+    def get_inner_dim(self):
+        return self.dimensions[-1] if len(self.dimensions) > 0 else 1
+
     def assign(self, value, language=None):
         self.value = value
 

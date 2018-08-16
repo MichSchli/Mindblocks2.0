@@ -1,7 +1,7 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>5000</default_value>
+            <default_value>4000</default_value>
         </variable>
         <variable name="report_loss_every_n">
             <default_value>10</default_value>
@@ -29,6 +29,37 @@
             <stop_token>EOS</stop_token>
         </component>
 
+        <component name="batch_generator" type="BatchGenerator">
+            <batch_size>10</batch_size>
+        </component>
+        <edge>
+                <source socket="count">source_reader</source>
+                <target socket="count">batch_generator</target>
+        </edge>
+
+        <component name="source_batcher" type="Batcher">
+            <lazy>True</lazy>
+        </component>
+        <edge>
+                <source socket="output">source_reader</source>
+                <target socket="data">source_batcher</target>
+        </edge>
+        <edge>
+                <source socket="batch">batch_generator</source>
+                <target socket="indexes">source_batcher</target>
+        </edge>
+        <component name="target_batcher" type="Batcher">
+            <lazy>True</lazy>
+        </component>
+        <edge>
+                <source socket="output">target_reader</source>
+                <target socket="data">target_batcher</target>
+        </edge>
+        <edge>
+                <source socket="batch">batch_generator</source>
+                <target socket="indexes">target_batcher</target>
+        </edge>
+
         <component name="embedding" type="FileEmbeddings">
             <file_path>$embedding_folder/glove.840B.300d.txt</file_path>
             <width>300</width>
@@ -40,7 +71,7 @@
             <input_type>sequence</input_type>
         </component>
         <edge>
-                <source socket="output">source_reader</source>
+                <source socket="output">source_batcher</source>
                 <target socket="input">source_indexer</target>
         </edge>
         <edge>
@@ -51,7 +82,7 @@
             <input_type>sequence</input_type>
         </component>
         <edge>
-                <source socket="output">target_reader</source>
+                <source socket="output">target_batcher</source>
                 <target socket="input">target_indexer</target>
         </edge>
         <edge>

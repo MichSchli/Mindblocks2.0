@@ -31,7 +31,12 @@ class Concat(ComponentTypeModel):
         if len(left_dims) == 0 and len(right_dims) == 0:
             value.new_array = True
 
-        return {"output": input_types["left"].copy()}
+        output = input_types["left"].copy()
+
+        if len(left_dims) > 0 and len(right_dims) > 0:
+            output.set_inner_dim(left_dims[-1] + right_dims[-1])
+
+        return {"output": output}
 
 
 class ConcatValue(ExecutionComponentValueModel):

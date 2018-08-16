@@ -25,6 +25,7 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         beam_input = value_dictionary["beam"][0]
         parts = beam_input[0].split("->")
         init = beam_input[1]["init"] if "init" in beam_input[1] else "zero_tensor:|int"
+        value.set_beam_index(value.rnn_model.count_recurrent_links())
         value.rnn_model.add_recurrence(parts[0], parts[1], init=init)
 
         if "n_beams" in value_dictionary:
@@ -42,6 +43,8 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
+        batch_size = self.compute_batch_size(input_dictionary, value)
+        value.rnn_model.set_batch_size(batch_size)
         decoded_sequences, lengths = value.assign_and_run(input_dictionary)
 
         output_models["predictions"].assign_with_lengths(decoded_sequences, lengths)
@@ -50,6 +53,7 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value):
         rnn_helper = RnnHelper()
+
         rnn_helper.tile_batches(value.rnn_model, value.beam_width)
         rnn_helper.handle_input_types(value.rnn_model, input_types)
 
@@ -57,9 +61,16 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         output_types = value.compute_types()
 
         # TODO this is nonsence
-        output_types["predictions"] = SequenceBatchTypeModel("int", [], 30, 30)
+        output_types["predictions"] = SequenceBatchTypeModel("int", [], None, value.maximum_iterations)
 
         return output_types
+
+    def compute_batch_size(self, input_dictionary, value):
+        for component_input, graph_input, feed_type in value.rnn_model.in_links:
+            if feed_type == "per_batch":
+                batch_size = tf.shape(input_dictionary[component_input].get_value())[0]
+
+        return batch_size
 
 
 class BeamSearchDecoderComponentValue:
@@ -70,7 +81,7 @@ class BeamSearchDecoderComponentValue:
     stop_symbol = None
     vocab_size = None
 
-    beam_index = 2
+    beam_index = None
     maximum_iterations = 50
     length_penalty = 0.6 # Check google nmt: 0.6-0/7 best
 
@@ -78,6 +89,9 @@ class BeamSearchDecoderComponentValue:
         self.beam_width = 1
         self.n_to_output = 1
         self.stop_symbol = 0
+
+    def set_beam_index(self, index):
+        self.beam_index = index
 
     def set_stop_token(self, symbol):
         self.stop_symbol = symbol

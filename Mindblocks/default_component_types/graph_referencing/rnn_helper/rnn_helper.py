@@ -74,12 +74,15 @@ class RnnHelper:
 
         counter = 0
 
+        batch_size = rnn_model.get_batch_size()
+
         for graph_output, graph_input, init in rnn_model.recurrences:
             if init is not None and init.startswith("zero_tensor"):
                 counter += 1
                 parts = graph_input.split(":")
                 in_socket = rnn_model.inner_graph.get_in_socket(parts[0], parts[1])
                 dims = in_socket.replaced_type.get_dimensions()
+                dims[0] = batch_size * rnn_model.tiling_factor if batch_size is not None else None
                 tf_type = tf.int32 if in_socket.replaced_type.type == "int" else tf.float32
                 tf_value = tf.zeros(dims, dtype=tf_type, name="zero_initializer_"+str(counter))
                 initializers.append(tf_value)
@@ -115,18 +118,7 @@ class RnnHelper:
         return sequence_output_values
 
     def handle_input_types(self, rnn_model, input_type_dictionary):
-        batch_size = rnn_model.get_batch_size()
-
-        if batch_size is None:
-            for component_input, graph_input, feed_type in rnn_model.in_links:
-                if feed_type == "per_batch":
-                    source_input_type = input_type_dictionary[component_input]
-                    batch_size = source_input_type.get_batch_size()
-
-                    rnn_model.set_batch_size(batch_size)
-
-        batch_size *= rnn_model.tiling_factor
-
+        batch_size = None
         for component_input, graph_input, feed_type in rnn_model.in_links:
             parts = graph_input.split(":")
             source_input_type = input_type_dictionary[component_input]

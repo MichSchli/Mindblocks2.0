@@ -5,15 +5,14 @@ from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import
 from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
-class ConllReader(ComponentTypeModel):
+class SentenceReader(ComponentTypeModel):
 
-    name = "ConllReader"
+    name = "SentenceReader"
     out_sockets = ["output", "count"]
     languages = ["python"]
 
     def initialize_value(self, value_dictionary, language):
-        value = ConllReaderValue(value_dictionary["file_path"][0][0],
-                                value_dictionary["columns"][0][0].split(","))
+        value = SentenceReaderValue(value_dictionary["file_path"][0][0])
 
         if "start_token" in value_dictionary:
             value.set_start_token(value_dictionary["start_token"][0][0])
@@ -28,7 +27,7 @@ class ConllReader(ComponentTypeModel):
         return output_models
 
     def build_value_type_model(self, input_types, value):
-        return {"output": SequenceBatchTypeModel("string", [value.count_columns()], len(value.read()), max([len(v) for v in value.read()])),
+        return {"output": SequenceBatchTypeModel("string", [], len(value.read()), max([len(v) for v in value.read()])),
                 "count": TensorTypeModel("int", [])}
 
     def has_batches(self, value, previous_values):
@@ -37,16 +36,15 @@ class ConllReader(ComponentTypeModel):
         return has_batch
 
 
-class ConllReaderValue(ExecutionComponentValueModel):
+class SentenceReaderValue(ExecutionComponentValueModel):
 
     filepath = None
     size = None
     start_token = None
     stop_token = None
 
-    def __init__(self, filepath, column_info):
+    def __init__(self, filepath):
         self.filepath = filepath
-        self.column_info = column_info
         self.has_batch = True
 
     def set_start_token(self, token):
@@ -56,14 +54,10 @@ class ConllReaderValue(ExecutionComponentValueModel):
         self.stop_token = token
 
     def get_start_token_part(self):
-        parts = ["_" for _ in range(self.count_columns())]
-        parts[1] = self.start_token
-        return parts
+        return self.start_token
 
     def get_stop_token_part(self):
-        parts = ["_" for _ in range(self.count_columns())]
-        parts[1] = self.stop_token
-        return parts
+        return self.stop_token
 
     def init_batches(self):
         self.has_batch = True
@@ -81,14 +75,8 @@ class ConllReaderValue(ExecutionComponentValueModel):
             line = line.strip()
 
             if line:
-                line_parts = line.split('\t')
+                lines[-1].extend(line.split(" "))
 
-                for i, column_type in enumerate(self.column_info):
-                    if column_type == "int":
-                        line_parts[i] = int(line_parts[i])
-
-                lines[-1].append(line_parts)
-            else:
                 if self.stop_token is not None:
                     lines[-1].append(self.get_stop_token_part())
 
@@ -98,7 +86,7 @@ class ConllReaderValue(ExecutionComponentValueModel):
                     lines.append([])
 
         if not lines[-1] or lines[-1] == [self.get_start_token_part()]:
-            lines = lines[-1]
+            lines = lines[:-1]
 
         if self.stop_token is not None and len(lines) > 0 and lines[-1][-1] != self.get_stop_token_part():
             lines[-1].append(self.get_stop_token_part())

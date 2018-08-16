@@ -10,8 +10,12 @@ class Indexer(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary, language):
-        return IndexerValue(value_dictionary["input_type"][0][0],
-                            int(value_dictionary["input_column"][0][0]))
+        indexer_value = IndexerValue(value_dictionary["input_type"][0][0])
+
+        if "input_column" in value_dictionary:
+            indexer_value.set_input_column(int(value_dictionary["input_column"][0][0]))
+
+        return indexer_value
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         transformed_input = value.apply_index(input_dictionary["input"].get_value(),
@@ -28,9 +32,14 @@ class Indexer(ComponentTypeModel):
 
 class IndexerValue(ExecutionComponentValueModel):
 
-    def __init__(self, input_type, input_column):
+    input_column = None
+
+    def __init__(self, input_type):
         self.input_type = input_type
-        self.input_column = input_column
+        self.input_column = None
+
+    def set_input_column(self, column_index):
+        self.input_column = column_index
 
     def apply_index(self, input_value, index):
         if self.input_type == "sequence":
@@ -38,7 +47,10 @@ class IndexerValue(ExecutionComponentValueModel):
             for i in range(len(input_value)):
                 output.append([])
                 for j in range(len(input_value[i])):
-                    to_index = input_value[i][j][self.input_column]
+                    if self.input_column is not None:
+                        to_index = input_value[i][j][self.input_column]
+                    else:
+                        to_index = input_value[i][j]
 
                     if to_index not in index["forward"]:
                         index["forward"][to_index] = len(index["forward"])

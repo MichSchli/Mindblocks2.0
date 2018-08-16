@@ -71,3 +71,6 @@ class BasicInterface:
 
     def evaluate(self):
         return self.ml_helper.evaluate()
+
+    def predict(self):
+        return self.ml_helper.predict()

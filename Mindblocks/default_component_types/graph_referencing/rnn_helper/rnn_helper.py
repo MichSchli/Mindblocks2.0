@@ -92,7 +92,12 @@ class RnnHelper:
                 in_socket = rnn_model.inner_graph.get_in_socket(parts[0], parts[1])
                 linked_socket = input_dictionary[init[7:]]
 
-                initializers.append(linked_socket.get_value())
+                init_value = linked_socket.get_value()
+
+                if rnn_model.tiling_factor > 1:
+                    init_value = tf.contrib.seq2seq.tile_batch(init_value, rnn_model.tiling_factor)
+
+                initializers.append(init_value)
                 recurrency_sockets.append(in_socket)
 
         return recurrency_sockets, initializers

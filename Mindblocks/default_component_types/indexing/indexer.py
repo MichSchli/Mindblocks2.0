@@ -54,10 +54,14 @@ class IndexerValue(ExecutionComponentValueModel):
                         to_index = input_value[i][j]
 
                     if to_index not in index["forward"]:
-                        index["forward"][to_index] = len(index["forward"])
-                        index["backward"][index["forward"][to_index]] = to_index
+                        if "unk_token" in index and index["unk_token"] is not None:
+                            to_index = index["unk_token"]
+                        else:
+                            index["forward"][to_index] = len(index["forward"])
+                            index["backward"][index["forward"][to_index]] = to_index
 
                     output[i].append(index["forward"][to_index])
+
             return output
         elif self.input_type.startswith("tensor"):
             total_dims = int(self.input_type.split(":")[1])

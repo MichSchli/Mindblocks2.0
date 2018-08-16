@@ -13,7 +13,7 @@
         </variable>
 
         <variable name="vocabulary_size">
-            <default_value>54</default_value>
+            <default_value>49</default_value>
         </variable>
         <variable name="attention_heads">
             <default_value>1</default_value>

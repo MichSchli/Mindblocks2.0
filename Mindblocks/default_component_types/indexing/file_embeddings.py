@@ -62,7 +62,7 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     token_list = None
 
     def __init__(self, file_path, width):
-        self.index = {"forward": {}, "backward": {}}
+        self.index = {"forward": {}, "backward": {}, "unk_token": None}
         self.file_path = file_path
         self.separator = ","
         self.width = width
@@ -79,6 +79,8 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     def add_unk_token(self, token, index):
         self.unk_token = token
         self.unk_token_index = index
+
+        self.index["unk_token"] = token
 
         if index == len(self.index["forward"]):
             self.add_to_index(token)
@@ -119,6 +121,9 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         if self.stop_token is not None:
             self.insert_stop_token()
 
+        if self.unk_token is not None:
+            self.insert_unk_token()
+
     def add_to_index(self, label):
         self.index["forward"][label] = len(self.index["forward"])
         self.index["backward"][len(self.index["backward"])] = label
@@ -137,6 +142,10 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     def insert_stop_token(self):
         stop_token_vector = [0] * self.width
         self.vectors.insert(self.stop_token_index, stop_token_vector)
+
+    def insert_unk_token(self):
+        unk_token_vector = [-1] * self.width
+        self.vectors.insert(self.unk_token_index, unk_token_vector)
 
     def get_index(self):
         return self.index

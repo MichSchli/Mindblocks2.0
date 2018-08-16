@@ -121,11 +121,11 @@ class TestToyNmt(unittest.TestCase):
             gold_tokens = s.split(" ")
             for j, t in enumerate(gold_tokens):
                 if predictions[i][j] != "UNK":
-                    self.assertEqual(s, predictions[i][j])
+                    self.assertEqual(t, predictions[i][j])
                 else:
                     unk_count += 1
 
-        self.assertLess(20, unk_count)
+        self.assertGreater(10, unk_count)
 
     def testSeqtoSeqWithKVMultiHeadAttention(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_attention.xml"

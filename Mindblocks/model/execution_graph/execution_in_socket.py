@@ -50,3 +50,12 @@ class ExecutionInSocket:
     def init_batches(self):
         if self.source is not None:
             self.source.init_batches()
+
+    def should_use_placeholder_for_tensorflow(self):
+        return self.source.should_use_placeholder_for_tensorflow()
+
+    def initialize(self, mode):
+        if self.source is not None:
+            return self.source.initialize(mode)
+        elif self.replaced_value is not None:
+            return self.replaced_value

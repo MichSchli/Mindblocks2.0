@@ -15,7 +15,8 @@ class TensorTypeModel:
         self.cached_casts = {}
 
     def initialize_value_model(self):
-        return TensorValueModel(self.type, self.dimensions)
+        tensor_value = TensorValueModel(self.type, self.dimensions)
+        return tensor_value
 
     def get_tensorflow_placeholder(self):
         placeholder_model = self.initialize_value_model()
@@ -35,7 +36,8 @@ class TensorTypeModel:
         return self.type
 
     def copy(self):
-        return TensorTypeModel(self.type, self.dimensions)
+        tensor_type = TensorTypeModel(self.type, self.dimensions)
+        return tensor_type
 
     def format_from_tensorflow_output(self, output_tensors):
         value_model = self.initialize_value_model()

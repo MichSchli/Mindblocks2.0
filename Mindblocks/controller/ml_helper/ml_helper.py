@@ -1,3 +1,8 @@
+import tensorflow as tf
+
+from Mindblocks.controller.ml_helper.initialization_helper import InitializationHelper
+
+
 class MlHelper:
 
     evaluate_function = None
@@ -9,6 +14,11 @@ class MlHelper:
     configuration = None
 
     model = None
+
+    has_initialized = False
+
+    def __init__(self):
+        self.initialization_helper = InitializationHelper()
 
     def set_evaluate_function(self, execution_graph):
         self.evaluate_function = execution_graph
@@ -26,6 +36,7 @@ class MlHelper:
         self.prediction_function = prediction_graph
 
     def evaluate(self):
+        self.initialize_model()
         self.evaluate_function.init_batches()
         performance = 0.0
         while self.evaluate_function.has_batches():
@@ -33,9 +44,11 @@ class MlHelper:
         return performance
 
     def validate(self):
+        self.initialize_model()
         return self.do_validate()
 
     def predict(self):
+        self.initialize_model()
         self.prediction_function.init_batches()
         predictions = []
 
@@ -48,11 +61,21 @@ class MlHelper:
         return self.validate_function is not None
 
     def train(self):
+        self.initialize_model()
+
         for i in range(self.configuration.max_iterations):
             self.do_train_iteration()
 
             if self.should_validate() and i % self.configuration.validate_every_n == 0:
                 print(self.do_validate())
+
+    def initialize_model(self):
+        if not self.has_initialized:
+            self.initialization_helper.initialize([self.update_and_loss_function,
+                                                   self.prediction_function,
+                                                   self.validate_function,
+                                                   self.evaluate_function])
+            self.has_initialized = True
 
     def do_validate(self):
         self.validate_function.init_batches()

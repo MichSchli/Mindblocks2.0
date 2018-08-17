@@ -22,6 +22,7 @@ class TestTensorflowSimpleBlocks(unittest.TestCase):
         runs = [[target_socket]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.0], run_graphs[0].execute())
@@ -39,6 +40,7 @@ class TestTensorflowSimpleBlocks(unittest.TestCase):
         runs = [[target_socket]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertAlmostEqual(8.0, run_graphs[0].execute()[0], places=5)

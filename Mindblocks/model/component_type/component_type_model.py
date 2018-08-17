@@ -25,3 +25,9 @@ class ComponentTypeModel:
             if not inp:
                 return False
         return True
+
+    def initialize(self, input_dictionary, execution_value, output_value_models):
+        return output_value_models
+
+    def determine_placeholders(self, value, in_socket_names):
+        return {k: True for k in in_socket_names}

@@ -7,6 +7,7 @@ from Mindblocks.controller.block_loader.graph_loader import GraphLoader
 from Mindblocks.controller.block_loader.variable_loader import VariableLoader
 from Mindblocks.controller.component_type_loader.component_type_loader import ComponentTypeLoader
 from Mindblocks.controller.graph_converter.graph_converter import GraphConverter
+from Mindblocks.controller.ml_helper.initialization_helper import InitializationHelper
 from Mindblocks.controller.ml_helper.ml_helper_factory import MlHelperFactory
 from Mindblocks.helpers.files.FilepathHandler import FilepathHandler
 from Mindblocks.helpers.xml.xml_helper import XmlHelper
@@ -56,3 +57,4 @@ class SetupHolder:
         self.graph_converter = GraphConverter(self.variable_repository, self.graph_repository)
 
         self.ml_helper_factory = MlHelperFactory(self.graph_converter, self.variable_repository)
+        self.initialization_helper = InitializationHelper()

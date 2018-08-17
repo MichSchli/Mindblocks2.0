@@ -24,6 +24,24 @@ class ExecutionComponentModel:
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)
 
+    def initialize(self, mode):
+        input_dictionary = {k: in_socket.initialize(mode) for k, in_socket in self.in_sockets.items()}
+        output_value_models = {k: type_model.initialize_value_model() for k, type_model in
+                               self.output_type_models.items()}
+
+        output_dictionary = self.execution_type.initialize(input_dictionary,
+                                                           self.execution_value,
+                                                           output_value_models)
+
+        for k,v in output_dictionary.items():
+            self.out_sockets[k].set_cached_init_value(v)
+
+    def determine_placeholders(self):
+        d = self.execution_type.determine_placeholders(self.execution_value, self.output_type_models.keys())
+
+        for k,v in d.items():
+            self.out_sockets[k].set_determine_placeholders(v)
+
     def infer_type_models(self):
         in_types = {k : in_socket.pull_type_model() for k,in_socket in self.in_sockets.items()}
         self.output_type_models = self.execution_type.build_value_type_model(in_types, self.execution_value)

@@ -1,7 +1,10 @@
 class ExecutionOutSocket:
 
     cached_value = None
+    cached_init_value = None
     cached_type = None
+
+    should_use_placeholder_for_tensorflow_cache = None
 
     execution_component = None
     targets = None
@@ -15,8 +18,14 @@ class ExecutionOutSocket:
 
         return self.cached_value
 
+    def set_determine_placeholders(self, p):
+        self.should_use_placeholder_for_tensorflow_cache = p
+
     def set_cached_value(self, value):
         self.cached_value = value
+
+    def set_cached_init_value(self, value):
+        self.cached_init_value = value
 
     def add_target(self, in_socket):
         self.targets.append(in_socket)
@@ -42,3 +51,15 @@ class ExecutionOutSocket:
 
     def init_batches(self):
         self.execution_component.init_batches()
+
+    def should_use_placeholder_for_tensorflow(self):
+        if self.should_use_placeholder_for_tensorflow_cache is None:
+            self.execution_component.determine_placeholders()
+
+        return self.should_use_placeholder_for_tensorflow_cache
+
+    def initialize(self, mode):
+        if self.cached_init_value is None:
+            self.execution_component.initialize(mode)
+
+        return self.cached_init_value

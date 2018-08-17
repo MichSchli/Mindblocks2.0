@@ -55,6 +55,9 @@ class TensorflowSection(ExecutionComponentModel):
     def create_feed_dict(self, mode):
         feed_dict = {}
         for tf_in_socket, in_socket in self.matched_in_sockets:
+            if not self.should_use_placeholder(in_socket):
+                continue
+
             value = in_socket.pull(mode)
             placeholders = in_socket.pull_type_model().get_cached_placeholders()
 
@@ -63,6 +66,26 @@ class TensorflowSection(ExecutionComponentModel):
                 feed_dict[k] = v
 
         return feed_dict
+
+    def should_use_placeholder(self, in_socket):
+        return in_socket.should_use_placeholder_for_tensorflow()
+
+    def initialize(self, mode):
+        for tf_in_socket, in_socket in self.matched_in_sockets:
+            initialization_value = tf_in_socket.initialize(mode)
+
+            if self.should_use_placeholder(in_socket):
+                socket_placeholder = self.get_placeholder(in_socket)
+                tf_in_socket.replaced_value = socket_placeholder
+            else:
+                print(initialization_value)
+                tf_in_socket.replaced_value = initialization_value
+
+        self.compile(mode)
+
+        for tf_out_socket, out_socket in self.matched_out_sockets:
+            init_value = tf_in_socket.initialize(mode)
+            out_socket.set_cached_init_value(init_value)
 
     def clear_caches(self):
         for _, in_socket in self.matched_in_sockets:

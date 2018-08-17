@@ -67,6 +67,7 @@ class TestGraphConverter(unittest.TestCase):
         runs = [[target_socket]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.15], run_graphs[0].execute())
@@ -84,6 +85,7 @@ class TestGraphConverter(unittest.TestCase):
         runs = [[target_socket]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.15], run_graphs[0].execute())
@@ -105,6 +107,7 @@ class TestGraphConverter(unittest.TestCase):
         runs = [[target_socket], [target_socket_2]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         self.assertEqual(2, len(run_graphs))
         self.assertEqual([8.15], run_graphs[0].execute())
@@ -128,6 +131,7 @@ class TestGraphConverter(unittest.TestCase):
         runs = [[target_socket, target_socket_2]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual([8.15, 13.32], run_graphs[0].execute())
@@ -145,6 +149,7 @@ class TestGraphConverter(unittest.TestCase):
         runs = [[target_socket]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         self.assertEqual(1, len(run_graphs))
         self.assertEqual(2, run_graphs[0].count_components())

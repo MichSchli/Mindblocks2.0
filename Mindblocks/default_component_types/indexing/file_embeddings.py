@@ -3,8 +3,7 @@ from Mindblocks.model.execution_graph.execution_component_value_model import Exe
 import numpy as np
 
 from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
-from Mindblocks.model.value_type.old.index_type import IndexType
-from Mindblocks.model.value_type.old.tensor_type import TensorType
+import tensorflow as tf
 from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
@@ -32,17 +31,30 @@ class FileEmbeddings(ComponentTypeModel):
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
-        if not value.loaded:
-            value.load()
 
         output_models["index"].assign(value.get_index())
         output_models["vectors"].assign(value.get_vectors())
 
         return output_models
 
+    def initialize(self, input_dictionary, value, output_value_models):
+        if not value.loaded:
+            value.load()
+        output_value_models["vectors"].assign(value.get_vectors())
+
+        return output_value_models
+
     def build_value_type_model(self, input_types, value):
+        vector_model = TensorTypeModel("float", [None, value.get_width()])
         return {"index": IndexTypeModel(),
-                "vectors": TensorTypeModel("float", [None, value.get_width()])}
+                "vectors": vector_model}
+
+    def determine_placeholders(self, value, out_socket_names):
+        default = {k: True for k in out_socket_names}
+
+        default["vectors"] = False
+
+        return default
 
 
 class FileEmbeddingsValue(ExecutionComponentValueModel):
@@ -124,6 +136,8 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         if self.unk_token is not None:
             self.insert_unk_token()
 
+        self.vectors = tf.Variable(np.array(self.vectors, dtype=np.float32), trainable=False)
+
     def add_to_index(self, label):
         self.index["forward"][label] = len(self.index["forward"])
         self.index["backward"][len(self.index["backward"])] = label
@@ -151,7 +165,7 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         return self.index
 
     def get_vectors(self):
-        return np.array(self.vectors, dtype=np.float32)
+        return self.vectors
 
     def get_width(self):
         return self.width

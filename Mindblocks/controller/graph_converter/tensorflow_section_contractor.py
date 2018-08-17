@@ -10,8 +10,7 @@ class TensorflowSectionContractor:
         tensorflow_session = tf.Session()
         for execution_graph, mode in zip(execution_graphs, run_modes):
             self.contract_tensorflow_sections(execution_graph, mode, tensorflow_session)
-
-        tensorflow_session.run(tf.global_variables_initializer())
+            execution_graph.tensorflow_session = tensorflow_session
 
     def contract_tensorflow_sections(self, execution_graph, mode, tensorflow_session):
         tensorflow_sections = self.find_tensorflow_sections(execution_graph)
@@ -71,5 +70,5 @@ class TensorflowSectionContractor:
 
             execution_graph.components.remove(component)
 
-        tensorflow_section.initialize_placeholders()
-        tensorflow_section.compile(mode)
+        #tensorflow_section.initialize_placeholders()
+        #tensorflow_section.compile(mode)

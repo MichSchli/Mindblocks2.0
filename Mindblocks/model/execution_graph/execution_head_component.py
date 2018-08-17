@@ -33,3 +33,7 @@ class ExecutionHeadComponent:
         print("\t"*indent + "Graph: ")
         for socket in self.run_output_sockets:
             socket.describe_graph(indent=indent+1)
+
+    def initialize(self, mode):
+        for socket in self.run_output_sockets:
+            socket.initialize(mode)

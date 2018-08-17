@@ -114,6 +114,7 @@ class TestIrisBlocks(unittest.TestCase):
         runs = [[accuracy]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        self.setup_holder.initialization_helper.initialize(run_graphs)
         run_graphs[0].init_batches()
         performance = run_graphs[0].execute()[0]
 

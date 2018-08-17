@@ -3,7 +3,7 @@ import unittest
 from Mindblocks.repository.creation_component_repository.creation_component_specifications import \
     CreationComponentSpecifications
 from tests.setup_holder import SetupHolder
-
+import tensorflow as tf
 
 class TestConllReaderBlocks(unittest.TestCase):
 
@@ -113,6 +113,8 @@ class TestConllReaderBlocks(unittest.TestCase):
         runs = [[target_socket]]
 
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+
+        self.setup_holder.initialization_helper.initialize(run_graphs)
 
         results = run_graphs[0].execute()[0]
         self.assertEqual(2, len(results))

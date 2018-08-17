@@ -18,7 +18,7 @@ class FileEmbeddings(ComponentTypeModel):
             value.separator = value_dictionary["separator"][0][0]
 
         if "token_list" in value_dictionary:
-            value.token_list = value_dictionary["token_list"][0][0]
+            value.use_vocabulary(value_dictionary["token_list"][0][0])
 
         if "stop_token" in value_dictionary:
             index = int(value_dictionary["stop_token"][0][1]["index"]) if "index" in value_dictionary["stop_token"][0][1] else 0
@@ -27,6 +27,9 @@ class FileEmbeddings(ComponentTypeModel):
         if "unk_token" in value_dictionary:
             index = int(value_dictionary["unk_token"][0][1]["index"]) if "index" in value_dictionary["unk_token"][0][1] else value.stop_token_index + 1
             value.add_unk_token(value_dictionary["unk_token"][0][0], index)
+
+        if "trainable" in value_dictionary:
+            value.set_trainable(value_dictionary["trainable"][0][0])
 
         return value
 
@@ -59,107 +62,186 @@ class FileEmbeddings(ComponentTypeModel):
 
 class FileEmbeddingsValue(ExecutionComponentValueModel):
 
+    length = None
+    width = None
+    vocabulary_file_path = None
+    vocabulary = None
+    special_symbols = None
     index = None
     vectors = None
     file_path = None
     separator = None
     loaded = None
-
+    next_item_pointer = None
     stop_token = None
-    stop_token_index = None
-
-    unk_token = None
-    unk_token_index = None
-
-    token_list = None
+    trainable = None
 
     def __init__(self, file_path, width):
         self.index = {"forward": {}, "backward": {}, "unk_token": None}
         self.file_path = file_path
         self.separator = ","
         self.width = width
-
         self.loaded = False
+        self.next_item_pointer = 0
+        self.special_symbols = []
+        self.trainable = False
 
-    def add_stop_token(self, token, index):
-        self.stop_token = token
-        self.stop_token_index = index
+    """
+    Vocabulary:
+    """
 
-        if index == 0:
-            self.add_to_index(token)
-
-    def add_unk_token(self, token, index):
-        self.unk_token = token
-        self.unk_token_index = index
-
-        self.index["unk_token"] = token
-
-        if index == len(self.index["forward"]):
-            self.add_to_index(token)
-
-    def load_token_list(self):
+    def load_token_list(self, filepath):
         token_list = []
-        f = open(self.token_list)
-        for line in f:
-            line = line.strip()
-            if line:
-                token_list.append(line)
+        with open(filepath, 'r') as token_file:
+            for line in token_file:
+                line = line.strip()
+                if line:
+                    token_list.append(line)
 
         return token_list
 
+    def use_vocabulary(self, filepath):
+        self.vocabulary_file_path = filepath
+
+    def uses_vocabulary(self):
+        return self.vocabulary_file_path is not None
+
+    def load_vocabulary(self):
+        self.vocabulary = self.load_token_list(self.vocabulary_file_path)
+        self.length = len(self.vocabulary) + self.count_special_symbols()
+
+    def free_vocabulary(self):
+        self.vocabulary = None
+
+    def in_vocabulary(self, item):
+        return item in self.vocabulary
+
+    """
+    Initialization:
+    """
+
+    def count_lines(self):
+        with open(self.file_path, 'r') as f:
+            num_lines = sum(1 for _ in f)
+        return num_lines
+
+    def set_number_of_vectors(self, number_of_vectors):
+        self.length = number_of_vectors
+
+    def dimensions_known(self):
+        return self.length is not None
+
+    def initialize_vectors(self):
+        self.vectors = np.zeros((self.length, self.width), dtype=np.float32)
+
+    """
+    Special characters:
+    """
+
+    def add_special_symbol(self, token, index, vector):
+        self.special_symbols.append((token, index, vector))
+
+    def count_special_symbols(self):
+        return len(self.special_symbols)
+
+    def populate_special_characters(self):
+        for token, index, vector in self.special_symbols:
+            self.add_to_index(token, index)
+            self.add_vector(vector, index)
+
+    def add_stop_token(self, token, index):
+        self.stop_token = token
+        self.add_special_symbol(token, index, np.zeros(self.width, dtype=np.float32))
+
+    def add_unk_token(self, token, index):
+        self.index["unk_token"] = token
+        self.add_special_symbol(token, index, np.ones(self.width, dtype=np.float32)*-1)
+
+    """
+    Appending:
+    """
+
+    def add_to_index(self, token, index):
+        self.index["forward"][token] = index
+        self.index["backward"][index] = token
+
+    def add(self, token):
+        while self.next_item_pointer in self.index["backward"]:
+            self.next_item_pointer += 1
+
+        self.add_to_index(token, self.next_item_pointer)
+        return self.next_item_pointer
+
+    def add_vector(self, vector, index):
+        self.vectors[index] = vector
+
+    """
+    Tensorflow formatting:
+    """
+
+    def format_output_to_tensorflow(self):
+        self.vectors = tf.Variable(np.array(self.vectors, dtype=np.float32), trainable=self.trainable)
+
+    def should_output_tensorflow(self):
+        return self.trainable != "feed"
+
+    def set_trainable(self, value):
+        if value == "feed":
+            self.trainable = value
+        else:
+            self.trainable = value == "True"
+
+    """
+    Loading:
+    """
+
+    def has_loaded_all_items(self):
+        while self.next_item_pointer in self.index["backward"]:
+            self.next_item_pointer += 1
+
+        return self.next_item_pointer == self.length
+
     def load(self):
-        token_list = None
-        if self.token_list is not None:
-            token_list = self.load_token_list()
+        if self.uses_vocabulary():
+            self.load_vocabulary()
 
-        f = open(self.file_path, "r")
-        self.vectors = []
-        for line in f:
-            line = line.strip()
-            if line:
-                parts = line.split(self.separator)
+        if not self.dimensions_known():
+            number_of_vectors = self.count_lines() + self.count_special_symbols()
+            self.set_number_of_vectors(number_of_vectors)
 
-                if token_list is not None and parts[0] not in token_list:
-                    continue
+        self.initialize_vectors()
+        self.populate_special_characters()
 
-                self.add_to_index(parts[0])
-                self.add_to_vectors([float(t) for t in parts[1:]])
+        with open(self.file_path, "r") as vector_file:
+            for line in vector_file:
+                line = line.strip()
+                if line:
+                    parts = line.split(self.separator)
 
-                if token_list is not None and len(self.vectors) == len(token_list):
-                    break
+                    if self.uses_vocabulary() and not self.in_vocabulary(parts[0]):
+                        continue
+
+                    index = self.add(parts[0])
+                    vector = np.zeros(self.width, dtype=np.float32)
+                    for i in range(1, min(self.width, len(parts))):
+                        vector[i] = float(parts[i])
+
+                    self.add_vector(vector, index)
+
+                    if self.has_loaded_all_items():
+                        break
 
         self.loaded = True
 
-        if self.stop_token is not None:
-            self.insert_stop_token()
+        if self.should_output_tensorflow():
+            self.format_output_to_tensorflow()
 
-        if self.unk_token is not None:
-            self.insert_unk_token()
+        if self.uses_vocabulary():
+            self.free_vocabulary()
 
-        self.vectors = tf.Variable(np.array(self.vectors, dtype=np.float32), trainable=False)
-
-    def add_to_index(self, label):
-        self.index["forward"][label] = len(self.index["forward"])
-        self.index["backward"][len(self.index["backward"])] = label
-
-        if self.stop_token is not None and len(self.index["forward"]) == self.stop_token_index:
-            self.index["forward"][self.stop_token] = len(self.index["forward"])
-            self.index["backward"][len(self.index["backward"])] = self.stop_token
-
-        if self.unk_token is not None and len(self.index["forward"]) == self.unk_token_index:
-            self.index["forward"][self.unk_token] = len(self.index["forward"])
-            self.index["backward"][len(self.index["backward"])] = self.unk_token
-
-    def add_to_vectors(self, vector):
-        self.vectors.append(vector)
-
-    def insert_stop_token(self):
-        stop_token_vector = [0] * self.width
-        self.vectors.insert(self.stop_token_index, stop_token_vector)
-
-    def insert_unk_token(self):
-        unk_token_vector = [-1] * self.width
-        self.vectors.insert(self.unk_token_index, unk_token_vector)
+    """
+    Get values:
+    """
 
     def get_index(self):
         return self.index

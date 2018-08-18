@@ -181,9 +181,12 @@ class BeamSearchDecoderComponentValue:
         # Add newly finished beams to list of finished:
         should_stop_prediction = tf.equal(tf.reshape(next_word_ids, [-1]), self.stop_symbol)
         new_finished = tf.logical_or(continues_finished, should_stop_prediction)
+        new_finished = tf.Print(new_finished, [should_stop_prediction], summarize=100, message="finished")
+        new_finished = tf.Print(new_finished, [next_word_ids], summarize=100, message="ids")
 
         # Allocate lengths to beams:
         new_lengths = tf.gather(new_lengths, indices=gather_indices)
+        new_finished = tf.Print(new_finished, [new_lengths], summarize=100, message="lengths")
 
         # Distribute reccurent values according to beams:
         for i in range(n_rec):
@@ -263,6 +266,11 @@ class BeamSearchDecoderComponentValue:
             lengths = tf.reshape(lengths, [-1])
 
         decoded_sequences = tf.transpose(tf.reshape(decoded_sequences, [-1, self.rnn_model.batch_size * self.n_to_output]), [1,0])
+        max_length = tf.reduce_max(lengths)
+        decoded_sequences = decoded_sequences[:, :max_length]
+
+        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences], message="sequences", summarize=100)
+        decoded_sequences = tf.Print(decoded_sequences, [lengths], message="lengths", summarize=100)
 
         return decoded_sequences, lengths
 

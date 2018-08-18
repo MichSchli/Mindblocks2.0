@@ -63,6 +63,7 @@ class SetupHolder:
         self.logger_factory = LoggerFactory()
         console_config = {"training": ["status",
                                        "loss"],
-                          "validation": ["all"]}
+                          "validation": ["all"],
+                          "batching": ["none"]}
         file_config = {}
         self.logger_factory.setup(console_config, file_config)

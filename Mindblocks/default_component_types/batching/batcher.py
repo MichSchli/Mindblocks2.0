@@ -1,6 +1,8 @@
 import random
 
 import numpy as np
+
+from Mindblocks.helpers.logging.logger_factory import LoggerFactory
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 
@@ -19,7 +21,11 @@ class Batcher(ComponentTypeModel):
         data = np.array(input_dictionary["data"].get_value())
         indexes = input_dictionary["indexes"].get_value()
 
-        output_value_models["output"].assign(data[indexes])
+        batch = data[indexes]
+        for logger in LoggerFactory().get():
+            logger.log("Batch: " + str(batch), "batching", "batches")
+
+        output_value_models["output"].assign(batch)
         return output_value_models
 
     def build_value_type_model(self, input_types, value):

@@ -126,7 +126,7 @@ class TestSimpleBlocks(unittest.TestCase):
         loss = ml_helper.validate()
 
         self.assertLess(0.0, loss)
-        self.assertGreater(0.3, loss)
+        self.assertGreater(0.35, loss)
 
     def testBasicLanguageModelLstm(self):
         filename = "seq_to_seq_tests/basic_language_model_lstm.xml"

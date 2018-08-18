@@ -1,17 +1,17 @@
 class AbstractRepository:
 
     elements = None
+    timestamps = None
 
     def __init__(self, identifier_repository):
         self.identifier_repository = identifier_repository
         self.elements = {}
+        self.timestamps = {}
 
     def __create__(self):
-        identifier = self.identifier_repository.create()
         model = self.__initialize_model__()
-        model.identifier = identifier
-        self.elements[identifier] = model
-
+        self.add(model)
+        
         return model
 
     def count(self):
@@ -21,14 +21,23 @@ class AbstractRepository:
         identifier = self.identifier_repository.create()
         model.identifier = identifier
         self.elements[identifier] = model
+        self.timestamps[identifier] = len(self.timestamps)
 
         return model
 
-    def get(self, specifications):
+    def get(self, specifications, should_sort=True):
         l = []
         for key, element in self.elements.items():
             if specifications.matches(element):
                 l.append(element)
+
+        if should_sort:
+            order = []
+            for key, element in self.elements.items():
+                if specifications.matches(element):
+                    order.append(self.timestamps[key])
+
+            l = [x for _, x in sorted(zip(order, l))]
 
         return l
 

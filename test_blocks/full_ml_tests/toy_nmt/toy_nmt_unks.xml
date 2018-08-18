@@ -1,7 +1,7 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>4000</default_value>
+            <default_value>2500</default_value>
         </variable>
         <variable name="report_loss_every_n">
             <default_value>10</default_value>

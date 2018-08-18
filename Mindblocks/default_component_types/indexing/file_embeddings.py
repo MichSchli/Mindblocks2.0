@@ -245,7 +245,7 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
             self.free_vocabulary()
 
         self.log("Loaded " + str(self.length) + " vectors.", "embeddings", "load")
-        self.log("Last symbol added at: " + self.next_item_pointer, "embeddings", "load")
+        self.log("Last symbol added at: " + str(self.next_item_pointer), "embeddings", "load")
 
         self.next_item_pointer = 0
 

@@ -10,6 +10,7 @@ from Mindblocks.controller.graph_converter.graph_converter import GraphConverter
 from Mindblocks.controller.ml_helper.initialization_helper import InitializationHelper
 from Mindblocks.controller.ml_helper.ml_helper_factory import MlHelperFactory
 from Mindblocks.helpers.files.FilepathHandler import FilepathHandler
+from Mindblocks.helpers.logging.logger_factory import LoggerFactory
 from Mindblocks.helpers.xml.xml_helper import XmlHelper
 from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepository
 from Mindblocks.repository.component_type_repository.component_type_repository import ComponentTypeRepository
@@ -58,3 +59,10 @@ class SetupHolder:
 
         self.ml_helper_factory = MlHelperFactory(self.graph_converter, self.variable_repository)
         self.initialization_helper = InitializationHelper()
+
+        self.logger_factory = LoggerFactory()
+        console_config = {"training": ["status",
+                                       "loss"],
+                          "validation": ["all"]}
+        file_config = {}
+        self.logger_factory.setup(console_config, file_config)

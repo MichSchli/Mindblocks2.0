@@ -1,3 +1,4 @@
+from Mindblocks.helpers.logging.logger_factory import LoggerFactory
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import numpy as np
@@ -74,6 +75,7 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
     loaded = None
     next_item_pointer = None
     stop_token = None
+    stop_token_index = None
     trainable = None
 
     def __init__(self, file_path, width):
@@ -151,6 +153,7 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
 
     def add_stop_token(self, token, index):
         self.stop_token = token
+        self.stop_token_index = index
         self.add_special_symbol(token, index, np.zeros(self.width, dtype=np.float32))
 
     def add_unk_token(self, token, index):
@@ -202,6 +205,7 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         return self.next_item_pointer == self.length
 
     def load(self):
+        self.log("Loading file embeddings...", "embeddings", "load")
         if self.uses_vocabulary():
             self.load_vocabulary()
 
@@ -223,8 +227,9 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
 
                     index = self.add(parts[0])
                     vector = np.zeros(self.width, dtype=np.float32)
-                    for i in range(1, min(self.width, len(parts))):
-                        vector[i] = float(parts[i])
+
+                    for i in range(1, len(parts)):
+                        vector[i - 1] = float(parts[i])
 
                     self.add_vector(vector, index)
 
@@ -239,6 +244,11 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         if self.uses_vocabulary():
             self.free_vocabulary()
 
+        self.log("Loaded " + str(self.length) + " vectors.", "embeddings", "load")
+        self.log("Last symbol added at: " + self.next_item_pointer, "embeddings", "load")
+
+        self.next_item_pointer = 0
+
     """
     Get values:
     """
@@ -251,3 +261,12 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
 
     def get_width(self):
         return self.width
+
+    """
+    Logging:
+    """
+
+    def log(self, message, context, field):
+        loggers = LoggerFactory().get()
+        for logger in loggers:
+            logger.log(message, context, field)

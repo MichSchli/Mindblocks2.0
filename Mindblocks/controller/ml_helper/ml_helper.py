@@ -1,6 +1,7 @@
 import tensorflow as tf
 
 from Mindblocks.controller.ml_helper.initialization_helper import InitializationHelper
+from Mindblocks.helpers.logging.logger_factory import LoggerFactory
 
 
 class MlHelper:
@@ -19,6 +20,7 @@ class MlHelper:
 
     def __init__(self):
         self.initialization_helper = InitializationHelper()
+        self.logger_factory = LoggerFactory()
 
     def set_evaluate_function(self, execution_graph):
         self.evaluate_function = execution_graph
@@ -61,16 +63,26 @@ class MlHelper:
         return self.validate_function is not None
 
     def train(self):
+        self.log("Starting training.", "training", "status")
         self.initialize_model()
 
         for i in range(self.configuration.max_iterations):
+            self.log("Starting iteration "+str(i), "training", "iteration")
             self.do_train_iteration()
 
             if self.should_validate() and i % self.configuration.validate_every_n == 0:
-                print(self.do_validate())
+                validation_performance = self.do_validate()
+                message, context, field = "Validation at epoch " + str(i) + ": " + str(validation_performance), "validation", "performance"
+                self.log(message, context, field)
+
+    def log(self, message, context, field):
+        loggers = self.logger_factory.get()
+        for logger in loggers:
+            logger.log(message, context, field)
 
     def initialize_model(self):
         if not self.has_initialized:
+            self.log("Initializing model.", "initialization", "status")
             self.initialization_helper.initialize([self.update_and_loss_function,
                                                    self.prediction_function,
                                                    self.validate_function,
@@ -94,7 +106,11 @@ class MlHelper:
             loss_tracker += loss
 
             if self.configuration.report_loss_every_n is not None and batch % self.configuration.report_loss_every_n == 0:
-                print(loss_tracker / self.configuration.report_loss_every_n)
+                out_loss = loss_tracker / self.configuration.report_loss_every_n
+                message = "Loss at batch " + str(batch) + ": " + str(out_loss)
+                context = "training"
+                field = "loss"
+                self.log(message, context, field)
                 loss_tracker = 0
 
             batch += 1

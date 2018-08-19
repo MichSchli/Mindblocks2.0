@@ -24,7 +24,7 @@ class ConllReader(ComponentTypeModel):
 
     def execute(self, input_dictionary, value, output_models, mode):
         output_models["output"].assign(value.read())
-        output_models["count"].assign(value.count)
+        output_models["count"].assign(value.count())
         return output_models
 
     def build_value_type_model(self, input_types, value):
@@ -98,7 +98,7 @@ class ConllReaderValue(ExecutionComponentValueModel):
                     lines.append([])
 
         if not lines[-1] or lines[-1] == [self.get_start_token_part()]:
-            lines = lines[-1]
+            lines = lines[:-1]
 
         if self.stop_token is not None and len(lines) > 0 and lines[-1][-1] != self.get_stop_token_part():
             lines[-1].append(self.get_stop_token_part())

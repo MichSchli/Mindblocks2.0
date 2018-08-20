@@ -30,8 +30,7 @@ class Batcher(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value):
         data_type = input_types["data"].copy()
-        indexes_outer_dim = input_types["indexes"].get_dimensions()[0]
-        data_type.subsample(indexes_outer_dim)
+        data_type.subsample(None)
         return {"output": data_type}
 
     def has_batches(self, value, previous_values):

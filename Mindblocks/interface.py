@@ -60,7 +60,9 @@ class BasicInterface:
         self.variable_repository.set_variable_value(name, value, mode=mode)
 
     def initialize(self):
-        graph = self.graph_repository.get(GraphSpecifications())[0]
+        graph_specs = GraphSpecifications()
+        graph_specs.marked = True
+        graph = self.graph_repository.get(graph_specs)[0]
         self.ml_helper = self.ml_helper_factory.build_ml_helper_from_graph(graph)
 
     def load_file(self, filename):

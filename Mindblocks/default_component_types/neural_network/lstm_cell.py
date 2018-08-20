@@ -11,7 +11,17 @@ class LstmCell(ComponentTypeModel):
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return LstmCellValue(value_dictionary["dimension"][0][0])
+        value = LstmCellValue(int(value_dictionary["dimension"][0][0]))
+
+        if "layers" in value_dictionary:
+            value.set_layers(int(value_dictionary["layers"][0][0]))
+
+        if "layer_dropout" in value_dictionary:
+            value.set_layer_dropout(float(value_dictionary["layer_dropout"][0][0]))
+
+        value.initialize_tensorflow_variable()
+
+        return value
 
     def build_value_type_model(self, in_types, execution_value):
         return {"output_c": in_types["previous_c"].copy(),
@@ -22,18 +32,48 @@ class LstmCell(ComponentTypeModel):
         previous_c = input_dictionary["previous_c"].get_value()
         previous_h = input_dictionary["previous_h"].get_value()
 
-        cell_input = (previous_c, previous_h)
+        new_hs = []
+        new_cs = []
 
-        new_h, new_state = execution_value.cell(input_x, cell_input)
-        new_c = new_state[0]
+        if execution_value.layers == 1:
+            cell_input = (previous_c, previous_h)
 
-        output_value_models["output_c"].assign(new_c)
-        output_value_models["output_h"].assign(new_h)
+            h, new_state = execution_value.cells[0](input_x, cell_input)
+            c = new_state[0]
+
+            new_hs = h
+            new_cs = c
+        else:
+            for i in range(execution_value.layers):
+                cell_input = (previous_c[i], previous_h[i])
+                h, new_state = execution_value.cells[i](input_x, cell_input)
+                c = new_state[0]
+
+                new_cs.append(c)
+                new_hs.append(h)
+
+            new_cs = tf.concat(new_cs, 1)
+            new_hs = tf.concat(new_hs, 1)
+
+        output_value_models["output_c"].assign(new_cs)
+        output_value_models["output_h"].assign(new_hs)
 
         return output_value_models
 
 
 class LstmCellValue(ExecutionComponentValueModel):
 
+    dimension = None
+    layers = None
+    layer_dropout = None
+
+    cells = None
+
     def __init__(self, dimension):
-        self.cell = tf.nn.rnn_cell.LSTMCell(int(dimension))
+        self.dimension = dimension
+        self.layers = 1
+        self.cells = []
+
+    def initialize_tensorflow_variable(self):
+        if self.layers == 1:
+            self.cells = [tf.nn.rnn_cell.LSTMCell(self.dimension)]

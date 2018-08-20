@@ -13,11 +13,16 @@ class BatchGenerator(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary, language):
-        return BatchGeneratorValue(int(value_dictionary["batch_size"][0][0]))
+        value = BatchGeneratorValue(int(value_dictionary["batch_size"][0][0]))
+
+        if "shuffle" in value_dictionary:
+            value.set_shuffle(value_dictionary["shuffle"][0][0] == "True")
+
+        return value
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         if value.needs_count():
-            value.register_count(input_dictionary["count"].get_value())
+            value.register_count(input_dictionary["count"].get_value(), mode)
 
         output_value_models["batch"].assign(value.get_next_batch())
         return output_value_models
@@ -35,16 +40,22 @@ class BatchGeneratorValue(ExecutionComponentValueModel):
 
     batches = None
     pointer = None
+    should_shuffle = None
 
     def __init__(self, batch_size):
         self.batch_size = batch_size
+        self.should_shuffle = True
 
     def needs_count(self):
         return self.batches is None
 
-    def register_count(self, count):
+    def set_shuffle(self, should_shuffle):
+        self.should_shuffle = should_shuffle
+
+    def register_count(self, count, mode):
         indexes = list(range(count))
-        #random.shuffle(indexes)
+        if self.should_shuffle and mode == "train":
+            random.shuffle(indexes)
 
         self.batches = indexes
         self.pointer = 0

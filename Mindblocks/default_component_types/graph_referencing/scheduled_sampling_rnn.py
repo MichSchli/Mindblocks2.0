@@ -58,9 +58,9 @@ class ScheduledSamplingRnnComponentValue:
     rnn_model = None
     teacher_index = 0
 
-    initial_teacher_probability = 0.9
-    final_teacher_probability = 0.5
-    decay_rate = 0.999
+    initial_teacher_probability = 1.0
+    final_teacher_probability = 0.7
+    decay_rate = 0.9999
 
     stop_symbol = None
 

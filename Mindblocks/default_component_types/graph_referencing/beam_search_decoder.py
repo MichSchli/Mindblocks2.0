@@ -173,6 +173,7 @@ class BeamSearchDecoderComponentValue:
         range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width, 1)
         gather_indices = tf.reshape(parent_beam_ids + range_, [-1])
         gather_indices = tf.reshape(gather_indices, [-1])
+        gather_indices = tf.Print(gather_indices, [gather_indices], message="gather_indices", summarize=100)
 
         # Determine which of the current beams are continuations of finished beams. Replace tokens with stop tokens:
         continues_finished = tf.gather(old_finished, indices=gather_indices)
@@ -181,12 +182,9 @@ class BeamSearchDecoderComponentValue:
         # Add newly finished beams to list of finished:
         should_stop_prediction = tf.equal(tf.reshape(next_word_ids, [-1]), self.stop_symbol)
         new_finished = tf.logical_or(continues_finished, should_stop_prediction)
-        new_finished = tf.Print(new_finished, [should_stop_prediction], summarize=100, message="finished")
-        new_finished = tf.Print(new_finished, [next_word_ids], summarize=100, message="ids")
 
         # Allocate lengths to beams:
         new_lengths = tf.gather(new_lengths, indices=gather_indices)
-        new_finished = tf.Print(new_finished, [new_lengths], summarize=100, message="lengths")
 
         # Distribute reccurent values according to beams:
         for i in range(n_rec):

@@ -1,6 +1,7 @@
 class GraphSpecifications:
     name = None
     identifier = None
+    marked = None
 
     def add(self, key, value):
         if key == "name":
@@ -14,6 +15,8 @@ class GraphSpecifications:
         if self.name is not None and self.name != element.name:
             return False
         if self.identifier is not None and self.identifier != element.identifier:
+            return False
+        if self.marked is not None and self.marked != element.is_marked():
             return False
         return True
 

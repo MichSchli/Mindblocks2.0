@@ -47,5 +47,11 @@ class GraphModel:
                 marked_sockets[k] = v
         return marked_sockets
 
+    def is_marked(self):
+        for component in self.components:
+            if len(component.get_marked_sockets()) > 0:
+                return True
+        return False
+
     def __str__(self):
         return self.name if self.name is not None else str(self.identifier)

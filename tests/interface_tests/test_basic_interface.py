@@ -26,3 +26,22 @@ class TestBasicInterface(unittest.TestCase):
 
         self.assertGreaterEqual(1.0, performance)
         self.assertLess(0.9, performance)
+
+
+    def testAlwaysUsesMarkedGraph(self):
+        interface = BasicInterface()
+
+        filename = "iris_tests/full_iris_with_extra_graphs.xml"
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.initialize()
+
+        interface.train()
+        performance = interface.evaluate()
+
+        self.assertGreaterEqual(1.0, performance)
+        self.assertLess(0.9, performance)

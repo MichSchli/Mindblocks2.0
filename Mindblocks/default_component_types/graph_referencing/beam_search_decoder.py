@@ -182,6 +182,8 @@ class BeamSearchDecoderComponentValue:
         # Add newly finished beams to list of finished:
         should_stop_prediction = tf.equal(tf.reshape(next_word_ids, [-1]), self.stop_symbol)
         new_finished = tf.logical_or(continues_finished, should_stop_prediction)
+        new_finished = tf.Print(new_finished, [new_finished], message="new_finished", summarize=100)
+        new_finished = tf.Print(new_finished, [next_word_ids], message="next_word_ids", summarize=100)
 
         # Allocate lengths to beams:
         new_lengths = tf.gather(new_lengths, indices=gather_indices)

@@ -3,15 +3,19 @@ from Mindblocks.model.execution_graph.execution_graph_model import ExecutionGrap
 from Mindblocks.model.execution_graph.execution_head_component import ExecutionHeadComponent
 from Mindblocks.model.execution_graph.execution_in_socket import ExecutionInSocket
 from Mindblocks.model.execution_graph.execution_out_socket import ExecutionOutSocket
+from Mindblocks.repository.execution_component_repository.execution_component_specifications import \
+    ExecutionComponentSpecifications
 from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
 
 
 class ExecutionGraphBuilder:
 
     graph_repository = None
+    execution_component_repository = None
 
-    def __init__(self, graph_repository):
+    def __init__(self, graph_repository, execution_component_repository):
         self.graph_repository = graph_repository
+        self.execution_component_repository = execution_component_repository
 
     def build_execution_graph(self, run, mode, value_dictionary):
         head_component, execution_components = self.get_run_components_and_edges(run, mode, value_dictionary)
@@ -129,10 +133,6 @@ class ExecutionGraphBuilder:
         return head_component, execution_components
 
     def build_execution_component(self, component, execution_value):
-        execution_component_model = ExecutionComponentModel()
+        execution_component_model = self.execution_component_repository.create_from_creation_component(component)
         execution_component_model.execution_value = execution_value
-        execution_component_model.execution_type = component.component_type
-        execution_component_model.identifier = component.identifier
-        execution_component_model.language = component.language
-        execution_component_model.name = component.name
         return execution_component_model

@@ -26,7 +26,8 @@ class ComponentTypeModel:
                 return False
         return True
 
-    def initialize(self, input_dictionary, execution_value, output_value_models):
+    def initialize(self, input_dictionary, execution_value, output_value_models, tensorflow_session_model):
+        execution_value.initialize_tensorflow_variables(tensorflow_session_model)
         return output_value_models
 
     def determine_placeholders(self, value, in_socket_names):

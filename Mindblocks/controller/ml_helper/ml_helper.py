@@ -5,7 +5,6 @@ from Mindblocks.helpers.logging.logger_factory import LoggerFactory
 
 
 class MlHelper:
-
     evaluate_function = None
     update_and_loss_function = None
     loss_function = None
@@ -18,9 +17,17 @@ class MlHelper:
 
     has_initialized = False
 
+    tensorflow_session_model = None
+
+    current_iteration = None
+
     def __init__(self):
+        self.current_iteration = 0
         self.initialization_helper = InitializationHelper()
         self.logger_factory = LoggerFactory()
+
+    def set_tensorflow_session(self, tensorflow_session_model):
+        self.tensorflow_session_model = tensorflow_session_model
 
     def set_evaluate_function(self, execution_graph):
         self.evaluate_function = execution_graph
@@ -62,18 +69,28 @@ class MlHelper:
     def should_validate(self):
         return self.validate_function is not None
 
-    def train(self):
-        self.log("Starting training.", "training", "status")
+    def train(self, iterations=None):
+        self.log("Starting training at iteration " + str(self.current_iteration), "training", "status")
         self.initialize_model()
 
-        for i in range(self.configuration.max_iterations):
-            self.log("Starting iteration "+str(i), "training", "iteration")
+        if iterations is None:
+            iteration_range = range(self.current_iteration, self.configuration.max_iterations)
+        else:
+            iteration_range = range(self.current_iteration, self.current_iteration + iterations)
+
+        for i in iteration_range:
+            self.log("Starting iteration " + str(i), "training", "iteration")
+            self.current_iteration = i
+            self.tensorflow_session_model.update_iteration(i)
             self.do_train_iteration()
 
             if self.should_validate() and i % self.configuration.validate_every_n == 0:
                 validation_performance = self.do_validate()
-                message, context, field = "Validation at epoch " + str(i) + ": " + str(validation_performance), "validation", "performance"
+                message, context, field = "Validation at epoch " + str(i) + ": " + str(
+                    validation_performance), "validation", "performance"
                 self.log(message, context, field)
+
+        self.current_iteration += 1
 
     def log(self, message, context, field):
         loggers = self.logger_factory.get()

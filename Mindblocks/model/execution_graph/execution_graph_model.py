@@ -28,7 +28,7 @@ class ExecutionGraphModel:
 
     def initialize(self):
         self.clear_all_caches()
-        self.head_component.initialize(self.run_mode)
+        self.head_component.initialize(self.run_mode, self.tensorflow_session_model)
 
     def init_batches(self):
         #for component in self.components:

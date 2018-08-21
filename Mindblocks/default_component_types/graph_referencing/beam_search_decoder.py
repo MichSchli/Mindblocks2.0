@@ -43,8 +43,6 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
-        print("DOING BEAM SEARCH")
-        print("STOP_SYMBOL:" + str(value.stop_symbol))
         batch_size = self.compute_batch_size(input_dictionary, value)
         value.rnn_model.set_batch_size(batch_size)
         decoded_sequences, lengths = value.assign_and_run(input_dictionary)
@@ -75,7 +73,7 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         return batch_size
 
 
-class BeamSearchDecoderComponentValue:
+class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
 
     rnn_model = None
     beam_width = None
@@ -115,7 +113,9 @@ class BeamSearchDecoderComponentValue:
         next_beam_scores, next_beam_indices = tf.nn.top_k(reshaped_beam_scores, k=self.beam_width)
         next_word_ids = math_ops.to_int32(next_beam_indices % self.vocab_size, name="next_beam_word_ids")
         next_beam_ids = math_ops.to_int32(next_beam_indices / self.vocab_size, name="next_beam_parent_ids")
-        return next_beam_ids, next_beam_scores, next_word_ids
+
+        log_prob_indexes = next_beam_indices
+        return next_beam_ids, next_beam_scores, next_word_ids, log_prob_indexes
 
     def calculate_initial_iteration_word_and_beam_pointers(self, scores):
         batch_beam_scores = tf.reshape(scores, [self.rnn_model.batch_size, self.beam_width, -1])
@@ -124,7 +124,9 @@ class BeamSearchDecoderComponentValue:
         next_beam_scores, next_word_ids = tf.nn.top_k(first_beam_scores, k=self.beam_width)
         next_beam_ids = tf.zeros([self.rnn_model.batch_size, self.beam_width], dtype=tf.int32)
 
-        return next_beam_ids, next_beam_scores, next_word_ids
+        log_prob_indexes = next_word_ids
+
+        return next_beam_ids, next_beam_scores, next_word_ids, log_prob_indexes
 
     def body(self, *args):
         counter = args[-1]
@@ -159,21 +161,22 @@ class BeamSearchDecoderComponentValue:
         new_lengths = tf.where(tf.logical_not(old_finished), old_lengths + 1, old_lengths)
 
         # Compute length penalty:
+        penalized_scores = scores
         if self.length_penalty is not None:
             length_penalty = math_ops.div((5. + math_ops.to_float(new_lengths)) ** self.length_penalty, (5. + 1.) ** self.length_penalty)
-            scores /= tf.expand_dims(length_penalty, -1)
+            penalized_scores /= tf.expand_dims(length_penalty, -1)
 
-        # Use old scores for finished beams
-        parent_beam_ids, next_beam_scores, next_word_ids = tf.cond(tf.equal(counter,0),
-                                                                 lambda: self.calculate_initial_iteration_word_and_beam_pointers(scores),
-                                                                 lambda: self.calculate_word_and_beam_pointers(scores))
+        # Compute best beams:
+        parent_beam_ids, next_beam_scores, next_word_ids, combined_beam_word_ids = tf.cond(tf.equal(counter,0),
+                                                                                           lambda: self.calculate_initial_iteration_word_and_beam_pointers(penalized_scores),
+                                                                                           lambda: self.calculate_word_and_beam_pointers(penalized_scores))
 
 
         # Select recurrent states from the appropriate beam
         range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width, 1)
         gather_indices = tf.reshape(parent_beam_ids + range_, [-1])
         gather_indices = tf.reshape(gather_indices, [-1])
-        gather_indices = tf.Print(gather_indices, [gather_indices], message="gather_indices", summarize=100)
+        gather_indices = tf.Print(gather_indices, [parent_beam_ids], message="1. parent_beam_ids", summarize=100)
 
         # Determine which of the current beams are continuations of finished beams. Replace tokens with stop tokens:
         continues_finished = tf.gather(old_finished, indices=gather_indices)
@@ -182,11 +185,12 @@ class BeamSearchDecoderComponentValue:
         # Add newly finished beams to list of finished:
         should_stop_prediction = tf.equal(tf.reshape(next_word_ids, [-1]), self.stop_symbol)
         new_finished = tf.logical_or(continues_finished, should_stop_prediction)
-        new_finished = tf.Print(new_finished, [new_finished], message="new_finished", summarize=100)
-        new_finished = tf.Print(new_finished, [next_word_ids], message="next_word_ids", summarize=100)
+        new_finished = tf.Print(new_finished, [new_finished], message="2. new_finished", summarize=100)
+        new_finished = tf.Print(new_finished, [next_word_ids], message="3. next_word_ids", summarize=100)
 
         # Allocate lengths to beams:
         new_lengths = tf.gather(new_lengths, indices=gather_indices)
+        new_lengths = tf.Print(new_lengths, [new_lengths], message="4. lengths", summarize=100)
 
         # Distribute reccurent values according to beams:
         for i in range(n_rec):
@@ -201,7 +205,16 @@ class BeamSearchDecoderComponentValue:
         results.append(self.write_to_tensor_array(args[prediction_index], tf.reshape(next_word_ids, [-1]), counter))
         results.append(self.write_to_tensor_array(args[backpointer_index], tf.reshape(parent_beam_ids, [-1]), counter))
 
-        results.append(tf.reshape(next_beam_scores, [-1]))
+        # TODO: This needs to be log prob sums
+        total_log_probs = tf.reshape(scores, [self.rnn_model.batch_size * self.beam_width, -1])
+        range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width * self.vocab_size, 1)
+        gather_indices = tf.reshape(combined_beam_word_ids + range_, [-1])
+        gather_indices = tf.reshape(gather_indices, [-1])
+        flat_log_probs = tf.reshape(total_log_probs, [-1])
+
+        output_log_probs = tf.gather(flat_log_probs, indices=gather_indices)
+        output_log_probs = tf.Print(output_log_probs, [output_log_probs], message="4. output_log_probs", summarize=100)
+        results.append(output_log_probs)
 
         results += [new_lengths]
         results += [new_finished]
@@ -282,15 +295,6 @@ class BeamSearchDecoderComponentValue:
                                                       self.stop_symbol)
 
         return decoded_seqs
-
-    def order_output(self, loop):
-        lengths = loop[-3]
-
-        n_rec = self.rnn_model.count_recurrent_links()
-        n_out = self.rnn_model.count_output_links()
-        for i in range(n_rec, n_rec + n_out):
-            loop[i] = tf.transpose(loop[i].stack(), perm=[1,0,2])
-        return {self.rnn_model.out_links[i][0]: loop[i + n_rec] for i in range(len(self.rnn_model.out_links))}, lengths
 
     def count_recurrences(self):
         return len(self.recurrences)

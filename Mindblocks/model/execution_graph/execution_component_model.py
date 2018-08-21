@@ -3,7 +3,11 @@ class ExecutionComponentModel:
     out_sockets = None
     in_sockets = None
     identifier = None
+    component_identifier = None
     language = None
+
+    name = None
+    mode = None
 
     def __init__(self):
         self.out_sockets = {}
@@ -24,14 +28,15 @@ class ExecutionComponentModel:
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)
 
-    def initialize(self, mode):
-        input_dictionary = {k: in_socket.initialize(mode) for k, in_socket in self.in_sockets.items()}
+    def initialize(self, mode, tensorflow_session_model):
+        input_dictionary = {k: in_socket.initialize(mode, tensorflow_session_model) for k, in_socket in self.in_sockets.items()}
         output_value_models = {k: type_model.initialize_value_model() for k, type_model in
                                self.output_type_models.items()}
 
         output_dictionary = self.execution_type.initialize(input_dictionary,
                                                            self.execution_value,
-                                                           output_value_models)
+                                                           output_value_models,
+                                                           tensorflow_session_model)
 
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_init_value(v)

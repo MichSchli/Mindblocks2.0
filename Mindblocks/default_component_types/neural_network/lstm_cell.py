@@ -65,7 +65,7 @@ class LstmCellValue(ExecutionComponentValueModel):
 
     dimension = None
     layers = None
-    layer_dropout = None
+    layer_dropout_keep_prob = None
 
     cells = None
 
@@ -73,6 +73,12 @@ class LstmCellValue(ExecutionComponentValueModel):
         self.dimension = dimension
         self.layers = 1
         self.cells = []
+
+    def set_layers(self, layers):
+        self.layers = layers
+
+    def set_layer_dropout(self, dropout_rate):
+        self.layer_dropout_keep_prob = dropout_rate
 
     def initialize_tensorflow_variable(self):
         if self.layers == 1:

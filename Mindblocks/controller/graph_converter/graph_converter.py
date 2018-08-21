@@ -15,15 +15,15 @@ class GraphConverter:
     variable_repository = None
     graph_repository = None
 
-    def __init__(self, variable_repository, graph_repository):
-        self.tensorflow_section_contractor = TensorflowSectionContractor()
+    def __init__(self, variable_repository, graph_repository, tensorflow_session_repository, execution_component_repository):
+        self.tensorflow_section_contractor = TensorflowSectionContractor(tensorflow_session_repository)
         self.variable_repository = variable_repository
         self.graph_repository = graph_repository
 
         self.value_dictionary_builder = ValueDictionaryBuilder(variable_repository, graph_repository)
-        self.execution_graph_builder = ExecutionGraphBuilder(graph_repository)
+        self.execution_graph_builder = ExecutionGraphBuilder(graph_repository, execution_component_repository)
 
-    def to_executable(self, runs, run_modes=None):
+    def to_executable(self, runs, run_modes=None, tensorflow_session_model=None):
         if run_modes is None:
             run_modes = ["test" for _ in runs]
 
@@ -36,7 +36,9 @@ class GraphConverter:
             run_graph.initialize_type_models()
             execution_graphs.append(run_graph)
 
-        self.tensorflow_section_contractor.contract_tensorflow_sections_in_graphs(execution_graphs, run_modes)
+        self.tensorflow_section_contractor.contract_tensorflow_sections_in_graphs(execution_graphs,
+                                                                                  run_modes,
+                                                                                  tensorflow_session_model=tensorflow_session_model)
 
         return execution_graphs
 

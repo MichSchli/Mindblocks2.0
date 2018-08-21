@@ -4,6 +4,8 @@ from Mindblocks.model.creation_component.creation_component_out_socket import Cr
 from Mindblocks.repository.abstract.abstract_repository import AbstractRepository
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
 from Mindblocks.repository.component_type_repository.component_type_specifications import ComponentTypeSpecifications
+from Mindblocks.repository.creation_component_repository.creation_component_specifications import \
+    CreationComponentSpecifications
 from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
 
 
@@ -21,6 +23,9 @@ class CreationComponentRepository(AbstractRepository):
 
     def __initialize_model__(self):
         return CreationComponentModel()
+
+    def get_specifications(self):
+        return CreationComponentSpecifications()
 
     def create(self, specifications):
         model = self.__create__()

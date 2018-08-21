@@ -43,7 +43,7 @@ class BasicRecurrenceComponent(ComponentTypeModel):
         return output_types
 
 
-class BasicRecurrenceComponentValue:
+class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
 
     graph_name = None
     graph = None

@@ -34,6 +34,6 @@ class ExecutionHeadComponent:
         for socket in self.run_output_sockets:
             socket.describe_graph(indent=indent+1)
 
-    def initialize(self, mode):
+    def initialize(self, mode, tensorflow_session_model):
         for socket in self.run_output_sockets:
-            socket.initialize(mode)
+            socket.initialize(mode, tensorflow_session_model)

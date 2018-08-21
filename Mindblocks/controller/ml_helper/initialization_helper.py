@@ -4,13 +4,13 @@ import tensorflow as tf
 class InitializationHelper:
 
     def initialize(self, run_graphs):
-        session = None
+        session_model = None
         for run in run_graphs:
             if run is not None:
                 run.initialize()
 
-            if run is not None and run.tensorflow_session is not None:
-                session = run.tensorflow_session
+            if run is not None and run.tensorflow_session_model is not None:
+                session_model = run.tensorflow_session_model
 
-        if session is not None:
-            session.run(tf.global_variables_initializer())
+        if session_model is not None:
+            session_model.initialize_variables()

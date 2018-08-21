@@ -58,8 +58,8 @@ class ExecutionOutSocket:
 
         return self.should_use_placeholder_for_tensorflow_cache
 
-    def initialize(self, mode):
+    def initialize(self, mode, tensorflow_session_model):
         if self.cached_init_value is None:
-            self.execution_component.initialize(mode)
+            self.execution_component.initialize(mode, tensorflow_session_model)
 
         return self.cached_init_value

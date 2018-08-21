@@ -21,6 +21,14 @@ class SGDUpdater(ComponentTypeModel):
         if "gradient_clip" in value_dictionary:
             value.set_gradient_clip(float(value_dictionary["gradient_clip"][0][0]))
 
+        if "learning_rate_decay" in value_dictionary:
+            if "start_iteration" in value_dictionary["learning_rate_decay"][0][1]:
+                start_iteration = int(value_dictionary["learning_rate_decay"][0][1]["start_iteration"])
+            else:
+                start_iteration = None
+
+            value.set_learning_rate_decay(float(value_dictionary["learning_rate_decay"][0][0]), start_iteration=start_iteration)
+
         return value
 
     def execute(self, input_dictionary, value, output_value_models, mode):
@@ -45,6 +53,9 @@ class SGDUpdaterValue(ExecutionComponentValueModel):
     learning_rate = None
     gradient_clip = None
 
+    decay_rate = None
+    decay_start_iteration = None
+
     def __init__(self):
         self.learning_rate = 0.001
         self.gradient_clip = None
@@ -54,3 +65,23 @@ class SGDUpdaterValue(ExecutionComponentValueModel):
 
     def set_gradient_clip(self, clip):
         self.gradient_clip = clip
+
+    def set_learning_rate_decay(self, decay_rate, start_iteration=None):
+        self.decay_rate = decay_rate
+        self.decay_start_iteration = start_iteration
+
+    def get_learning_rate(self):
+        return self.learning_rate
+
+    def initialize_tensorflow_variables(self, tensorflow_session_model):
+        lr = tf.Variable(self.learning_rate, trainable=False)
+        if self.decay_rate is not None:
+            if self.decay_start_iteration is not None:
+                iteration = tensorflow_session_model.get_tensorflow_iteration()
+                lr = tf.cond(iteration >= self.decay_start_iteration,
+                             lambda: lr * self.decay_rate ** tf.cast((iteration - self.decay_start_iteration + 1), dtype=tf.float32),
+                             lambda: lr)
+            else:
+                lr = lr * self.decay_rate ** tensorflow_session_model.get_tensorflow_iteration()
+
+        self.learning_rate = lr

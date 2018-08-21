@@ -53,7 +53,7 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
         return output_types
 
 
-class ScheduledSamplingRnnComponentValue:
+class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
 
     rnn_model = None
     teacher_index = 0

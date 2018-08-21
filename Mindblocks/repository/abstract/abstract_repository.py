@@ -25,6 +25,9 @@ class AbstractRepository:
 
         return model
 
+    def new(self):
+        return self.create(self.get_specifications())
+
     def get(self, specifications, should_sort=True):
         l = []
         for key, element in self.elements.items():

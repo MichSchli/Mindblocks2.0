@@ -54,8 +54,8 @@ class ExecutionInSocket:
     def should_use_placeholder_for_tensorflow(self):
         return self.source.should_use_placeholder_for_tensorflow()
 
-    def initialize(self, mode):
+    def initialize(self, mode, tensorflow_session_model):
         if self.source is not None:
-            return self.source.initialize(mode)
+            return self.source.initialize(mode, tensorflow_session_model)
         elif self.replaced_value is not None:
             return self.replaced_value

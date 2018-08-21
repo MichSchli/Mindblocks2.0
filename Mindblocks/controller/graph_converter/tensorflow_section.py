@@ -7,7 +7,7 @@ class TensorflowSection(ExecutionComponentModel):
 
     components = None
     outputs = None
-    session = None
+    session_model = None
     execution_type = None
 
     def __init__(self):
@@ -19,7 +19,7 @@ class TensorflowSection(ExecutionComponentModel):
         self.components.append(component)
 
     def set_session(self, session):
-        self.session = session
+        self.session_model = session
 
     def map_out_socket(self, out_socket, new_out_socket):
         self.matched_out_sockets.append((out_socket, new_out_socket))
@@ -45,7 +45,7 @@ class TensorflowSection(ExecutionComponentModel):
 
     def execute(self, mode):
         feed_dict = self.create_feed_dict(mode)
-        tf_outputs = self.session.run(self.outputs, feed_dict=feed_dict)
+        tf_outputs = self.session_model.run(self.outputs, feed_dict)
 
         for i in range(len(self.matched_out_sockets)):
             output_type = self.matched_out_sockets[i][0].pull_type_model()
@@ -70,22 +70,21 @@ class TensorflowSection(ExecutionComponentModel):
     def should_use_placeholder(self, in_socket):
         return in_socket.should_use_placeholder_for_tensorflow()
 
-    def initialize(self, mode):
+    def initialize(self, mode, tensorflow_session_model):
         for tf_in_socket, in_socket in self.matched_in_sockets:
-            initialization_value = tf_in_socket.initialize(mode)
+            initialization_value = tf_in_socket.initialize(mode, tensorflow_session_model)
 
             if self.should_use_placeholder(in_socket):
                 socket_placeholder = self.get_placeholder(in_socket)
                 tf_in_socket.replaced_value = socket_placeholder
             else:
-                print(initialization_value)
                 tf_in_socket.replaced_value = initialization_value
 
-        self.compile(mode)
-
         for tf_out_socket, out_socket in self.matched_out_sockets:
-            init_value = tf_in_socket.initialize(mode)
+            init_value = tf_out_socket.initialize(mode, tensorflow_session_model)
             out_socket.set_cached_init_value(init_value)
+
+        self.compile(mode)
 
     def clear_caches(self):
         for _, in_socket in self.matched_in_sockets:

@@ -6,11 +6,18 @@ import tensorflow as tf
 
 class TensorflowSectionContractor:
 
-    def contract_tensorflow_sections_in_graphs(self, execution_graphs, run_modes):
-        tensorflow_session = tf.Session()
+    tensorflow_session_repository = None
+
+    def __init__(self, tensorflow_session_repository):
+        self.tensorflow_session_repository = tensorflow_session_repository
+
+    def contract_tensorflow_sections_in_graphs(self, execution_graphs, run_modes, tensorflow_session_model=None):
+        if tensorflow_session_model is None:
+            tensorflow_session_model = self.tensorflow_session_repository.new()
+
         for execution_graph, mode in zip(execution_graphs, run_modes):
-            self.contract_tensorflow_sections(execution_graph, mode, tensorflow_session)
-            execution_graph.tensorflow_session = tensorflow_session
+            self.contract_tensorflow_sections(execution_graph, mode, tensorflow_session_model)
+            execution_graph.tensorflow_session_model = tensorflow_session_model
 
     def contract_tensorflow_sections(self, execution_graph, mode, tensorflow_session):
         tensorflow_sections = self.find_tensorflow_sections(execution_graph)

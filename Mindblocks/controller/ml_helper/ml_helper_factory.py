@@ -7,9 +7,10 @@ class MlHelperFactory:
     graph_converter = None
     variable_repository = None
 
-    def __init__(self, graph_converter, variable_repository):
+    def __init__(self, graph_converter, variable_repository, tensorflow_session_repository):
         self.graph_converter = graph_converter
         self.variable_repository = variable_repository
+        self.tensorflow_session_repository = tensorflow_session_repository
 
     def build_configuration(self):
         configuration = MlHelperConfiguration()
@@ -49,6 +50,8 @@ class MlHelperFactory:
 
     def build_ml_helper(self, update=None, loss=None, evaluate=None, prediction=None):
         ml_helper = MlHelper()
+        tensorflow_session_model = self.tensorflow_session_repository.new()
+        ml_helper.set_tensorflow_session(tensorflow_session_model)
 
         runs = []
         run_interpretations = []
@@ -92,7 +95,7 @@ class MlHelperFactory:
             run_interpretations.append("prediction")
             run_modes.append("test")
 
-        run_graphs = self.graph_converter.to_executable(runs, run_modes=run_modes)
+        run_graphs = self.graph_converter.to_executable(runs, run_modes=run_modes, tensorflow_session_model=tensorflow_session_model)
 
         for run_graph, interpretation in zip(run_graphs, run_interpretations):
             if interpretation == "update_and_loss":

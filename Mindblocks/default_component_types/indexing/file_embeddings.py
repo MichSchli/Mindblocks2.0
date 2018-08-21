@@ -41,7 +41,7 @@ class FileEmbeddings(ComponentTypeModel):
 
         return output_models
 
-    def initialize(self, input_dictionary, value, output_value_models):
+    def initialize(self, input_dictionary, value, output_value_models, tensorflow_session_model):
         if not value.loaded:
             value.load()
         output_value_models["vectors"].assign(value.get_vectors())

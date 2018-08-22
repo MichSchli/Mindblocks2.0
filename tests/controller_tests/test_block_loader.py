@@ -4,6 +4,8 @@ from Mindblocks.controller.block_loader.block_loader import BlockLoader
 from Mindblocks.controller.block_loader.canvas_loader import CanvasLoader
 from Mindblocks.controller.block_loader.component_loader import ComponentLoader
 from Mindblocks.controller.block_loader.edge_loader import EdgeLoader
+from Mindblocks.error_handling.loading.component_not_found_exception import ComponentNotFoundException
+from Mindblocks.error_handling.loading.socket_not_found_exception import SocketNotFoundException
 from Mindblocks.helpers.files.FilepathHandler import FilepathHandler
 from Mindblocks.helpers.xml.xml_helper import XmlHelper
 from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepository
@@ -258,6 +260,87 @@ class TestBlockLoader(unittest.TestCase):
 
         self.assertEqual(1, self.setup_holder.canvas_repository.count())
         self.assertEqual(2, self.setup_holder.component_repository.count())
+
+    def testEdgeLoadersRaisesExceptionForUnknownSource(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["out"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Printer"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["in"]
+
+        text = """<block><canvas name="main">
+        <component name="constant_1" type="Constant"></component>
+        <component name="printer" type="Printer"></component>
+        <edge><source socket=whywouldihavesockets>imnotreal</source><target socket=in>printer</target></edge>
+        </canvas></block>"""
+
+        with self.assertRaises(ComponentNotFoundException):
+            self.setup_holder.block_loader.load_block(text, 0)
+
+    def testEdgeLoadersRaisesExceptionForUnknownTarget(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["out"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Printer"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["in"]
+
+        text = """<block><canvas name="main">
+        <component name="constant_1" type="Constant"></component>
+        <component name="printer" type="Printer"></component>
+        <edge><source socket=out>constant_1</source><target socket=hahano>imalsonotreal</target></edge>
+        </canvas></block>"""
+
+        with self.assertRaises(ComponentNotFoundException):
+            self.setup_holder.block_loader.load_block(text, 0)
+
+    def testEdgeLoadersRaisesExceptionForUnknownSourceSocket(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["out"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Printer"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["in"]
+
+        text = """<block><canvas name="main">
+        <component name="constant_1" type="Constant"></component>
+        <component name="printer" type="Printer"></component>
+        <edge><source socket=whywouldihavesockets>constant_1</source><target socket=in>printer</target></edge>
+        </canvas></block>"""
+
+        with self.assertRaises(SocketNotFoundException):
+            self.setup_holder.block_loader.load_block(text, 0)
+
+
+    def testEdgeLoadersRaisesExceptionForUnknownTargetSocket(self):
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Constant"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.out_sockets = ["out"]
+
+        component_type_spec = ComponentTypeSpecifications()
+        component_type_spec.name = "Printer"
+        component_type = self.setup_holder.type_repository.create(component_type_spec)
+        component_type.in_sockets = ["in"]
+
+        text = """<block><canvas name="main">
+        <component name="constant_1" type="Constant"></component>
+        <component name="printer" type="Printer"></component>
+        <edge><source socket=output>constant_1</source><target socket=hahano>printer</target></edge>
+        </canvas></block>"""
+
+        with self.assertRaises(SocketNotFoundException):
+            self.setup_holder.block_loader.load_block(text, 0)
 
     def testLoadsFullWithVariable(self):
         component_type_spec = ComponentTypeSpecifications()

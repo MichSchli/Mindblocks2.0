@@ -1,3 +1,7 @@
+from Mindblocks.error_handling.loading.component_not_found_exception import ComponentNotFoundException
+from Mindblocks.error_handling.loading.socket_not_found_exception import SocketNotFoundException
+
+
 class BlockLoader:
 
     def __init__(self, xml_helper, canvas_loader, configuration_loader):
@@ -22,7 +26,12 @@ class BlockLoader:
             if next_symbol == "block" or next_symbol == "/block":
                 _, _, pointer = self.xml_helper.pop_symbol(file_lines, start_index=pointer)
             elif next_symbol == "canvas":
-                _, pointer = self.canvas_loader.load_canvas(file_lines, start_index=pointer)
+                try:
+                    _, pointer = self.canvas_loader.load_canvas(file_lines, start_index=pointer)
+                except SocketNotFoundException:
+                    raise
+                except ComponentNotFoundException:
+                    raise
             elif next_symbol == "configuration":
                 _, pointer = self.configuration_loader.load_configuration(file_lines, start_index=pointer)
             else:

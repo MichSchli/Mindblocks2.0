@@ -1,3 +1,5 @@
+from Mindblocks.error_handling.loading.component_not_found_exception import ComponentNotFoundException
+from Mindblocks.error_handling.loading.socket_not_found_exception import SocketNotFoundException
 from Mindblocks.repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
 
 
@@ -32,9 +34,17 @@ class EdgeLoader:
                 component_spec = CreationComponentSpecifications()
                 component_spec.graph_id = graph_id
                 component_spec.name = component_name
-                component = self.component_repository.get(component_spec)[0]
+                components = self.component_repository.get(component_spec)
 
-                source_socket = component.get_out_socket(socket_name)
+                if len(components) == 0:
+                    raise ComponentNotFoundException("Attempted edge creation with undeclared source component " + component_name)
+
+                component = components[0]
+
+                try:
+                    source_socket = component.get_out_socket(socket_name)
+                except SocketNotFoundException:
+                    raise SocketNotFoundException("Attempted edge creation with non-existant socket "+socket_name+" for source component "+component_name)
 
                 next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
             elif next_symbol == "target":
@@ -45,9 +55,17 @@ class EdgeLoader:
                 component_spec = CreationComponentSpecifications()
                 component_spec.graph_id = graph_id
                 component_spec.name = component_name
-                component = self.component_repository.get(component_spec)[0]
+                components = self.component_repository.get(component_spec)
 
-                target_socket = component.get_in_socket(socket_name)
+                if len(components) == 0:
+                    raise ComponentNotFoundException("Attempted edge creation with undeclared target component " + component_name)
+
+                component = components[0]
+
+                try:
+                    target_socket = component.get_in_socket(socket_name)
+                except SocketNotFoundException:
+                    raise SocketNotFoundException("Attempted edge creation with non-existant socket "+socket_name+" for target component "+component_name)
 
                 next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 

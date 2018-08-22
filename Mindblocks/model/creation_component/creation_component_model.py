@@ -1,3 +1,6 @@
+from Mindblocks.error_handling.loading.socket_not_found_exception import SocketNotFoundException
+
+
 class CreationComponentModel:
 
     identifier = None
@@ -68,13 +71,13 @@ class CreationComponentModel:
         if name in self.out_sockets:
             return self.out_sockets[name]
         else:
-            return None
+            raise SocketNotFoundException(self.__str__() + " has no outgoing socket " + name)
 
     def get_in_socket(self, name):
         if name in self.in_sockets:
             return self.in_sockets[name]
         else:
-            return None
+            raise SocketNotFoundException(self.__str__() + " has no ingoing socket " + name)
 
     def __str__(self):
         return self.name + " (" +self.component_type.name + ")"

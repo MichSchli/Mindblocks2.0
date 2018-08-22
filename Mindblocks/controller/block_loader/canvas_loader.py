@@ -1,3 +1,5 @@
+from Mindblocks.error_handling.loading.component_not_found_exception import ComponentNotFoundException
+from Mindblocks.error_handling.loading.socket_not_found_exception import SocketNotFoundException
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
 
 
@@ -28,7 +30,12 @@ class CanvasLoader:
             if next_symbol == "component":
                 _, pointer = self.component_loader.load_component(text, canvas_id=canvas.identifier, start_index=pointer)
             elif next_symbol == "edge":
-                _, pointer = self.edge_loader.load_edge(text, pointer)
+                try:
+                    _, pointer = self.edge_loader.load_edge(text, pointer)
+                except SocketNotFoundException:
+                    raise
+                except ComponentNotFoundException:
+                    raise
             elif next_symbol == "graph":
                 _, pointer = self.graph_loader.load_graph(text, pointer)
             else:

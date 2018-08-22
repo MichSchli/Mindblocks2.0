@@ -1,5 +1,6 @@
 import unittest
 
+from Mindblocks.error_handling.loading.component_type_not_found_exception import ComponentTypeNotFoundException
 from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepository
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
 from Mindblocks.repository.component_type_repository.component_type_repository import ComponentTypeRepository
@@ -79,6 +80,16 @@ class TestCreationComponentRepository(unittest.TestCase):
         self.assertIsNotNone(element.component_type)
         self.assertEqual(component_type, element.component_type)
         self.assertEqual("TestType", element.get_component_type_name())
+
+    def testCreateWithUndeclaredTypeRaisesException(self):
+        type_specs = ComponentTypeSpecifications()
+        type_specs.name = "TestType"
+
+        specs = CreationComponentSpecifications()
+        specs.component_type_name = "TestType"
+
+        with self.assertRaises(ComponentTypeNotFoundException):
+            self.repository.create(specs)
 
     def testCreateWithComponentTypeAssignsDefaultValue(self):
         type_specs = ComponentTypeSpecifications()

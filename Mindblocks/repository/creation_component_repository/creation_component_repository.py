@@ -1,3 +1,4 @@
+from Mindblocks.error_handling.loading.component_type_not_found_exception import ComponentTypeNotFoundException
 from Mindblocks.model.creation_component.creation_component_in_socket import CreationComponentInSocket
 from Mindblocks.model.creation_component.creation_component_model import CreationComponentModel
 from Mindblocks.model.creation_component.creation_component_out_socket import CreationComponentOutSocket
@@ -32,7 +33,11 @@ class CreationComponentRepository(AbstractRepository):
 
         model.name = specifications.name
 
-        self.assign_component_type(model, specifications)
+        try:
+            self.assign_component_type(model, specifications)
+        except ComponentTypeNotFoundException:
+            raise
+
         self.assign_canvas(model, specifications)
         self.assign_graph(model, specifications)
 
@@ -51,7 +56,12 @@ class CreationComponentRepository(AbstractRepository):
         if specifications.component_type_name is not None:
             type_specs = ComponentTypeSpecifications()
             type_specs.name = specifications.component_type_name
-            component_type = self.component_type_repository.get(type_specs)[0]
+            component_types = self.component_type_repository.get(type_specs)
+
+            if len(component_types) == 0:
+                raise ComponentTypeNotFoundException("Attempted to create component with undeclared type " + specifications.component_type_name + ".")
+
+            component_type = component_types[0]
             model.component_type = component_type
 
             for out_socket_name in model.component_type.get_out_sockets():

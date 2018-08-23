@@ -8,16 +8,19 @@ from Mindblocks.model.execution_graph.execution_component_value_model import Exe
 import numpy as np
 
 
-class KeyValueAttentionComponent(ComponentTypeModel):
+class AttentionComponent(ComponentTypeModel):
 
-    name = "KeyValueAttention"
+    name = "Attention"
     in_sockets = ["sequence", "key"]
     out_sockets = ["output"]
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        value = KeyValueAttentionValue()
-        value.set_output_dimension(int(value_dictionary["output_dim"][0][0]))
+        value = AttentionValue()
+        value.set_scoring_type(value_dictionary["scoring"][0][0])
+
+        if "output_dim" in value_dictionary:
+            value.set_output_dimension(int(value_dictionary["output_dim"][0][0]))
 
         if "heads" in value_dictionary:
             value.set_attention_heads(int(value_dictionary["heads"][0][0]))
@@ -39,41 +42,42 @@ class KeyValueAttentionComponent(ComponentTypeModel):
                                        value,
                                        input_dimension,
                                        mode)
+
         output_value_models["output"].assign(attention_result, language="tensorflow")
 
         return output_value_models
 
     def attend(self, key, sequence_tensor, lengths, value, input_dimension, mode):
-        key_tensor, value_tensor = tf.split(sequence_tensor, [int(0.5 * input_dimension), int(0.5 * input_dimension)], 2)
+        if value.scoring_type == "bilinear":
+            transformed_key = value.key_transform.transform(key, mode)
+            transformed_key = tf.expand_dims(transformed_key, 1)
+            scores = transformed_key * sequence_tensor
 
-        previous_shape = tf.shape(key_tensor)
-        transformed_key = tf.reshape(key_tensor, [previous_shape[0] * previous_shape[1], -1])
-        transformed_value = value.value_transform.transform(tf.reshape(value_tensor, [previous_shape[0] * previous_shape[1], -1]), mode)
+            sequence_shape = tf.shape(sequence_tensor)
 
-        dim = int(0.5 * input_dimension / value.attention_heads)
-        transformed_key = tf.reshape(transformed_key, [previous_shape[0], previous_shape[1], value.attention_heads, dim])
-        transformed_value = tf.reshape(transformed_value, [previous_shape[0], previous_shape[1], value.attention_heads, dim])
+            head_scores = tf.reshape(scores, [sequence_shape[0], sequence_shape[1], value.attention_heads, -1])
 
-        transformed_context_key = value.key_input_transform.transform(key, mode)
-        transformed_key *= tf.reshape(transformed_context_key, [previous_shape[0], 1, value.attention_heads, dim])
-
-        norm_factor = np.sqrt(dim)
-        attention_logits = tf.reduce_sum(transformed_key, axis=3) / norm_factor
+        head_scores = tf.reduce_sum(head_scores, -1)
 
         minus_inifinity = dtypes.as_dtype(tf.float32).as_numpy_dtype(-np.inf)
-        self.mask_attention_logits(attention_logits, lengths, minus_inifinity)
-        attention_weights = tf.nn.softmax(attention_logits, dim=1)
+        head_scores = self.mask_attention_logits(head_scores, lengths, minus_inifinity)
+        attention_weights = tf.nn.softmax(head_scores, 1)
+        attention_weights = tf.expand_dims(attention_weights, -1)
 
-        #attention_weights = self.mask_attention_weights(attention_weights, lengths)
+        exp_seq_tensor = tf.expand_dims(sequence_tensor, 2)
+        attention_weighted_matrix = exp_seq_tensor * attention_weights
+        weighted_sums = tf.reduce_sum(attention_weighted_matrix, 1)
 
-        attention_weights = tf.expand_dims(attention_weights, 3)
+        output = tf.reshape(weighted_sums, [sequence_shape[0], sequence_shape[-1]])
 
-        attention_weighted_matrix = transformed_value * attention_weights
+        if value.should_combine_context():
+            output = tf.nn.relu(tf.concat([output, key], -1))
+            output = value.output_transform.transform(output, mode=mode)
+            output = tf.nn.tanh(output)
+            #if mode == "train":
+            #    output = tf.nn.dropout(output, keep_prob=0.7)
 
-        weighted_value_matrix = tf.reduce_sum(attention_weighted_matrix, 1)
-        return_value = tf.reshape(weighted_value_matrix, [previous_shape[0], value.output_dimension])
-
-        return return_value
+        return output
 
     def mask_attention_logits(self, attention_logits, lengths, score_mask_value):
         seq_mask = tf.sequence_mask(
@@ -92,12 +96,13 @@ class KeyValueAttentionComponent(ComponentTypeModel):
         return {"output": output_type}
 
 
-class KeyValueAttentionValue(ExecutionComponentValueModel):
+class AttentionValue(ExecutionComponentValueModel):
 
     axis = None
     attention_heads = None
     output_dimension = None
     initialized = None
+    scoring_type = None
 
     def __init__(self):
         self.initialized = False
@@ -106,10 +111,18 @@ class KeyValueAttentionValue(ExecutionComponentValueModel):
     def set_output_dimension(self, dim):
         self.output_dimension = dim
 
+    def should_combine_context(self):
+        return True
+
+    def set_scoring_type(self, scoring_type):
+        self.scoring_type = scoring_type
+
     def set_attention_heads(self, attention_heads):
         self.attention_heads = attention_heads
 
     def initialize_transforms(self, key_dim, value_dim):
-        self.key_input_transform = MlpHelper([int(key_dim), self.output_dimension], "attention_key_input_transform")
-        self.value_transform = MlpHelper([int(value_dim/2), self.output_dimension], "attention_value_transform")
+        if self.scoring_type == "bilinear":
+            self.key_transform = MlpHelper([int(key_dim), int(value_dim)], "attention_key_input_transform")
+            self.output_transform = MlpHelper([int(value_dim) + int(key_dim), int(self.output_dimension)], "attention_output_transform")
+
         self.initialized = True

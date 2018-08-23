@@ -25,8 +25,6 @@ class MlpHelper:
                 np.float32)
             bias_initializer = np.zeros(dim_2, dtype=np.float32)
 
-            weight_initializer = np.ones_like(weight_initializer)
-
             self.weights[i] = tf.Variable(weight_initializer, name=self.variable_prefix + "_W" + str(i))
             self.biases[i] = tf.Variable(bias_initializer, name=self.variable_prefix + "_b" + str(i))
 

@@ -28,9 +28,12 @@ class KeyValueAttentionComponent(ComponentTypeModel):
             value_dim = input_dictionary["sequence"].get_inner_dim()
             value.initialize_transforms(key_dim, value_dim)
 
+        lengths = input_dictionary["sequence"].get_sequence_lengths()
+
         input_dimension = input_dictionary["sequence"].get_inner_dim()
         attention_result = self.attend(input_dictionary["key"].get_value(),
                                        input_dictionary["sequence"].get_value(),
+                                       lengths,
                                        value,
                                        input_dimension,
                                        mode)
@@ -38,7 +41,7 @@ class KeyValueAttentionComponent(ComponentTypeModel):
 
         return output_value_models
 
-    def attend(self, key, sequence_tensor, value, input_dimension, mode):
+    def attend(self, key, sequence_tensor, lengths, value, input_dimension, mode):
         key_tensor, value_tensor = tf.split(sequence_tensor, [int(0.5 * input_dimension), int(0.5 * input_dimension)], 2)
 
         previous_shape = tf.shape(key_tensor)
@@ -53,7 +56,11 @@ class KeyValueAttentionComponent(ComponentTypeModel):
         transformed_key *= tf.reshape(transformed_context_key, [previous_shape[0], 1, value.attention_heads, dim])
 
         norm_factor = np.sqrt(dim)
-        attention_weights = tf.nn.softmax(tf.reduce_sum(transformed_key, axis=3) / norm_factor, dim=1)
+        attention_logits = tf.reduce_sum(transformed_key, axis=3) / norm_factor
+        attention_weights = tf.nn.softmax(attention_logits, dim=1)
+
+        attention_weights = self.mask_attention_weights(attention_weights, lengths)
+
         attention_weights = tf.expand_dims(attention_weights, 3)
 
         attention_weighted_matrix = transformed_value * attention_weights
@@ -62,6 +69,18 @@ class KeyValueAttentionComponent(ComponentTypeModel):
         return_value = tf.reshape(weighted_value_matrix, [previous_shape[0], value.output_dimension])
 
         return return_value
+
+    def mask_attention_weights(self, attention_weights, lengths):
+        seq_mask = tf.sequence_mask(
+            lengths,
+            maxlen=tf.shape(attention_weights)[1],
+            dtype=tf.float32,
+            name="attention_mask"
+        )
+        seq_mask = tf.expand_dims(seq_mask, -1)
+        attention_weights = attention_weights * seq_mask
+        attention_weights = attention_weights / tf.expand_dims(tf.reduce_sum(attention_weights, axis=1), 1)
+        return attention_weights
 
     def build_value_type_model(self, input_types, value):
         output_type = input_types["key"].copy()
@@ -89,6 +108,5 @@ class KeyValueAttentionValue(ExecutionComponentValueModel):
 
     def initialize_transforms(self, key_dim, value_dim):
         self.key_input_transform = MlpHelper([int(key_dim), self.output_dimension], "attention_key_input_transform")
-        self.key_transform = MlpHelper([int(value_dim/2), self.output_dimension], "attention_key_transform")
         self.value_transform = MlpHelper([int(value_dim/2), self.output_dimension], "attention_value_transform")
         self.initialized = True

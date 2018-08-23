@@ -46,7 +46,7 @@ class SequenceBatchValueModel:
         else:
             pass
 
-    def assign_with_lengths(self, sequence_batch, length_batch):
+    def assign_with_lengths(self, sequence_batch, length_batch, language="tensorflow"):
         self.sequences = sequence_batch
         self.sequence_lengths = length_batch
 

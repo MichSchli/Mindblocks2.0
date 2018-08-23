@@ -44,7 +44,7 @@ class BiRnn(ComponentTypeModel):
 
         final_states = tf.concat([rnn_output[1][i][1] for i in [0,1]], -1)
 
-        output_value_models["output"].assign(out_sequences, language="tensorflow")
+        output_value_models["output"].assign_with_lengths(out_sequences, lengths, language="tensorflow")
         output_value_models["final_state"].assign(final_states)
         return output_value_models
 

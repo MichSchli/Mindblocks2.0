@@ -44,13 +44,22 @@ class RnnHelper:
         for component_input, graph_input, feed_type in rnn_model.in_links:
             parts = graph_input.split(":")
             if feed_type == "per_batch" and rnn_model.tiling_factor > 1:
-                input_value = input_dictionary[component_input].get_value()
                 parts = graph_input.split(":")
                 in_socket = rnn_model.inner_graph.get_in_socket(parts[0], parts[1])
                 value = in_socket.replaced_type.initialize_value_model()
 
-                tf_inp = tf.contrib.seq2seq.tile_batch(input_value, rnn_model.tiling_factor)
-                value.assign(tf_inp, language="tensorflow")
+                if input_dictionary[component_input].is_value_type("sequence"):
+                    input_seqs = input_dictionary[component_input].get_sequences()
+                    input_lens = input_dictionary[component_input].get_sequence_lengths()
+
+                    tf_inp_seqs = tf.contrib.seq2seq.tile_batch(input_seqs, rnn_model.tiling_factor)
+                    tf_inp_lens = tf.contrib.seq2seq.tile_batch(input_lens, rnn_model.tiling_factor)
+
+                    value.assign_with_lengths(tf_inp_seqs, tf_inp_lens, language="tensorflow")
+                else:
+                    input_value = input_dictionary[component_input].get_value()
+                    tf_inp = tf.contrib.seq2seq.tile_batch(input_value, rnn_model.tiling_factor)
+                    value.assign(tf_inp, language="tensorflow")
 
                 rnn_model.inner_graph.enforce_value(parts[0], parts[1], value)
             elif feed_type != "loop":

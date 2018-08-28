@@ -70,11 +70,11 @@ class BasicInterface:
     def set_variable(self, name, value, mode=None):
         self.variable_repository.set_variable_value(name, value, mode=mode)
 
-    def initialize(self):
+    def initialize(self, profile=False, log_dir=None):
         graph_specs = GraphSpecifications()
         graph_specs.marked = True
         graph = self.graph_repository.get(graph_specs)[0]
-        self.ml_helper = self.ml_helper_factory.build_ml_helper_from_graph(graph)
+        self.ml_helper = self.ml_helper_factory.build_ml_helper_from_graph(graph, profile=profile, log_dir=log_dir)
         self.ml_helper.initialize_model()
 
     def load_file(self, filename):

@@ -21,6 +21,8 @@ class MlHelper:
 
     current_iteration = None
 
+    profile_dir = None
+
     def __init__(self):
         self.current_iteration = 0
         self.initialization_helper = InitializationHelper()
@@ -78,6 +80,7 @@ class MlHelper:
         else:
             iteration_range = range(self.current_iteration, self.current_iteration + iterations)
 
+        self.first_batch = True
         for i in iteration_range:
             self.log("Starting iteration " + str(i), "training", "iteration")
             self.current_iteration = i
@@ -119,6 +122,10 @@ class MlHelper:
         loss_tracker = 0
         while self.update_and_loss_function.has_batches():
             _, loss = self.update_and_loss_function.execute()
+
+            if self.first_batch and self.profile_dir is not None:
+                self.first_batch = False
+                self.tensorflow_session_model.generate_profiling_data(self.profile_dir)
 
             loss_tracker += loss
 

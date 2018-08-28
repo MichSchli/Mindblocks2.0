@@ -35,7 +35,7 @@ class MlHelperFactory:
 
         return configuration
 
-    def build_ml_helper_from_graph(self, graph):
+    def build_ml_helper_from_graph(self, graph, profile=False, log_dir=None):
         marked_sockets = graph.get_marked_sockets()
 
         update = marked_sockets["update"] if "update" in marked_sockets else None
@@ -46,12 +46,16 @@ class MlHelperFactory:
         return self.build_ml_helper(update=update,
                                     loss=loss,
                                     evaluate=evaluate,
-                                    prediction=prediction)
+                                    prediction=prediction,
+                                    profile=profile,
+                                    log_dir=log_dir)
 
-    def build_ml_helper(self, update=None, loss=None, evaluate=None, prediction=None):
+    def build_ml_helper(self, update=None, loss=None, evaluate=None, prediction=None, profile=False, log_dir=None):
         ml_helper = MlHelper()
         tensorflow_session_model = self.tensorflow_session_repository.new()
+        tensorflow_session_model.should_profile = profile
         ml_helper.set_tensorflow_session(tensorflow_session_model)
+        ml_helper.profile_dir = log_dir
 
         runs = []
         run_interpretations = []

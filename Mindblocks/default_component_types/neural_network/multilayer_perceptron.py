@@ -67,7 +67,7 @@ class MultilayerPerceptronValue(ExecutionComponentValueModel):
         for i in range(len(self.dims) - 1):
             vectors = tf.matmul(vectors, self.weights[i]) + self.biases[i]
             if i < len(self.dims) - 2:
-                if self.dropout_rate > 0.00001 and mode == "train":
+                if self.dropout_rate > 0 and mode == "train":
                     vectors = tf.nn.dropout(vectors, keep_prob=keep_prob)
 
                 vectors = tf.nn.relu(vectors)

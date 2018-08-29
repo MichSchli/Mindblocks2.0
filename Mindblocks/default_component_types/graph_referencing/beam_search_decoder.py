@@ -176,7 +176,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width, 1)
         gather_indices = tf.reshape(parent_beam_ids + range_, [-1])
         gather_indices = tf.reshape(gather_indices, [-1])
-        gather_indices = tf.Print(gather_indices, [parent_beam_ids], message="1. parent_beam_ids", summarize=100)
 
         # Determine which of the current beams are continuations of finished beams. Replace tokens with stop tokens:
         continues_finished = tf.gather(old_finished, indices=gather_indices)
@@ -185,12 +184,9 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         # Add newly finished beams to list of finished:
         should_stop_prediction = tf.equal(tf.reshape(next_word_ids, [-1]), self.stop_symbol)
         new_finished = tf.logical_or(continues_finished, should_stop_prediction)
-        new_finished = tf.Print(new_finished, [new_finished], message="2. new_finished", summarize=100)
-        new_finished = tf.Print(new_finished, [next_word_ids], message="3. next_word_ids", summarize=100)
 
         # Allocate lengths to beams:
         new_lengths = tf.gather(new_lengths, indices=gather_indices)
-        new_lengths = tf.Print(new_lengths, [new_lengths], message="4. lengths", summarize=100)
 
         # Distribute reccurent values according to beams:
         for i in range(n_rec):
@@ -213,7 +209,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         flat_log_probs = tf.reshape(total_log_probs, [-1])
 
         output_log_probs = tf.gather(flat_log_probs, indices=gather_indices)
-        output_log_probs = tf.Print(output_log_probs, [output_log_probs], message="4. output_log_probs", summarize=100)
         results.append(output_log_probs)
 
         results += [new_lengths]
@@ -281,9 +276,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         decoded_sequences = tf.transpose(tf.reshape(decoded_sequences, [-1, self.rnn_model.batch_size * self.n_to_output]), [1,0])
         max_length = tf.reduce_max(lengths)
         decoded_sequences = decoded_sequences[:, :max_length]
-
-        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences], message="sequences", summarize=100)
-        decoded_sequences = tf.Print(decoded_sequences, [lengths], message="lengths", summarize=100)
 
         return decoded_sequences, lengths
 

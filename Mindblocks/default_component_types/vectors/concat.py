@@ -28,10 +28,6 @@ class Concat(ComponentTypeModel):
         left_dims = input_types["left"].get_dimensions()
         right_dims = input_types["right"].get_dimensions()
 
-        print("asfg")
-        print(left_dims)
-        print(right_dims)
-
         if len(left_dims) == 0 and len(right_dims) == 0:
             value.new_array = True
 

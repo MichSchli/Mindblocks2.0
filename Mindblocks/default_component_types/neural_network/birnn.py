@@ -76,8 +76,6 @@ class BiRnnValue(ExecutionComponentValueModel):
         self.cell_forward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name= self.get_name() + "-forward")
         self.cell_backward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name= self.get_name() + "-backward")
 
-        print(self.cells_forward)
-
     def set_layer_dropout(self, dropout):
         self.layer_dropout_keep_prob = 1 - dropout
 

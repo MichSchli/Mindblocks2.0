@@ -115,8 +115,8 @@
                 <source socket="output">target_indexer</source>
                 <target socket="labels">loss</target>
         </edge>
-        <component name="adam_upd" type="SGDUpdater" language="tensorflow">
-            <learning_rate>0.01</learning_rate>
+        <component name="adam_upd" type="AdamUpdater" language="tensorflow">
+            <learning_rate>0.001</learning_rate>
             <gradient_clip>1.0</gradient_clip>
             <mark socket="update">update</mark>
         </component>

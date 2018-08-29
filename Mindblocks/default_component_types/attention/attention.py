@@ -33,6 +33,7 @@ class AttentionComponent(ComponentTypeModel):
             value_dim = input_dictionary["sequence"].get_inner_dim()
             value.initialize_transforms(key_dim, value_dim)
 
+
         lengths = input_dictionary["sequence"].get_sequence_lengths()
 
         input_dimension = input_dictionary["sequence"].get_inner_dim()

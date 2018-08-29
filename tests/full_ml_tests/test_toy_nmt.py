@@ -38,6 +38,27 @@ class TestToyNmt(unittest.TestCase):
             pred_sent = " ".join(predictions[i])
             self.assertEqual(s, pred_sent)
 
+    def testBasicSeqtoSeqPerplexity(self):
+        filename = "full_ml_tests/toy_nmt/basic_toy_nmt_with_perplexity.xml"
+
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_data_path("nmt/toy/")
+        embedding_filepath = self.setup_holder.filepath_handler.get_test_data_path("embeddings/")
+
+        interface = BasicInterface()
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.set_variable("embedding_folder", embedding_filepath)
+        interface.initialize()
+
+        initial_validation = interface.validate()
+        interface.train()
+        second_validation = interface.validate()
+
+        self.assertLess(50, initial_validation)
+        self.assertLess(1, second_validation)
+        self.assertGreater(1.01, second_validation)
+
     def testSeqtoSeqWithKVAttention(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_attention.xml"
 
@@ -143,7 +164,6 @@ class TestToyNmt(unittest.TestCase):
         self.assertEqual(len(gold_sentences), len(predictions))
 
         for i, s in enumerate(gold_sentences):
-            print(i)
             pred_sent = " ".join(predictions[i])
             self.assertEqual(s, pred_sent)
 
@@ -171,7 +191,6 @@ class TestToyNmt(unittest.TestCase):
         self.assertEqual(len(gold_sentences), len(predictions))
 
         for i, s in enumerate(gold_sentences):
-            print(i)
             pred_sent = " ".join(predictions[i])
             self.assertEqual(s, pred_sent)
 
@@ -216,7 +235,6 @@ class TestToyNmt(unittest.TestCase):
         self.assertEqual(len(gold_sentences), len(predictions))
 
         for i, s in enumerate(gold_sentences):
-            print(i)
             pred_sent = " ".join(predictions[i])
             self.assertEqual(s, pred_sent)
 

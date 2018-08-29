@@ -71,6 +71,7 @@ class TensorflowSectionContractor:
                     source_out_socket.add_target(new_in_socket)
                     new_in_socket.set_source(source_out_socket)
                     new_in_socket.cast = in_socket.cast
+
                     new_in_socket.execution_component = tensorflow_section
 
                     tensorflow_section.map_in_socket(in_socket, new_in_socket)

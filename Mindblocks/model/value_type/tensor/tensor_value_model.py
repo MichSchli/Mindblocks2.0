@@ -52,6 +52,9 @@ class TensorValueModel:
     def get_tensorflow_output_tensors(self):
         return [self.value]
 
+    def apply_dropouts(self, dropout_rate):
+        keep_prob = 1 - float(dropout_rate)
+        self.value = tf.nn.dropout(self.value, keep_prob=keep_prob)
 
     def is_value_type(self, test_type):
         return test_type == "tensor"

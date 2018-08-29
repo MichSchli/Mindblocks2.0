@@ -19,7 +19,7 @@ class Accuracy(ComponentTypeModel):
         predictions = input_dictionary["predictions"].get_value()
         labels = input_dictionary["labels"].get_value().astype(np.int32).flatten()
 
-        accuracy = (np.abs(predictions - labels) < value.tolerance).sum() / input_dictionary["normalization"].get_value()
+        accuracy = (np.abs(predictions - labels) < value.tolerance)
 
         output_value_models["output"].assign(accuracy)
 

@@ -37,3 +37,5 @@ class GraphRepository(AbstractRepository):
         out_socket.add_edge(edge)
         in_socket.set_edge(edge)
         edge.cast = cast
+
+        return edge

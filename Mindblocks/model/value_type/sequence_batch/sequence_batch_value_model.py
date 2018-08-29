@@ -50,6 +50,10 @@ class SequenceBatchValueModel:
         self.sequences = sequence_batch
         self.sequence_lengths = length_batch
 
+    def apply_dropouts(self, dropout_rate):
+        keep_prob = 1 - float(dropout_rate)
+        self.sequences = tf.nn.dropout(self.sequences, keep_prob=keep_prob)
+
     def get_value(self):
         return self.sequences
 

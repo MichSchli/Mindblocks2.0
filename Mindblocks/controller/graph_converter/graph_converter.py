@@ -21,7 +21,7 @@ class GraphConverter:
         self.graph_repository = graph_repository
 
         self.value_dictionary_builder = ValueDictionaryBuilder(variable_repository, graph_repository)
-        self.execution_graph_builder = ExecutionGraphBuilder(graph_repository, execution_component_repository)
+        self.execution_graph_builder = ExecutionGraphBuilder(graph_repository, execution_component_repository, variable_repository)
 
     def to_executable(self, runs, run_modes=None, tensorflow_session_model=None):
         if run_modes is None:

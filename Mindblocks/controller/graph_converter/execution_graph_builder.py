@@ -12,10 +12,12 @@ class ExecutionGraphBuilder:
 
     graph_repository = None
     execution_component_repository = None
+    variable_repository = None
 
-    def __init__(self, graph_repository, execution_component_repository):
+    def __init__(self, graph_repository, execution_component_repository, variable_repository):
         self.graph_repository = graph_repository
         self.execution_component_repository = execution_component_repository
+        self.variable_repository = variable_repository
 
     def build_execution_graph(self, run, mode, value_dictionary):
         head_component, execution_components = self.get_run_components_and_edges(run, mode, value_dictionary)
@@ -103,6 +105,9 @@ class ExecutionGraphBuilder:
 
                     execution_in_socket.cast = socket.edge.cast
 
+                    if socket.edge.dropout_rate is not None:
+                        self.handle_dropouts(execution_in_socket, socket.edge.dropout_rate, run_mode)
+
                     desired_source_id = str(socket.edge.source_socket.component.identifier) + ":" + socket.edge.source_socket.name
                     if desired_source_id not in unmatched_in_sockets:
                         unmatched_in_sockets[desired_source_id] = []
@@ -131,6 +136,14 @@ class ExecutionGraphBuilder:
             head_component.add_in_socket(head_in_socket)
 
         return head_component, execution_components
+
+    def handle_dropouts(self, execution_in_socket, dropout_rate, mode):
+        for variable in self.get_all_variables():
+            dropout_rate = variable.replace_in_string(dropout_rate, mode=mode)
+        execution_in_socket.dropout_rate = float(dropout_rate)
+
+    def get_all_variables(self):
+        return self.variable_repository.get_all()
 
     def build_execution_component(self, component, execution_value):
         execution_component_model = self.execution_component_repository.create_from_creation_component(component)

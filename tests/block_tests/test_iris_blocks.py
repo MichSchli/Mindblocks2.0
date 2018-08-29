@@ -116,7 +116,7 @@ class TestIrisBlocks(unittest.TestCase):
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
         self.setup_holder.initialization_helper.initialize(run_graphs)
         run_graphs[0].init_batches()
-        performance = run_graphs[0].execute()[0]
+        performance = run_graphs[0].execute()[0].sum()
 
         self.assertGreaterEqual(10.0, performance)
         self.assertLessEqual(0.0, performance)
@@ -250,3 +250,66 @@ class TestIrisBlocks(unittest.TestCase):
         performance = ml_helper.evaluate()
 
         self.assertLess(0.9, performance)
+
+    def testFullTrainingLowEdgeDropoutsTrains(self):
+        filename = "iris_tests/full_iris_with_edge_dropouts.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+        self.setup_holder.variable_repository.set_variable_value("input_dropout", 0.1)
+        self.setup_holder.variable_repository.set_variable_value("output_dropout", 0.1)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertLess(0.9, performance)
+
+    def testFullTrainingHighInputDropoutsFails(self):
+        filename = "iris_tests/full_iris_with_edge_dropouts.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+        self.setup_holder.variable_repository.set_variable_value("input_dropout", 0.999999)
+        self.setup_holder.variable_repository.set_variable_value("output_dropout", 0.1)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertGreater(0.5, performance)
+
+    def testFullTrainingHighOutputDropoutsFails(self):
+        filename = "iris_tests/full_iris_with_edge_dropouts.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+        self.setup_holder.variable_repository.set_variable_value("input_dropout", 0.1)
+        self.setup_holder.variable_repository.set_variable_value("output_dropout", 0.999999)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertGreater(0.5, performance)

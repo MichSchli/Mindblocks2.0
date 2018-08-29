@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from Mindblocks.controller.ml_helper.initialization_helper import InitializationHelper
 from Mindblocks.helpers.logging.logger_factory import LoggerFactory
-
+import numpy as np
 
 class MlHelper:
     evaluate_function = None
@@ -50,9 +50,14 @@ class MlHelper:
         self.initialize_model()
         self.evaluate_function.init_batches()
         performance = 0.0
+        count = 0
         while self.evaluate_function.has_batches():
-            performance += self.evaluate_function.execute()[0]
-        return performance
+            batch_result = self.evaluate_function.execute()[0]
+            for b in batch_result:
+                performance += b
+                count += 1
+
+        return  self.process_result_for_reporting(performance, count, mode="test")
 
     def validate(self):
         self.initialize_model()
@@ -112,14 +117,29 @@ class MlHelper:
     def do_validate(self):
         self.validate_function.init_batches()
         performance = 0.0
+        count = 0
         while self.validate_function.has_batches():
-            performance += self.validate_function.execute()[0]
-        return performance
+            batch_result = self.validate_function.execute()[0]
+            for b in batch_result:
+                performance += b
+                count += 1
+        return self.process_result_for_reporting(performance, count, mode="validate")
+
+    def process_result_for_reporting(self, performance, count, mode):
+        average_performance = performance / count
+
+        if self.configuration.report_perplexity[mode]:
+            perplexity = np.exp(average_performance)
+            return perplexity
+
+        return average_performance
 
     def do_train_iteration(self):
         self.update_and_loss_function.init_batches()
         batch = 1
+
         loss_tracker = 0
+        count = 0
         while self.update_and_loss_function.has_batches():
             _, loss = self.update_and_loss_function.execute()
 
@@ -127,14 +147,17 @@ class MlHelper:
                 self.first_batch = False
                 self.tensorflow_session_model.generate_profiling_data(self.profile_dir)
 
-            loss_tracker += loss
+            for b in loss:
+                loss_tracker += b
+                count += 1
 
             if self.configuration.report_loss_every_n is not None and batch % self.configuration.report_loss_every_n == 0:
-                out_loss = loss_tracker / self.configuration.report_loss_every_n
+                out_loss = self.process_result_for_reporting(loss_tracker, count, mode="train")
                 message = "Loss at batch " + str(batch) + ": " + str(out_loss)
                 context = "training"
                 field = "loss"
                 self.log(message, context, field)
                 loss_tracker = 0
+                count = 0
 
             batch += 1

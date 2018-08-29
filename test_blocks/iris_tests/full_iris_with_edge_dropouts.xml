@@ -9,27 +9,11 @@
 
         <variable name="data_folder">
         </variable>
+        <variable name="input_dropout">
+        </variable>
+        <variable name="output_dropout">
+        </variable>
     </configuration>
-        <canvas name="def">
-        <component name="defconstant_1" type="Constant">
-            <value>5.17</value>
-            <type>float</type>
-        </component>
-        <component name="defconstant_2" type="Constant">
-            <value>2.98</value>
-            <type>float</type>
-        </component>
-        <component name="defadder" type="Add" language="python">
-        </component>
-        <edge>
-                <source socket="output">defconstant_1</source>
-                <target socket="left">defadder</target>
-        </edge>
-        <edge>
-                <source socket="output">defconstant_2</source>
-                <target socket="right">defadder</target>
-        </edge>
-    </canvas>
     <canvas name="main">
         <component name="reader" type="CsvReader">
             <file_path>$data_folder/iris.data.txt</file_path>
@@ -80,8 +64,9 @@
             <dimensions>4,20,3</dimensions>
         </component>
         <edge cast="float">
-                <source socket="left">data_splitter</source>
-                <target socket="input">mlp</target>
+            <source socket="left">data_splitter</source>
+            <target socket="input">mlp</target>
+            <dropout>$input_dropout</dropout>
         </edge>
 
         <component name="softmax" type="Softmax" language="tensorflow">
@@ -116,8 +101,9 @@
             <mark socket="output">loss</mark>
         </component>
         <edge>
-                <source socket="output">mlp</source>
-                <target socket="logits">cross_ent</target>
+            <source socket="output">mlp</source>
+            <target socket="logits">cross_ent</target>
+            <dropout>$output_dropout</dropout>
         </edge>
         <edge>
                 <source socket="output">indexer</source>
@@ -129,26 +115,6 @@
         <edge>
                 <source socket="output">cross_ent</source>
                 <target socket="loss">adam_upd</target>
-        </edge>
-    </canvas>
-        <canvas name="abc">
-        <component name="abcconstant_1" type="Constant">
-            <value>5.17</value>
-            <type>float</type>
-        </component>
-        <component name="abcconstant_2" type="Constant">
-            <value>2.98</value>
-            <type>float</type>
-        </component>
-        <component name="abcadder" type="Add" language="python">
-        </component>
-        <edge>
-                <source socket="output">abcconstant_1</source>
-                <target socket="left">abcadder</target>
-        </edge>
-        <edge>
-                <source socket="output">abcconstant_2</source>
-                <target socket="right">abcadder</target>
         </edge>
     </canvas>
 </block>

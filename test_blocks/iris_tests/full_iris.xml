@@ -1,5 +1,12 @@
 <block>
     <configuration>
+        <variable name="max_iterations">
+            <default_value>200</default_value>
+        </variable>
+        <variable name="validate_every_n">
+            <default_value>20</default_value>
+        </variable>
+
         <variable name="data_folder">
         </variable>
     </configuration>

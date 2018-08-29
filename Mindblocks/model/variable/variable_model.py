@@ -41,4 +41,4 @@ class VariableModel:
 
         target_part = "$" + self.name
 
-        return string.replace(target_part, replacement)
+        return string.replace(target_part, str(replacement))

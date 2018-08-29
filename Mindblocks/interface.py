@@ -86,6 +86,9 @@ class BasicInterface:
     def evaluate(self):
         return self.ml_helper.evaluate()
 
+    def validate(self):
+        return self.ml_helper.validate()
+
     def predict(self):
         return self.ml_helper.predict()
 

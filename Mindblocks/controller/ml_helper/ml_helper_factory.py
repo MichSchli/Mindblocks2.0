@@ -33,6 +33,11 @@ class MlHelperFactory:
         else:
             configuration.validate_every_n = 10
 
+        vars = self.variable_repository.get_by_name("report_perplexity")
+        if len(vars) > 0:
+            for mode in ["train", "validate", "test"]:
+                configuration.report_perplexity[mode] = vars[0].get_value(mode)
+
         return configuration
 
     def build_ml_helper_from_graph(self, graph, profile=False, log_dir=None):

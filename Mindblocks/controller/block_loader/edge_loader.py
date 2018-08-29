@@ -24,6 +24,8 @@ class EdgeLoader:
         if "cast" in attributes:
             cast = attributes["cast"]
 
+        dropout_rate = None
+
         while next_symbol != "/edge":
             next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
             if next_symbol == "source":
@@ -68,7 +70,12 @@ class EdgeLoader:
                     raise SocketNotFoundException("Attempted edge creation with non-existant socket "+socket_name+" for target component "+component_name)
 
                 next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
+            elif next_symbol == "dropout":
+                next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
+                dropout_rate = next_symbol
+                next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 
         edge = self.graph_repository.add_edge(source_socket, target_socket, cast=cast)
+        edge.dropout_rate = dropout_rate
 
         return edge, pointer

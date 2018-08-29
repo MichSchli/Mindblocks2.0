@@ -32,8 +32,10 @@ class SGDUpdater(ComponentTypeModel):
         return value
 
     def execute(self, input_dictionary, value, output_value_models, mode):
+        per_example_loss = input_dictionary["loss"].get_value()
+        per_batch_loss = tf.reduce_mean(per_example_loss)
         optim = tf.train.GradientDescentOptimizer(learning_rate=value.learning_rate)
-        grad_and_var_pairs = optim.compute_gradients(input_dictionary["loss"].get_value())
+        grad_and_var_pairs = optim.compute_gradients(per_batch_loss)
 
         grads = [gvp[0] for gvp in grad_and_var_pairs]
         tvars = [gvp[1] for gvp in grad_and_var_pairs]

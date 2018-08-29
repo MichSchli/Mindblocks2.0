@@ -1,13 +1,10 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>1000</default_value>
-        </variable>
-        <variable name="report_loss_every_n">
-            <default_value>10</default_value>
+            <default_value>200</default_value>
         </variable>
         <variable name="validate_every_n">
-            <default_value>10</default_value>
+            <default_value>20</default_value>
         </variable>
 
         <variable name="IRIS">

@@ -33,6 +33,9 @@ class MlHelperFactory:
         else:
             configuration.validate_every_n = 10
 
+        configuration.report_perplexity = {"train": False,
+                                           "validate": False,
+                                           "test": False}
         vars = self.variable_repository.get_by_name("report_perplexity")
         if len(vars) > 0:
             for mode in ["train", "validate", "test"]:

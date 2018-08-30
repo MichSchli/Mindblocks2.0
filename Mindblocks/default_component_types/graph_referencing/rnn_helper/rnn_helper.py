@@ -65,8 +65,9 @@ class RnnHelper:
             elif feed_type != "loop":
                 rnn_model.inner_graph.enforce_value(parts[0], parts[1], input_dictionary[component_input])
 
-    def add_sequence_outputs(self, rnn_model, maximum_iterations):
+    def add_sequence_outputs(self, rnn_model, maximum_iterations, mode):
         sequence_output_values = self.get_sequence_output_values(rnn_model,
+                                                                 mode,
                                                                  maximum_iterations=maximum_iterations)
         for sequence_output_value in sequence_output_values:
             rnn_model.add_loop_var(sequence_output_value)
@@ -111,7 +112,7 @@ class RnnHelper:
 
         return recurrency_sockets, initializers
 
-    def get_sequence_output_values(self, rnn_model, maximum_iterations=None):
+    def get_sequence_output_values(self, rnn_model, mode, maximum_iterations=None):
         sequence_output_values = []
         counter = 0
         for _, graph_output, _ in rnn_model.out_links:
@@ -119,7 +120,7 @@ class RnnHelper:
             # use tensor arrays
             parts = graph_output.split(":")
             socket = rnn_model.inner_graph.get_out_socket(parts[0], parts[1])
-            out_type = socket.pull_type_model()
+            out_type = socket.pull_type_model(mode)
             dims = out_type.get_dimensions()
             tf_value = tensor_array_ops.TensorArray(
                 dtype=tf.float32,

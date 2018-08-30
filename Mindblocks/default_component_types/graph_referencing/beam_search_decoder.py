@@ -51,14 +51,14 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
 
         return output_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         rnn_helper = RnnHelper()
 
         rnn_helper.tile_batches(value.rnn_model, value.beam_width)
         rnn_helper.handle_input_types(value.rnn_model, input_types)
 
         #value.assign_input_types(input_types)
-        output_types = value.compute_types()
+        output_types = value.compute_types(mode)
 
         # TODO this is nonsence
         output_types["predictions"] = SequenceBatchTypeModel("int", [], None, value.maximum_iterations)
@@ -89,6 +89,9 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         self.beam_width = 1
         self.n_to_output = 1
         self.stop_symbol = 0
+
+    def get_referenced_graphs(self):
+        return [self.rnn_model.inner_graph]
 
     def set_beam_index(self, index):
         self.beam_index = index
@@ -295,8 +298,8 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         results = self.graph.execute()
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
-    def compute_types(self):
-        inner_graph_output = self.rnn_model.get_inner_graph_output_types()
+    def compute_types(self, mode):
+        inner_graph_output = self.rnn_model.get_inner_graph_output_types(mode)
 
         return inner_graph_output
 

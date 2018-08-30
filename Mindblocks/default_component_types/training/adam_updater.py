@@ -38,7 +38,7 @@ class AdamUpdater(ComponentTypeModel):
         output_value_models["update"].assign(update)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         return {"update": SpecialTypeModel()}
 
 class AdamUpdaterValue(ExecutionComponentValueModel):

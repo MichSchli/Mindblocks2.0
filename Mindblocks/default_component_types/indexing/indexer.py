@@ -24,7 +24,7 @@ class Indexer(ComponentTypeModel):
         output_value_models["output"].assign(transformed_input)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         input_value_type = input_types["input"].copy()
         input_value_type.set_data_type("int")
         input_value_type.set_inner_dim(1)

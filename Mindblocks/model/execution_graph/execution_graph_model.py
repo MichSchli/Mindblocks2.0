@@ -31,9 +31,6 @@ class ExecutionGraphModel:
         self.head_component.initialize(self.run_mode, self.tensorflow_session_model)
 
     def init_batches(self):
-        #for component in self.components:
-        #    if component.execution_type is not None and component.execution_type.name == "BatchGenerator":
-        #        component.execution_value.init_batches()
         self.clear_all_caches()
         self.head_component.init_batches()
 
@@ -58,5 +55,28 @@ class ExecutionGraphModel:
         in_socket = self.get_in_socket(component, socket)
         in_socket.replace_type(type)
 
-    def initialize_type_models(self):
-        return self.head_component.initialize_type_models()
+    def initialize_type_models(self, mode):
+        return self.head_component.initialize_type_models(mode)
+
+    def count_parameters(self):
+        parameters = 0
+        for component in self.components:
+            parameters += component.count_parameters()
+
+        for value in self.referenced_graph_values():
+            parameters += value.count_parameters()
+
+        return parameters
+
+    def referenced_graph_values(self):
+        values = []
+
+        for component in self.components:
+            for referenced_graph in component.get_referenced_graphs():
+                values.extend(referenced_graph.get_all_values())
+
+        values = list(set(values))
+        return values
+
+    def get_all_values(self):
+        return [component.get_value() for component in self.components]

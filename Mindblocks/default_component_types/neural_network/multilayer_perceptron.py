@@ -26,7 +26,7 @@ class MultilayerPerceptron(ComponentTypeModel):
         output_value_models["output"].assign(post_value)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["input"].copy()
         output_type.set_inner_dim(value.dims[-1])
         return {"output": output_type}
@@ -61,6 +61,18 @@ class MultilayerPerceptronValue(ExecutionComponentValueModel):
 
             self.weights[i] = tf.Variable(weight_initializer, name=self.variable_prefix + "_W" + str(i))
             self.biases[i] = tf.Variable(bias_initializer, name=self.variable_prefix + "_b" + str(i))
+
+    def count_parameters(self):
+        parameters = 0
+
+        for i in range(len(self.dims) - 1):
+            dim_1 = self.dims[i]
+            dim_2 = self.dims[i + 1]
+
+            parameters += dim_1 * dim_2
+            parameters += dim_2
+
+        return parameters
 
     def transform(self, vectors, mode):
         keep_prob = 1.0 - self.dropout_rate

@@ -22,7 +22,7 @@ class CrossEntropy(ComponentTypeModel):
         output_value_models["output"].assign(cross_entropy)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         return {"output": TensorTypeModel("float", [])}
 
 class CrossEntropyValue(ExecutionComponentValueModel):

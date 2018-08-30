@@ -24,7 +24,7 @@ class Concat(ComponentTypeModel):
         output_value_models["output"].assign(result)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         left_dims = input_types["left"].get_dimensions()
         right_dims = input_types["right"].get_dimensions()
 

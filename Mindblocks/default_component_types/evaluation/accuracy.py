@@ -25,7 +25,7 @@ class Accuracy(ComponentTypeModel):
 
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         return {"output": TensorTypeModel("float", [None])}
 
 

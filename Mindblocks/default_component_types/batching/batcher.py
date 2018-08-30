@@ -28,7 +28,7 @@ class Batcher(ComponentTypeModel):
         output_value_models["output"].assign(batch)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         data_type = input_types["data"].copy()
         data_type.subsample(None)
         return {"output": data_type}

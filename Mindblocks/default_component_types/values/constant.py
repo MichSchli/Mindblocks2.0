@@ -19,7 +19,7 @@ class Constant(ComponentTypeModel):
         output_value_models["output"].assign(value.value)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         return {"output": TensorTypeModel(value.value_type, [] if not value.tensor else [v for v in value.value.shape])}
 
 

@@ -27,7 +27,7 @@ class BatchGenerator(ComponentTypeModel):
         output_value_models["batch"].assign(value.get_next_batch())
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         return {"batch": TensorTypeModel("int", [value.batch_size])}
 
     def has_batches(self, value, previous_values):

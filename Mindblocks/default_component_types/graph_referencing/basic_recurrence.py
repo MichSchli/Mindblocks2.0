@@ -36,11 +36,14 @@ class BasicRecurrenceComponent(ComponentTypeModel):
 
         return output_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         value.assign_input_types(input_types)
-        output_types = value.compute_types()
+        output_types = value.compute_types(mode)
 
         return output_types
+
+    def get_used_in_sockets(self, value):
+        return []
 
 
 class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
@@ -55,6 +58,9 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
         self.in_links = []
         self.out_links = []
         self.recurrences = []
+
+    def get_referenced_graphs(self):
+        return [self.graph]
 
     def add_in_link(self, component_input, graph_input, feed_type=None):
         self.in_links.append((component_input, graph_input, feed_type))
@@ -132,8 +138,8 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
         results = self.graph.execute()
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
-    def compute_types(self):
-        results = self.graph.initialize_type_models()
+    def compute_types(self, mode):
+        results = self.graph.initialize_type_models(mode)
         out_type_dict = {}
         for output, result in zip(self.out_links, results):
             component_output, _, feed_type = output

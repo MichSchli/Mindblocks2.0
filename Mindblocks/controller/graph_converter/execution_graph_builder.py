@@ -97,6 +97,9 @@ class ExecutionGraphBuilder:
                 execution_out_sockets[socket_id] = execution_out_socket
 
             for name, socket in component.in_sockets.items():
+                if not self.should_use(name, component, execution_value, run_mode):
+                    continue
+
                 execution_in_socket = ExecutionInSocket()
                 execution_component.add_in_socket(name, execution_in_socket)
                 execution_in_socket.execution_component = execution_component
@@ -136,6 +139,10 @@ class ExecutionGraphBuilder:
             head_component.add_in_socket(head_in_socket)
 
         return head_component, execution_components
+
+    def should_use(self, name, creation_component, execution_value, mode):
+        execution_type = creation_component.component_type
+        return execution_type.is_used(name, execution_value, mode)
 
     def handle_dropouts(self, execution_in_socket, dropout_rate, mode):
         for variable in self.get_all_variables():

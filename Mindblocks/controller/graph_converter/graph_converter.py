@@ -33,7 +33,7 @@ class GraphConverter:
 
         for run, mode in zip(runs, run_modes):
             run_graph = self.execution_graph_builder.build_execution_graph(run, mode, value_dictionary)
-            run_graph.initialize_type_models()
+            run_graph.initialize_type_models(mode)
             execution_graphs.append(run_graph)
 
         self.tensorflow_section_contractor.contract_tensorflow_sections_in_graphs(execution_graphs,

@@ -32,3 +32,6 @@ class ComponentTypeModel:
 
     def determine_placeholders(self, value, in_socket_names):
         return {k: True for k in in_socket_names}
+
+    def is_used(self, socket_name, value, mode):
+        return True

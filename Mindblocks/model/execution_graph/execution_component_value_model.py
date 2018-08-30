@@ -18,3 +18,9 @@ class ExecutionComponentValueModel:
 
     def initialize_tensorflow_variables(self, tensorflow_session_model):
         pass
+
+    def count_parameters(self):
+        return 0
+
+    def get_referenced_graphs(self):
+        return []

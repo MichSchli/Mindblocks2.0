@@ -112,8 +112,8 @@ class RnnModel:
         value_model.assign(value)
         in_socket.replace_value(value_model)
 
-    def get_inner_graph_output_types(self):
-        results = self.inner_graph.initialize_type_models()
+    def get_inner_graph_output_types(self, mode):
+        results = self.inner_graph.initialize_type_models(mode)
         out_type_dict = {}
         for output, result in zip(self.out_links, results):
             component_output, _, feed_type = output

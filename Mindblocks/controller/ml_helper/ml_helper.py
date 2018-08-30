@@ -77,6 +77,7 @@ class MlHelper:
         return self.validate_function is not None
 
     def train(self, iterations=None):
+        self.count_parameters()
         self.log("Starting training at iteration " + str(self.current_iteration), "training", "status")
         self.initialize_model()
 
@@ -133,6 +134,16 @@ class MlHelper:
             return perplexity
 
         return average_performance
+
+    def count_parameters(self):
+        parameters = self.update_and_loss_function.count_parameters()
+
+        message = "Parameter count: " + str(parameters)
+        context = "training"
+        field = "parameters"
+        self.log(message, context, field)
+
+        return parameters
 
     def do_train_iteration(self):
         self.update_and_loss_function.init_batches()

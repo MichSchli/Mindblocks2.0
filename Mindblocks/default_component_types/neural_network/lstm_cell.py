@@ -23,9 +23,16 @@ class LstmCell(ComponentTypeModel):
 
         return value
 
-    def build_value_type_model(self, in_types, execution_value):
-        return {"output_c": in_types["previous_c"].copy(),
-                "output_h": in_types["previous_h"].copy()}
+    def build_value_type_model(self, in_types, execution_value, mode):
+        new_h_type = in_types["previous_h"].copy()
+        execution_value.input_dimension = new_h_type.get_inner_dim()
+        new_h_type.set_inner_dim(execution_value.get_final_cell_size())
+
+        new_c_type = in_types["previous_c"].copy()
+        new_c_type.set_inner_dim(execution_value.get_final_cell_size())
+
+        return {"output_c": new_c_type,
+                "output_h": new_h_type}
 
     def execute(self, input_dictionary, execution_value, output_value_models, mode):
         input_x = input_dictionary["input_x"].get_value()
@@ -83,3 +90,20 @@ class LstmCellValue(ExecutionComponentValueModel):
     def initialize_tensorflow_variable(self):
         if self.layers == 1:
             self.cells = [tf.nn.rnn_cell.LSTMCell(self.dimension)]
+
+    def get_final_cell_size(self):
+        return self.dimension
+
+    def count_parameters(self):
+        parameters = 0
+
+        input_dim = self.input_dimension
+        output_dim = self.dimension
+
+        for layer in range(self.layers):
+            if layer > 0:
+                input_dim = output_dim
+
+            parameters += 4 * output_dim * (input_dim + output_dim + 1)
+
+        return parameters

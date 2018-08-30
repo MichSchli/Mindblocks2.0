@@ -30,9 +30,9 @@ class GraphComponent(ComponentTypeModel):
 
         return output_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         value.assign_input_types(input_types)
-        output_types = value.compute_types()
+        output_types = value.compute_types(mode)
         return output_types
 
 
@@ -47,6 +47,9 @@ class GraphComponentValue(ExecutionComponentValueModel):
     def __init__(self):
         self.in_links = []
         self.out_links = []
+
+    def get_referenced_graphs(self):
+        return [self.graph]
 
     def add_in_link(self, component_input, graph_input):
         self.in_links.append((component_input, graph_input))
@@ -68,8 +71,8 @@ class GraphComponentValue(ExecutionComponentValueModel):
         results = self.graph.execute()
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
-    def compute_types(self):
-        results = self.graph.initialize_type_models()
+    def compute_types(self, mode):
+        results = self.graph.initialize_type_models(mode)
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
     def set_graph_name(self, name):

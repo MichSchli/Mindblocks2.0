@@ -22,7 +22,7 @@ class DataSplitter(ComponentTypeModel):
 
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         left = input_types["input"].copy()
         right = input_types["input"].copy()
         left.set_inner_dim(value.pivot+1)

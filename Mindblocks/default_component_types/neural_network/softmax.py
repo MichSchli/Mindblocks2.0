@@ -18,7 +18,7 @@ class Softmax(ComponentTypeModel):
         output_value_models["output"].assign(tf.nn.softmax(input_dictionary["input"].get_value()))
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["input"].copy()
         output_type.set_inner_dim(1)
         return {"output": output_type}

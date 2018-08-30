@@ -48,8 +48,9 @@ class BiRnn(ComponentTypeModel):
         output_value_models["final_state"].assign(final_states)
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         new_type = input_types["input"].copy()
+        value.input_dimension = new_type.get_inner_dim()
         new_type.set_inner_dim(value.get_final_cell_size())
 
         final_state_type = new_type.get_single_token_type()
@@ -81,3 +82,17 @@ class BiRnnValue(ExecutionComponentValueModel):
 
     def get_final_cell_size(self):
         return self.cell_size
+
+    def count_parameters(self):
+        parameters = 0
+
+        input_dim = self.input_dimension
+        output_dim = self.cell_size
+
+        for layer in range(self.layers):
+            if layer > 0:
+                input_dim = output_dim
+
+            parameters += 4 * output_dim * (input_dim + output_dim + 1)
+
+        return parameters

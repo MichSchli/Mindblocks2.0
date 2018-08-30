@@ -37,9 +37,9 @@ class ExecutionOutSocket:
     def has_batches(self):
         return self.execution_component.has_batches()
 
-    def pull_type_model(self):
+    def pull_type_model(self, mode):
         if self.cached_type is None:
-            self.execution_component.infer_type_models()
+            self.execution_component.infer_type_models(mode)
         return self.cached_type
 
     def set_cached_type(self, type_model):

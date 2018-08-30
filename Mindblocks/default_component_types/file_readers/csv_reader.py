@@ -19,7 +19,7 @@ class CsvReader(ComponentTypeModel):
         output_value_models["count"].assign(value.count())
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         return {"output": TensorTypeModel("string", [None, value.count_columns()]),
                 "count": TensorTypeModel("int", [])}
 

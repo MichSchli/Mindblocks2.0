@@ -48,7 +48,7 @@ class FileEmbeddings(ComponentTypeModel):
 
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         vector_model = TensorTypeModel("float", [None, value.get_width()])
         return {"index": IndexTypeModel(),
                 "vectors": vector_model}

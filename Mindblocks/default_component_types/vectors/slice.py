@@ -15,7 +15,7 @@ class SliceComponent(ComponentTypeModel):
     def execute(self, input_dictionary, value, output_models, mode):
         return {"output": input_dictionary["input"][value.slices]}
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["input"].copy()
         for i, dim_correction in enumerate(value.dim_corrections()):
             if dim_correction == "unknown":

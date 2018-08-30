@@ -140,6 +140,24 @@ class TestToyNmt(unittest.TestCase):
             pred_sent = " ".join(predictions[i])
             self.assertEqual(s, pred_sent)
 
+    def testSeqtoSeqWithLuongMulAttention(self):
+        filename = "full_ml_tests/toy_nmt/toy_nmt_luong_mul_attention.xml"
+
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_data_path("nmt/toy/")
+        embedding_filepath = self.setup_holder.filepath_handler.get_test_data_path("embeddings/")
+
+        interface = BasicInterface()
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.set_variable("embedding_folder", embedding_filepath)
+        interface.initialize()
+
+        ml_helper = interface.ml_helper
+        params = ml_helper.count_parameters()
+
+        self.assertEqual(436854, params)
+
     def testSeqtoSeqWithBatches(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_batches.xml"
 

@@ -1,0 +1,22 @@
+<block>
+    <canvas name="main">
+        <component name="constant_1" type="Constant">
+            <value>5.17</value>
+            <type>float</type>
+        </component>
+        <component name="constant_2" type="Constant">
+            <value>2.98</value>
+            <type>float</type>
+        </component>
+        <component name="mode_split" type="ModeSplitter" language="python">
+        </component>
+        <edge>
+                <source socket="output">constant_1</source>
+                <target socket="train">mode_split</target>
+        </edge>
+        <edge>
+                <source socket="output">constant_2</source>
+                <target socket="test">mode_split</target>
+        </edge>
+    </canvas>
+</block>

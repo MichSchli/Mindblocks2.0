@@ -47,15 +47,28 @@ class ExecutionComponentModel:
         for k,v in d.items():
             self.out_sockets[k].set_determine_placeholders(v)
 
-    def infer_type_models(self):
-        in_types = {k : in_socket.pull_type_model() for k,in_socket in self.in_sockets.items()}
-        self.output_type_models = self.execution_type.build_value_type_model(in_types, self.execution_value)
+    def infer_type_models(self, mode):
+        in_types = {}
+        for k, in_socket in self.in_sockets.items():
+            if self.execution_type.is_used(k, self.execution_value, mode):
+                in_types[k] = in_socket.pull_type_model(mode)
+
+        self.output_type_models = self.execution_type.build_value_type_model(in_types, self.execution_value, mode)
 
         for k,v in self.output_type_models.items():
             self.out_sockets[k].set_cached_type(v)
 
+    def count_parameters(self):
+        return self.execution_value.count_parameters()
+
     def get_name(self):
         return self.name
+
+    def get_value(self):
+        return self.execution_value
+
+    def get_referenced_graphs(self):
+        return self.execution_value.get_referenced_graphs()
 
     def get_in_sockets(self):
         return list(self.in_sockets.values())

@@ -38,6 +38,12 @@ class SequenceBatchTypeModel:
         else:
             self.item_shape[-1] = dimension
 
+    def get_inner_dim(self):
+        if len(self.item_shape) == 0:
+            return 1
+        else:
+            return self.item_shape[-1]
+
     def set_data_type(self, new_type):
         self.type = new_type
 

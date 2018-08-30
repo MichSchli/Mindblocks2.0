@@ -194,6 +194,24 @@ class TestIrisBlocks(unittest.TestCase):
 
         self.assertLess(0.9, performance)
 
+    def testCountParameters(self):
+        filename = "iris_tests/full_iris.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        params = ml_helper.count_parameters()
+
+        self.assertEqual(163, params)
+
     def testFullTrainingWithSgd(self):
         filename = "iris_tests/full_iris_with_sgd.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)

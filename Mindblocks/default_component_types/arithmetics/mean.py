@@ -21,7 +21,7 @@ class Mean(ComponentTypeModel):
 
         return output_value_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         if input_types["input"].is_value_type("sequence") and value.axis == 1:
             output_type = input_types["input"].get_single_token_type()
             output_type.extend_outer_dim(input_types["input"].get_batch_size())

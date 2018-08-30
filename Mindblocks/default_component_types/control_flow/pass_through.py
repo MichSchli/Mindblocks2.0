@@ -15,7 +15,7 @@ class PassThrough(ComponentTypeModel):
     def execute(self, input_dictionary, value, output_models, mode):
         return {"output": input_dictionary["input"]}
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         return {"output": input_types["input"].copy()}
 
 

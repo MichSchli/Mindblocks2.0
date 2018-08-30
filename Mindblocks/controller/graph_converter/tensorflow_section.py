@@ -33,22 +33,30 @@ class TensorflowSection(ExecutionComponentModel):
     def compile(self, mode):
         self.outputs = [tf_out_socket.pull(mode).get_tensorflow_output_tensors() for tf_out_socket, _ in self.matched_out_sockets]
 
-    def initialize_placeholders(self):
+    def initialize_placeholders(self, mode):
         for tf_in_socket, in_socket in self.matched_in_sockets:
-            socket_placeholder = self.get_placeholder(in_socket)
+            socket_placeholder = self.get_placeholder(in_socket, mode)
 
             tf_in_socket.replaced_value = socket_placeholder
 
-    def get_placeholder(self, in_socket):
-        value_type = in_socket.pull_type_model()
+    def get_placeholder(self, in_socket, mode):
+        value_type = in_socket.pull_type_model(mode)
         return value_type.get_tensorflow_placeholder()
+
+    def count_parameters(self):
+        parameters = 0
+
+        for component in self.components:
+            parameters += component.count_parameters()
+
+        return parameters
 
     def execute(self, mode):
         feed_dict = self.create_feed_dict(mode)
         tf_outputs = self.session_model.run(self.outputs, feed_dict)
 
         for i in range(len(self.matched_out_sockets)):
-            output_type = self.matched_out_sockets[i][0].pull_type_model()
+            output_type = self.matched_out_sockets[i][0].pull_type_model(mode)
             formatted_output = output_type.format_from_tensorflow_output(tf_outputs[i])
             self.matched_out_sockets[i][1].set_cached_value(formatted_output)
 
@@ -59,7 +67,7 @@ class TensorflowSection(ExecutionComponentModel):
                 continue
 
             value = in_socket.pull(mode)
-            placeholders = in_socket.pull_type_model().get_cached_placeholders()
+            placeholders = in_socket.pull_type_model(mode).get_cached_placeholders()
 
             feed_values = value.format_for_tensorflow_input()
             for k,v in zip(placeholders, feed_values):
@@ -75,7 +83,7 @@ class TensorflowSection(ExecutionComponentModel):
             initialization_value = tf_in_socket.initialize(mode, tensorflow_session_model)
 
             if self.should_use_placeholder(in_socket):
-                socket_placeholder = self.get_placeholder(in_socket)
+                socket_placeholder = self.get_placeholder(in_socket, mode)
                 tf_in_socket.replaced_value = socket_placeholder
             else:
                 tf_in_socket.replaced_value = initialization_value
@@ -100,3 +108,12 @@ class TensorflowSection(ExecutionComponentModel):
         #TODO: We are not initing in graph
         for in_socket in self.get_in_sockets():
             in_socket.init_batches()
+
+
+    def get_referenced_graphs(self):
+        gs = []
+
+        for component in self.components:
+            gs.extend(component.get_referenced_graphs())
+
+        return list(set(gs))

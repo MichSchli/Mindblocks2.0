@@ -75,8 +75,6 @@ class AttentionComponent(ComponentTypeModel):
             output = tf.nn.relu(tf.concat([output, key], -1))
             output = value.output_transform.transform(output, mode=mode)
             output = tf.nn.tanh(output)
-            #if mode == "train":
-            #    output = tf.nn.dropout(output, keep_prob=0.7)
 
         return output
 
@@ -90,7 +88,7 @@ class AttentionComponent(ComponentTypeModel):
         mask_values = score_mask_value * tf.ones_like(attention_logits)
         return tf.where(seq_mask, attention_logits, mask_values)
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["key"].copy()
         output_type.set_inner_dim(value.output_dimension)
 
@@ -127,3 +125,13 @@ class AttentionValue(ExecutionComponentValueModel):
             self.output_transform = MlpHelper([int(value_dim) + int(key_dim), int(self.output_dimension)], "attention_output_transform")
 
         self.initialized = True
+
+    def count_parameters(self):
+        if self.scoring_type == "bilinear":
+            parameters = self.key_transform.dims[0] * self.key_transform.dims[1] + self.key_transform.dims[1]
+            parameters += self.output_transform.dims[0] * self.output_transform.dims[1] + self.output_transform.dims[1]
+
+            return parameters
+
+        print("parameter count for other attention types than bilinear not implemented")
+        exit()

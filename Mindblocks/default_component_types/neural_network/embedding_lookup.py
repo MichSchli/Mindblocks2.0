@@ -31,7 +31,7 @@ class EmbeddingLookup(ComponentTypeModel):
 
         return output_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         vector_type = input_types["vectors"]
         index_type = input_types["indexes"]
 

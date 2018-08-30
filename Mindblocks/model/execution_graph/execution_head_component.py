@@ -26,8 +26,8 @@ class ExecutionHeadComponent:
         for socket in self.run_output_sockets:
             socket.init_batches()
 
-    def initialize_type_models(self):
-        return [socket.pull_type_model() for socket in self.run_output_sockets]
+    def initialize_type_models(self, mode):
+        return [socket.pull_type_model(mode) for socket in self.run_output_sockets]
 
     def describe_graph(self, indent=0):
         print("\t"*indent + "Graph: ")

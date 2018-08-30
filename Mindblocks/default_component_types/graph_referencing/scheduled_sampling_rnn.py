@@ -33,7 +33,7 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
         return value
 
     def execute(self, input_dictionary, value, output_models, mode):
-        outputs, lengths = value.assign_and_run(input_dictionary)
+        outputs, lengths = value.assign_and_run(input_dictionary, mode)
 
         for k,v in outputs.items():
             if output_models[k].is_value_type("sequence"):
@@ -43,12 +43,11 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
         return output_models
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         rnn_helper = RnnHelper()
         rnn_helper.handle_input_types(value.rnn_model, input_types)
 
-        #value.assign_input_types(input_types)
-        output_types = value.compute_types()
+        output_types = value.compute_types(mode)
 
         return output_types
 
@@ -67,6 +66,9 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
     def __init__(self):
         self.teacher_probability = tf.Variable(initial_value=self.initial_teacher_probability, trainable=False)
         self.stop_symbol = 0
+
+    def get_referenced_graphs(self):
+        return [self.rnn_model.inner_graph]
 
     def set_stop_token(self, symbol):
         self.stop_symbol = symbol
@@ -127,7 +129,7 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
     def get_teacher_value(self, index):
         return self.teacher_values[index]
 
-    def assign_and_run(self, input_dictionary):
+    def assign_and_run(self, input_dictionary, mode):
         batch_size = tf.shape(input_dictionary["teacher_inputs"].get_value())[0]
         self.rnn_model.set_batch_size(batch_size)
 
@@ -150,7 +152,7 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
         #        sequence_sockets.append((parts[0], parts[1]))
 
         rnn_helper.add_recurrency_initializers(self.rnn_model, input_dictionary)
-        rnn_helper.add_sequence_outputs(self.rnn_model, maximum_iterations)
+        rnn_helper.add_sequence_outputs(self.rnn_model, maximum_iterations, mode)
 
         self.rnn_model.add_length_var()
         self.rnn_model.add_finished_var()
@@ -182,8 +184,8 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
         results = self.graph.execute()
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
-    def compute_types(self):
-        inner_graph_output = self.rnn_model.get_inner_graph_output_types()
+    def compute_types(self, mode):
+        inner_graph_output = self.rnn_model.get_inner_graph_output_types(mode)
 
         return inner_graph_output
 

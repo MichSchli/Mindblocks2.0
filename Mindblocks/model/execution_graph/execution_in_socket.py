@@ -25,11 +25,11 @@ class ExecutionInSocket:
 
         return value
 
-    def pull_type_model(self):
+    def pull_type_model(self, mode):
         if self.replaced_type is not None:
             return self.replaced_type
 
-        source_type = self.source.pull_type_model()
+        source_type = self.source.pull_type_model(mode)
 
         if self.cast is not None:
             return source_type.cast(self.cast)

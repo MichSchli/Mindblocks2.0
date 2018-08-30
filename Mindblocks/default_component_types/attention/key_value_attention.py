@@ -85,7 +85,7 @@ class KeyValueAttentionComponent(ComponentTypeModel):
         mask_values = score_mask_value * tf.ones_like(attention_logits)
         return tf.where(seq_mask, attention_logits, mask_values)
 
-    def build_value_type_model(self, input_types, value):
+    def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["key"].copy()
         output_type.set_inner_dim(value.output_dimension)
 

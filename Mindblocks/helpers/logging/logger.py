@@ -1,3 +1,6 @@
+import os
+
+
 class Logger:
 
     filename = None
@@ -12,5 +15,9 @@ class Logger:
                 if self.filename is None:
                     print(message)
                 else:
+                    save_dir = os.path.dirname(self.filename)
+                    if not os.path.isdir(save_dir):
+                        os.makedirs(save_dir)
+
                     with open(self.filename, 'a') as log_file:
                         print(message, file=log_file)

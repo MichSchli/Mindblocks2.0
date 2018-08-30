@@ -11,6 +11,10 @@ class LoggerManager:
         logger = self.factory.create_console_logger(logger_configuration)
         self.loggers.append(logger)
 
+    def add_file_logger(self, logger_configuration, log_file_name):
+        logger = self.factory.create_file_logger(logger_configuration, log_file_name)
+        self.loggers.append(logger)
+
     def add_default_console_logger(self):
         default_config = {"training": ["status",
                                        "loss",

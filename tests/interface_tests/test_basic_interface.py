@@ -29,6 +29,37 @@ class TestBasicInterface(unittest.TestCase):
         self.assertGreaterEqual(1.0, performance)
         self.assertLess(0.9, performance)
 
+    def testLoggerSavesLog(self):
+        interface = BasicInterface()
+
+        filename = "iris_tests/full_iris.xml"
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+
+        logger_filepath = self.setup_holder.filepath_handler.get_test_data_path("test_output/logs/iris/log.txt")
+        log_dir_filepath = self.setup_holder.filepath_handler.get_test_data_path("test_output/logs/iris/")
+        if os.path.exists(log_dir_filepath):
+            shutil.rmtree(log_dir_filepath)
+
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.initialize()
+
+        logger_config = {"training": ["status",
+                                       "loss",
+                                       "parameters"],
+                          "validation": ["all"]}
+        interface.add_file_logger(logger_config, logger_filepath)
+
+        interface.train()
+        performance = interface.evaluate()
+
+        self.assertGreaterEqual(1.0, performance)
+        self.assertLess(0.9, performance)
+
+        self.assertTrue(os.path.exists(logger_filepath))
+
     def testIrisSaveAndLoad(self):
         interface = BasicInterface()
 

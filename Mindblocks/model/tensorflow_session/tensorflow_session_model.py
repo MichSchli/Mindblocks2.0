@@ -64,7 +64,6 @@ class TensorflowSessionModel(AbstractModel):
         return self.__tensorflow_iteration__
 
     def save(self, filepath):
-        print(tf.trainable_variables())
         if self.saver is None:
             self.saver = tf.train.Saver()
 

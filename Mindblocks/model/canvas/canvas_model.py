@@ -1,4 +1,7 @@
-class CanvasModel:
+from Mindblocks.model.abstract.abstract_model import AbstractModel
+
+
+class CanvasModel(AbstractModel):
 
     identifier = None
     name = None

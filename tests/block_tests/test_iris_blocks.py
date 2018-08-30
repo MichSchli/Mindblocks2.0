@@ -299,7 +299,7 @@ class TestIrisBlocks(unittest.TestCase):
         data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
             "iris_tests")
         self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
-        self.setup_holder.variable_repository.set_variable_value("input_dropout", 0.999999)
+        self.setup_holder.variable_repository.set_variable_value("input_dropout", 0.9999999)
         self.setup_holder.variable_repository.set_variable_value("output_dropout", 0.1)
 
         component_spec = CreationComponentSpecifications()
@@ -321,7 +321,7 @@ class TestIrisBlocks(unittest.TestCase):
             "iris_tests")
         self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
         self.setup_holder.variable_repository.set_variable_value("input_dropout", 0.1)
-        self.setup_holder.variable_repository.set_variable_value("output_dropout", 0.999999)
+        self.setup_holder.variable_repository.set_variable_value("output_dropout", 0.9999999)
 
         component_spec = CreationComponentSpecifications()
         c = self.setup_holder.component_repository.get(component_spec)[0]

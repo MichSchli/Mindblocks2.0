@@ -40,9 +40,7 @@ class ComponentTypeLoader:
         class_name_end_index = f_string.index("(ComponentTypeModel)")
         class_name = f_string[:class_name_end_index].split(" ")[-1]
         loaded_file = importlib.machinery.SourceFileLoader("module", f).load_module()
-        component_type = getattr(loaded_file, class_name)()
-
-        self.component_type_repository.add(component_type)
+        self.component_type_repository.create_from_class(getattr(loaded_file, class_name))
 
     def filter_name(self, name):
         if name.startswith('.') or name.startswith('_'):

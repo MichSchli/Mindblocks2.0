@@ -2,7 +2,7 @@ import unittest
 
 from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepository
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
-from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
+from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
 
 
 class TestCanvasRepository(unittest.TestCase):

@@ -4,19 +4,6 @@ loggers = []
 
 class LoggerFactory:
 
-    def setup(self, console_configuration, file_configuration):
-        global loggers
-        loggers = self.build(console_configuration, file_configuration)
-
-    def build(self, console_configuration, file_configuration):
-        new_loggers = [Logger(console_configuration, None)]
-        return new_loggers
-
-    def get(self):
-        global loggers
-        return loggers
-
-    def log(self, message, context, field):
-        loggers = self.get()
-        for logger in loggers:
-            logger.log(message, context, field)
+    def create_console_logger(self, console_configuration):
+        new_logger = Logger(console_configuration, None)
+        return new_logger

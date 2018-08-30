@@ -7,7 +7,7 @@ from Mindblocks.repository.canvas_repository.canvas_specifications import Canvas
 from Mindblocks.repository.component_type_repository.component_type_specifications import ComponentTypeSpecifications
 from Mindblocks.repository.creation_component_repository.creation_component_specifications import \
     CreationComponentSpecifications
-from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
+from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
 
 
 class CreationComponentRepository(AbstractRepository):
@@ -16,8 +16,8 @@ class CreationComponentRepository(AbstractRepository):
     graph_repository = None
     canvas_repository = None
 
-    def __init__(self, identifier_repository, component_type_repository, canvas_repository, graph_repository):
-        AbstractRepository.__init__(self, identifier_repository)
+    def __init__(self, identifier_repository, component_type_repository, canvas_repository, graph_repository, logger_manager):
+        AbstractRepository.__init__(self, identifier_repository, logger_manager)
         self.component_type_repository = component_type_repository
         self.canvas_repository = canvas_repository
         self.graph_repository = graph_repository

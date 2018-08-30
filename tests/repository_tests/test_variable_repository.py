@@ -1,5 +1,5 @@
 import unittest
-from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
+from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
 from Mindblocks.repository.variable_repository.variable_repository import VariableRepository
 from Mindblocks.repository.variable_repository.variable_specifications import VariableSpecifications
 

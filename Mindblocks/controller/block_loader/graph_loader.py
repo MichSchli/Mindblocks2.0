@@ -1,5 +1,5 @@
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
-from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
+from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
 
 
 class GraphLoader:

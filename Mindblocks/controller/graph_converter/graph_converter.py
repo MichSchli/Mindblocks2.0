@@ -6,7 +6,7 @@ from Mindblocks.model.execution_graph.execution_graph_model import ExecutionGrap
 from Mindblocks.model.execution_graph.execution_head_component import ExecutionHeadComponent
 from Mindblocks.model.execution_graph.execution_in_socket import ExecutionInSocket
 from Mindblocks.model.execution_graph.execution_out_socket import ExecutionOutSocket
-from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
+from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
 
 
 class GraphConverter:

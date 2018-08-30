@@ -3,8 +3,10 @@ import os
 import tensorflow as tf
 from tensorflow.python.client import timeline
 
+from Mindblocks.model.abstract.abstract_model import AbstractModel
 
-class TensorflowSessionModel:
+
+class TensorflowSessionModel(AbstractModel):
 
     identifier = None
     tensorflow_session = None

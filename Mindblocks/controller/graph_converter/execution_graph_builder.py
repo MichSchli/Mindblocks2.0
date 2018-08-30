@@ -5,7 +5,7 @@ from Mindblocks.model.execution_graph.execution_in_socket import ExecutionInSock
 from Mindblocks.model.execution_graph.execution_out_socket import ExecutionOutSocket
 from Mindblocks.repository.execution_component_repository.execution_component_specifications import \
     ExecutionComponentSpecifications
-from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
+from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
 
 
 class ExecutionGraphBuilder:

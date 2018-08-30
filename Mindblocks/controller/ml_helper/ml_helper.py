@@ -26,7 +26,6 @@ class MlHelper:
     def __init__(self):
         self.current_iteration = 0
         self.initialization_helper = InitializationHelper()
-        self.logger_factory = LoggerFactory()
 
     def set_tensorflow_session(self, tensorflow_session_model):
         self.tensorflow_session_model = tensorflow_session_model
@@ -102,9 +101,7 @@ class MlHelper:
         self.current_iteration += 1
 
     def log(self, message, context, field):
-        loggers = self.logger_factory.get()
-        for logger in loggers:
-            logger.log(message, context, field)
+        self.logger_manager.log(message, context, field)
 
     def save(self, filepath):
         self.tensorflow_session_model.save(filepath + "/tfparams.ckpt")

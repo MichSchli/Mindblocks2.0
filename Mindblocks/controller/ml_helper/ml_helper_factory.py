@@ -6,11 +6,13 @@ class MlHelperFactory:
 
     graph_converter = None
     variable_repository = None
+    logger_manager = None
 
-    def __init__(self, graph_converter, variable_repository, tensorflow_session_repository):
+    def __init__(self, graph_converter, variable_repository, tensorflow_session_repository, logger_manager):
         self.graph_converter = graph_converter
         self.variable_repository = variable_repository
         self.tensorflow_session_repository = tensorflow_session_repository
+        self.logger_manager = logger_manager
 
     def build_configuration(self):
         configuration = MlHelperConfiguration()
@@ -124,5 +126,6 @@ class MlHelperFactory:
                 ml_helper.set_prediction_function(run_graph)
 
         ml_helper.configuration = self.build_configuration()
+        ml_helper.logger_manager = self.logger_manager
 
         return ml_helper

@@ -13,3 +13,8 @@ class ComponentTypeRepository(AbstractRepository):
         model.name = specifications.name
 
         return model
+
+    def create_from_class(self, component_type_class):
+        model = component_type_class()
+        self.__fill__(model)
+        self.add(model)

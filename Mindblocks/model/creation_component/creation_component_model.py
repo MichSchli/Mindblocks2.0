@@ -1,7 +1,8 @@
 from Mindblocks.error_handling.loading.socket_not_found_exception import SocketNotFoundException
+from Mindblocks.model.abstract.abstract_model import AbstractModel
 
 
-class CreationComponentModel:
+class CreationComponentModel(AbstractModel):
 
     identifier = None
     name = None

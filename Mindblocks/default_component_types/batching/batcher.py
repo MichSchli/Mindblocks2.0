@@ -22,8 +22,7 @@ class Batcher(ComponentTypeModel):
         indexes = input_dictionary["indexes"].get_value()
 
         batch = data[indexes]
-        for logger in LoggerFactory().get():
-            logger.log("Batch: " + str(batch), "batching", "batches")
+        self.log("Batch: " + str(batch), "batching", "batches")
 
         output_value_models["output"].assign(batch)
         return output_value_models

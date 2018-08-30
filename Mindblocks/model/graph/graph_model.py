@@ -1,4 +1,7 @@
-class GraphModel:
+from Mindblocks.model.abstract.abstract_model import AbstractModel
+
+
+class GraphModel(AbstractModel):
 
     identifier = None
     name = None

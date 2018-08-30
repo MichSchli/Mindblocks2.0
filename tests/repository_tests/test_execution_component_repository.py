@@ -4,7 +4,7 @@ from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepo
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
 from Mindblocks.repository.execution_component_repository.execution_component_specifications import \
     ExecutionComponentSpecifications
-from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
+from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
 from tests.setup_holder import SetupHolder
 
 

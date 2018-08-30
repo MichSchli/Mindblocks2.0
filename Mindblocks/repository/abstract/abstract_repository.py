@@ -3,13 +3,18 @@ class AbstractRepository:
     elements = None
     timestamps = None
 
-    def __init__(self, identifier_repository):
+    def __init__(self, identifier_repository, logger_manager):
         self.identifier_repository = identifier_repository
+        self.logger_manager = logger_manager
         self.elements = {}
         self.timestamps = {}
 
+    def __fill__(self, model):
+        model.logger_manager = self.logger_manager
+
     def __create__(self):
         model = self.__initialize_model__()
+        self.__fill__(model)
         self.add(model)
         
         return model

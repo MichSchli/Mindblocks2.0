@@ -26,8 +26,11 @@ class FileEmbeddings(ComponentTypeModel):
             value.add_stop_token(value_dictionary["stop_token"][0][0], index)
 
         if "unk_token" in value_dictionary:
-            index = int(value_dictionary["unk_token"][0][1]["index"]) if "index" in value_dictionary["unk_token"][0][1] else value.stop_token_index + 1
-            value.add_unk_token(value_dictionary["unk_token"][0][0], index)
+            if "included" in value_dictionary["unk_token"][0][1]:
+                value.set_unk_token(value_dictionary["unk_token"][0][0])
+            else:
+                index = int(value_dictionary["unk_token"][0][1]["index"]) if "index" in value_dictionary["unk_token"][0][1] else value.stop_token_index + 1
+                value.add_unk_token(value_dictionary["unk_token"][0][0], index)
 
         if "trainable" in value_dictionary:
             value.set_trainable(value_dictionary["trainable"][0][0])
@@ -43,7 +46,10 @@ class FileEmbeddings(ComponentTypeModel):
 
     def initialize(self, input_dictionary, value, output_value_models, tensorflow_session_model):
         if not value.loaded:
+            self.log("Loading file embeddings...", "embeddings", "load")
             value.load()
+            self.log("Loaded " + str(value.length) + " vectors.", "embeddings", "load")
+
         output_value_models["vectors"].assign(value.get_vectors())
 
         return output_value_models
@@ -156,8 +162,11 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         self.stop_token_index = index
         self.add_special_symbol(token, index, np.zeros(self.width, dtype=np.float32))
 
-    def add_unk_token(self, token, index):
+    def set_unk_token(self, token):
         self.index["unk_token"] = token
+
+    def add_unk_token(self, token, index):
+        self.set_unk_token(token)
         self.add_special_symbol(token, index, np.ones(self.width, dtype=np.float32)*-1)
 
     """
@@ -205,7 +214,6 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         return self.next_item_pointer == self.length
 
     def load(self):
-        self.log("Loading file embeddings...", "embeddings", "load")
         if self.uses_vocabulary():
             self.load_vocabulary()
 
@@ -244,9 +252,6 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
         if self.uses_vocabulary():
             self.free_vocabulary()
 
-        self.log("Loaded " + str(self.length) + " vectors.", "embeddings", "load")
-        self.log("Last symbol added at: " + str(self.next_item_pointer), "embeddings", "load")
-
         self.next_item_pointer = 0
 
     """
@@ -261,12 +266,3 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
 
     def get_width(self):
         return self.width
-
-    """
-    Logging:
-    """
-
-    def log(self, message, context, field):
-        loggers = LoggerFactory().get()
-        for logger in loggers:
-            logger.log(message, context, field)

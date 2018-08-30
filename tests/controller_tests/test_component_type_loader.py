@@ -3,7 +3,7 @@ import unittest
 from Mindblocks.controller.component_type_loader.component_type_loader import ComponentTypeLoader
 from Mindblocks.helpers.files.FilepathHandler import FilepathHandler
 from Mindblocks.repository.component_type_repository.component_type_repository import ComponentTypeRepository
-from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
+from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
 
 
 class TestComponentTypeLoader(unittest.TestCase):

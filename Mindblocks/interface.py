@@ -15,9 +15,9 @@ from Mindblocks.repository.component_type_repository.component_type_repository i
 from Mindblocks.repository.creation_component_repository.creation_component_repository import CreationComponentRepository
 from Mindblocks.repository.execution_component_repository.execution_component_repository import \
     ExecutionComponentRepository
-from Mindblocks.repository.graph.graph_repository import GraphRepository
-from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
-from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
+from Mindblocks.repository.graph_repository.graph_repository import GraphRepository
+from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
+from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
 from Mindblocks.repository.tensorflow_session_repository.tensorflow_session_repository import \
     TensorflowSessionRepository
 from Mindblocks.repository.variable_repository.variable_repository import VariableRepository

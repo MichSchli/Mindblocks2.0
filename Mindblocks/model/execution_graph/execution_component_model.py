@@ -1,7 +1,8 @@
 from Mindblocks.helpers.logging.logger_factory import LoggerFactory
+from Mindblocks.model.abstract.abstract_model import AbstractModel
 
 
-class ExecutionComponentModel:
+class ExecutionComponentModel(AbstractModel):
 
     out_sockets = None
     in_sockets = None
@@ -67,7 +68,7 @@ class ExecutionComponentModel:
             message = " * " + self.get_name() + ": " + str(params)
             context = "training"
             field = "parameters"
-            LoggerFactory().log(message, context, field)
+            self.log(message, context, field)
         return params
 
     def get_name(self):

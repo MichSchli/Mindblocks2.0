@@ -3,7 +3,7 @@ import unittest
 from Mindblocks.repository.component_type_repository.component_type_repository import ComponentTypeRepository
 from Mindblocks.repository.component_type_repository.component_type_specifications import ComponentTypeSpecifications
 from Mindblocks.repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
-from Mindblocks.repository.identifier.identifier_repository import IdentifierRepository
+from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
 
 
 class TestComponentTypeRepository(unittest.TestCase):

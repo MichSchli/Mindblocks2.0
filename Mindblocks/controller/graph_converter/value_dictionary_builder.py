@@ -1,4 +1,4 @@
-from Mindblocks.repository.graph.graph_specifications import GraphSpecifications
+from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
 
 
 class ValueDictionaryBuilder:

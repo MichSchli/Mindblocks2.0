@@ -3,7 +3,7 @@ Parameter count:
  * Total: 163
 Starting training at iteration 0
 Validation at epoch 0: 0.3333333333333333
-Validation at epoch 20: 0.9466666666666667
-Validation at epoch 40: 0.9666666666666667
-Validation at epoch 60: 0.9866666666666667
+Validation at epoch 20: 0.6733333333333333
+Validation at epoch 40: 0.96
+Validation at epoch 60: 0.9733333333333334
 Validation at epoch 80: 0.9733333333333334

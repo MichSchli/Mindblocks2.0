@@ -9,6 +9,14 @@ class Logger:
         self.configuration = configuration
         self.filename = filename
 
+        if self.filename is not None:
+            save_dir = os.path.dirname(self.filename)
+            if not os.path.isdir(save_dir):
+                os.makedirs(save_dir)
+
+            if os.path.isfile(self.filename):
+                os.remove(self.filename)
+
     def log(self, message, context, subcontext):
         if context in self.configuration:
             if subcontext in self.configuration[context] or "all" in self.configuration[context]:

@@ -21,12 +21,15 @@ from Mindblocks.repository.identifier.identifier_repository import IdentifierRep
 from Mindblocks.repository.tensorflow_session_repository.tensorflow_session_repository import \
     TensorflowSessionRepository
 from Mindblocks.repository.variable_repository.variable_repository import VariableRepository
+import tensorflow as tf
 
 class BasicInterface:
 
     ml_helper = None
 
     def __init__(self, load_default_types=True):
+        tf.reset_default_graph()
+
         self.identifier_repository = IdentifierRepository()
         self.type_repository = ComponentTypeRepository(self.identifier_repository)
         self.canvas_repository = CanvasRepository(self.identifier_repository)
@@ -91,6 +94,12 @@ class BasicInterface:
 
     def predict(self):
         return self.ml_helper.predict()
+
+    def save(self, filepath):
+        self.ml_helper.save(filepath)
+
+    def load(self, filepath):
+        self.ml_helper.load(filepath)
 
     def get_execution_component(self, name):
         spec = self.execution_component_repository.get_specifications()

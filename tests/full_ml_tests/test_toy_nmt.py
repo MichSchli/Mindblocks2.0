@@ -1,3 +1,5 @@
+import os
+import shutil
 import unittest
 
 from Mindblocks.interface import BasicInterface
@@ -140,7 +142,7 @@ class TestToyNmt(unittest.TestCase):
             pred_sent = " ".join(predictions[i])
             self.assertEqual(s, pred_sent)
 
-    def testSeqtoSeqWithLuongMulAttention(self):
+    def testSeqtoSeqWithLuongMulAttentionParameterCount(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_luong_mul_attention.xml"
 
         block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
@@ -156,7 +158,7 @@ class TestToyNmt(unittest.TestCase):
         ml_helper = interface.ml_helper
         params = ml_helper.count_parameters()
 
-        self.assertEqual(436854, params)
+        self.assertEqual(276454, params)
 
     def testSeqtoSeqWithBatches(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_batches.xml"
@@ -393,6 +395,54 @@ class TestToyNmt(unittest.TestCase):
 
         interface.train()
         predictions = interface.predict()
+
+        self.assertEqual(len(gold_sentences), len(predictions))
+
+        for i, s in enumerate(gold_sentences):
+            pred_sent = " ".join(predictions[i])
+            self.assertEqual(s, pred_sent)
+
+    def testSeqtoSeqWithLuongMulAttentionSaveAndLoad(self):
+        filename = "full_ml_tests/toy_nmt/toy_nmt_luong_mul_attention.xml"
+
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_data_path("nmt/toy/")
+        embedding_filepath = self.setup_holder.filepath_handler.get_test_data_path("embeddings/")
+
+        interface = BasicInterface()
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.set_variable("embedding_folder", embedding_filepath)
+        interface.initialize()
+
+        f = open(data_filepath+"tgt.txt")
+        lines = [l.strip() for l in f]
+        gold_sentences = [l + " EOS" for l in lines]
+        f.close()
+
+        interface.train()
+        predictions = interface.predict()
+
+        self.assertEqual(len(gold_sentences), len(predictions))
+
+        for i, s in enumerate(gold_sentences):
+            pred_sent = " ".join(predictions[i])
+            self.assertEqual(s, pred_sent)
+
+        model_filepath = self.setup_holder.filepath_handler.get_test_data_path("stored_models/toy_nmt/luong")
+        if os.path.exists(model_filepath):
+            shutil.rmtree(model_filepath)
+
+        interface.save(model_filepath)
+
+        interface_2 = BasicInterface()
+        interface_2.load_file(block_filepath)
+        interface_2.set_variable("data_folder", data_filepath)
+        interface_2.set_variable("embedding_folder", embedding_filepath)
+        interface_2.initialize()
+        interface_2.load(model_filepath)
+
+        predictions = interface_2.predict()
 
         self.assertEqual(len(gold_sentences), len(predictions))
 

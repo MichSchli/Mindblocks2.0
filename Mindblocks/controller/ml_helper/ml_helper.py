@@ -106,6 +106,12 @@ class MlHelper:
         for logger in loggers:
             logger.log(message, context, field)
 
+    def save(self, filepath):
+        self.tensorflow_session_model.save(filepath + "/tfparams.ckpt")
+
+    def load(self, filepath):
+        self.tensorflow_session_model.load(filepath + "/tfparams.ckpt")
+
     def initialize_model(self):
         if not self.has_initialized:
             self.log("Initializing model.", "initialization", "status")
@@ -136,9 +142,14 @@ class MlHelper:
         return average_performance
 
     def count_parameters(self):
+        message = "Parameter count: "
+        context = "training"
+        field = "parameters"
+        self.log(message, context, field)
+
         parameters = self.update_and_loss_function.count_parameters()
 
-        message = "Parameter count: " + str(parameters)
+        message = " * Total: " + str(parameters)
         context = "training"
         field = "parameters"
         self.log(message, context, field)

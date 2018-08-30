@@ -28,6 +28,8 @@ class ExecutionGraphBuilder:
         for execution_component in execution_components:
             run_graph.add_execution_component(execution_component)
 
+        run_graph.get_components()
+
         return run_graph
 
     def should_populate(self, value):
@@ -85,12 +87,12 @@ class ExecutionGraphBuilder:
                 execution_value = self.do_populate(execution_value, run_mode, value_dictionary)
 
             execution_component = self.build_execution_component(component, execution_value)
+            execution_components.append(execution_component)
 
             for name, socket in component.out_sockets.items():
                 execution_out_socket = ExecutionOutSocket()
                 execution_component.add_out_socket(name, execution_out_socket)
                 execution_out_socket.execution_component = execution_component
-                execution_components.append(execution_component)
 
                 socket_id = str(component.identifier) + ":" + name
                 execution_out_socket.socket_id = socket_id

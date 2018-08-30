@@ -60,22 +60,28 @@ class ExecutionGraphModel:
 
     def count_parameters(self):
         parameters = 0
+        counted_values = []
         for component in self.components:
-            parameters += component.count_parameters()
+            v = component.get_value()
+            if v not in counted_values:
+                counted_values.append(v)
+                parameters += component.count_parameters()
 
-        for value in self.referenced_graph_values():
-            parameters += value.count_parameters()
+        for component in self.referenced_graph_components():
+            v = component.get_value()
+            if v not in counted_values:
+                counted_values.append(v)
+                parameters += component.count_parameters()
 
         return parameters
 
-    def referenced_graph_values(self):
+    def referenced_graph_components(self):
         values = []
 
         for component in self.components:
             for referenced_graph in component.get_referenced_graphs():
-                values.extend(referenced_graph.get_all_values())
+                values.extend(referenced_graph.get_components())
 
-        values = list(set(values))
         return values
 
     def get_all_values(self):

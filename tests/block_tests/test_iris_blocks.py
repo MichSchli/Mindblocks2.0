@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from Mindblocks.repository.creation_component_repository.creation_component_specifications import \
@@ -331,3 +332,4 @@ class TestIrisBlocks(unittest.TestCase):
         performance = ml_helper.evaluate()
 
         self.assertGreater(0.5, performance)
+

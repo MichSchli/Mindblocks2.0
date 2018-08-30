@@ -43,6 +43,9 @@ class TensorflowSection(ExecutionComponentModel):
         value_type = in_socket.pull_type_model(mode)
         return value_type.get_tensorflow_placeholder()
 
+    def get_value(self):
+        return self
+
     def count_parameters(self):
         parameters = 0
 
@@ -108,7 +111,6 @@ class TensorflowSection(ExecutionComponentModel):
         #TODO: We are not initing in graph
         for in_socket in self.get_in_sockets():
             in_socket.init_batches()
-
 
     def get_referenced_graphs(self):
         gs = []

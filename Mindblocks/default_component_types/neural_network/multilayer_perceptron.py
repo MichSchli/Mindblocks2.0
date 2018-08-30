@@ -23,6 +23,7 @@ class MultilayerPerceptron(ComponentTypeModel):
 
     def execute(self, input_dictionary, value, output_value_models, mode):
         post_value = value.transform(input_dictionary["input"].get_value(), mode)
+
         output_value_models["output"].assign(post_value)
         return output_value_models
 

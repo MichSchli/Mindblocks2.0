@@ -1,7 +1,7 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>100</default_value>
+            <default_value>300</default_value>
         </variable>
         <variable name="validate_every_n">
             <default_value>20</default_value>
@@ -16,6 +16,7 @@
             <columns>string,string,string,string,string</columns>
         </component>
         <component name="batch_generator" type="BatchGenerator">
+            <shuffle>False</shuffle>
             <batch_size>10</batch_size>
         </component>
         <edge>

@@ -1,3 +1,5 @@
+import os
+
 import tensorflow as tf
 from tensorflow.python.client import timeline
 
@@ -13,6 +15,8 @@ class TensorflowSessionModel:
 
     tf_run_options = None
     tf_run_metadata = None
+
+    saver = None
 
     def __init__(self):
         self.current_iteration = 0
@@ -56,3 +60,20 @@ class TensorflowSessionModel:
         if self.__tensorflow_iteration__ is None:
             self.__tensorflow_iteration__ = tf.placeholder(tf.int32, shape=[])
         return self.__tensorflow_iteration__
+
+    def save(self, filepath):
+        print(tf.trainable_variables())
+        if self.saver is None:
+            self.saver = tf.train.Saver()
+
+        save_dir = os.path.dirname(filepath)
+        if not os.path.isdir(save_dir):
+            os.makedirs(save_dir)
+
+        self.saver.save(self.tensorflow_session, filepath)
+
+    def load(self, filepath):
+        if self.saver is None:
+            self.saver = tf.train.Saver()
+
+        self.saver.restore(self.tensorflow_session, filepath)

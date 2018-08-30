@@ -2,7 +2,6 @@ from Mindblocks.helpers.logging.logger import Logger
 
 loggers = []
 
-
 class LoggerFactory:
 
     def setup(self, console_configuration, file_configuration):
@@ -16,3 +15,8 @@ class LoggerFactory:
     def get(self):
         global loggers
         return loggers
+
+    def log(self, message, context, field):
+        loggers = self.get()
+        for logger in loggers:
+            logger.log(message, context, field)

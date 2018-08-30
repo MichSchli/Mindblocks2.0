@@ -1,3 +1,6 @@
+from Mindblocks.helpers.logging.logger_factory import LoggerFactory
+
+
 class ExecutionComponentModel:
 
     out_sockets = None
@@ -59,7 +62,13 @@ class ExecutionComponentModel:
             self.out_sockets[k].set_cached_type(v)
 
     def count_parameters(self):
-        return self.execution_value.count_parameters()
+        params = self.execution_value.count_parameters()
+        if params > 0:
+            message = " * " + self.get_name() + ": " + str(params)
+            context = "training"
+            field = "parameters"
+            LoggerFactory().log(message, context, field)
+        return params
 
     def get_name(self):
         return self.name

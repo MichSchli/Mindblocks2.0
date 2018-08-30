@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 
 from Mindblocks.interface import BasicInterface
@@ -27,6 +28,42 @@ class TestBasicInterface(unittest.TestCase):
 
         self.assertGreaterEqual(1.0, performance)
         self.assertLess(0.9, performance)
+
+    def testIrisSaveAndLoad(self):
+        interface = BasicInterface()
+
+        filename = "iris_tests/full_iris_no_shuffling.xml"
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+
+        model_filepath = self.setup_holder.filepath_handler.get_test_data_path("stored_models/iris/iris.model")
+        if os.path.exists(model_filepath):
+            shutil.rmtree(model_filepath)
+
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.initialize()
+
+        interface.train()
+        performance = interface.evaluate()
+
+        self.assertGreaterEqual(1.0, performance)
+        self.assertLess(0.9, performance)
+
+        interface.save(model_filepath)
+
+        interface_2 = BasicInterface()
+        interface_2.load_file(block_filepath)
+        interface_2.set_variable("data_folder", data_filepath)
+        interface_2.initialize()
+        interface_2.load(model_filepath)
+
+        performance = interface_2.evaluate()
+
+        self.assertGreaterEqual(1.0, performance)
+        self.assertLess(0.9, performance)
+
 
     def testAlwaysUsesMarkedGraph(self):
         interface = BasicInterface()

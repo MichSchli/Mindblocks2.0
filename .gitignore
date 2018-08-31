@@ -5,6 +5,8 @@ __pycache__/
 
 # Ignore all embedding files
 test_data/embeddings/
+test_data/stored_models/
+test_data/test_output/
 
 # Pycharm
 *.pyc

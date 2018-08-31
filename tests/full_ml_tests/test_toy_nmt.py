@@ -293,6 +293,44 @@ class TestToyNmt(unittest.TestCase):
 
         self.assertGreater(10, unk_count)
 
+    def testSeqtoSeqWithUnkReplacement(self):
+        filename = "full_ml_tests/toy_nmt/toy_nmt_replace_unks.xml"
+
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_data_path("nmt/toy/")
+        embedding_filepath = self.setup_holder.filepath_handler.get_test_data_path("embeddings/")
+
+        interface = BasicInterface()
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.set_variable("embedding_folder", embedding_filepath)
+        interface.initialize()
+
+        f = open(data_filepath + "tgt.txt")
+        lines = [l.strip() for l in f]
+        gold_sentences = [l + " EOS" for l in lines]
+        f.close()
+
+        interface.train()
+        predictions = interface.predict()
+
+        self.assertEqual(len(gold_sentences), len(predictions))
+
+        unk_count = 0
+        missed_count = 0
+
+        for i, s in enumerate(gold_sentences):
+            gold_tokens = s.split(" ")
+            for j, t in enumerate(gold_tokens):
+                if predictions[i][j] != "UNK":
+                    if predictions[i][j] != t:
+                        missed_count += 1
+                else:
+                    unk_count += 1
+
+        self.assertEqual(0, unk_count)
+        self.assertGreater(10, missed_count)
+
     def testSeqtoSeqWithKVMultiHeadAttention(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_attention.xml"
 

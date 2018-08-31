@@ -7,12 +7,14 @@ import tensorflow as tf
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import numpy as np
 
+from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+
 
 class AttentionComponent(ComponentTypeModel):
 
     name = "Attention"
     in_sockets = ["sequence", "key"]
-    out_sockets = ["output"]
+    out_sockets = ["output", "attention_weights"]
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
@@ -37,7 +39,7 @@ class AttentionComponent(ComponentTypeModel):
         lengths = input_dictionary["sequence"].get_sequence_lengths()
 
         input_dimension = input_dictionary["sequence"].get_inner_dim()
-        attention_result = self.attend(input_dictionary["key"].get_value(),
+        attention_result, attention_weights = self.attend(input_dictionary["key"].get_value(),
                                        input_dictionary["sequence"].get_value(),
                                        lengths,
                                        value,
@@ -45,6 +47,7 @@ class AttentionComponent(ComponentTypeModel):
                                        mode)
 
         output_value_models["output"].assign(attention_result, language="tensorflow")
+        output_value_models["attention_weights"].assign(attention_weights)
 
         return output_value_models
 
@@ -76,7 +79,7 @@ class AttentionComponent(ComponentTypeModel):
             output = value.output_transform.transform(output, mode=mode)
             output = tf.nn.tanh(output)
 
-        return output
+        return output, tf.squeeze(attention_weights)
 
     def mask_attention_logits(self, attention_logits, lengths, score_mask_value):
         seq_mask = tf.sequence_mask(
@@ -92,7 +95,9 @@ class AttentionComponent(ComponentTypeModel):
         output_type = input_types["key"].copy()
         output_type.set_inner_dim(value.output_dimension)
 
-        return {"output": output_type}
+        attention_weight_type = TensorTypeModel("float", [None])
+
+        return {"output": output_type, "attention_weights": attention_weight_type}
 
 
 class AttentionValue(ExecutionComponentValueModel):

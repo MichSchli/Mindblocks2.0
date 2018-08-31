@@ -47,6 +47,9 @@ class SequenceBatchTypeModel:
     def set_data_type(self, new_type):
         self.type = new_type
 
+    def get_data_type(self):
+        return self.type
+
     def get_batch_size(self):
         return self.batch_size
 

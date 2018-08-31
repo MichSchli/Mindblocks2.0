@@ -135,7 +135,10 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         counter = args[-1]
         old_finished = args[-2]
         n_rec = self.rnn_model.count_recurrent_links()
+        n_out = self.rnn_model.count_output_links()
         score_index = n_rec + 2
+        # TODO: Fix indexes
+        # TODO: Properly return output
 
         for i in range(n_rec):
             self.rnn_model.set_nths_input(i, args[i])

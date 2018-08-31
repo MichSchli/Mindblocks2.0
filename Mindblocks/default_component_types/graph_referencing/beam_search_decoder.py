@@ -273,14 +273,13 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         lookup = self.get_selected_states(backpointers, lengths, max_length)
 
         lengths, lookup = self.remove_extra_beams(lengths, lookup)
+        max_length = tf.reduce_max(lengths)
+        lookup = lookup[:max_length, :, :, :]
 
         decoded_sequences = tf.gather_nd(pred_stack, lookup)
 
         decoded_sequences = tf.transpose(tf.reshape(decoded_sequences, [-1, self.rnn_model.batch_size * self.n_to_output]), [1,0])
-        max_length = tf.reduce_max(lengths)
         decoded_sequences = decoded_sequences[:, :max_length]
-
-        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences], summarize=100, message="final_deq")
 
         return decoded_sequences, lengths
 

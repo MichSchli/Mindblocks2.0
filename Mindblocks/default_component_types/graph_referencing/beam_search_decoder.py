@@ -264,23 +264,45 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         prediction_index = n_rec
         backpointer_index = n_rec + 1
 
-        predictions = tf.reshape(loop[prediction_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
+        pred_stack = loop[prediction_index].stack()
+        lengths = loop[-3]
+
         backpointers = tf.reshape(loop[backpointer_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
 
-        lengths = loop[-3]
-        decoded_sequences = self.decode(predictions, backpointers, tf.reshape(lengths, [-1, self.beam_width]))
+        max_length = tf.shape(backpointers)[0]
+        lookup = self.get_selected_states(backpointers, lengths, max_length)
 
-        if self.n_to_output < self.beam_width:
-            decoded_sequences = decoded_sequences[:,:,:self.n_to_output]
-            lengths = tf.reshape(lengths, [-1, self.beam_width])
-            lengths = lengths[:, :self.n_to_output]
-            lengths = tf.reshape(lengths, [-1])
+        lengths, lookup = self.remove_extra_beams(lengths, lookup)
+
+        decoded_sequences = tf.gather_nd(pred_stack, lookup)
 
         decoded_sequences = tf.transpose(tf.reshape(decoded_sequences, [-1, self.rnn_model.batch_size * self.n_to_output]), [1,0])
         max_length = tf.reduce_max(lengths)
         decoded_sequences = decoded_sequences[:, :max_length]
 
+        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences], summarize=100, message="final_deq")
+
         return decoded_sequences, lengths
+
+    def remove_extra_beams(self, lengths, lookup):
+        if self.n_to_output < self.beam_width:
+            lookup = lookup[:, :, :self.n_to_output]
+            lengths = tf.reshape(lengths, [-1, self.beam_width])
+            lengths = lengths[:, :self.n_to_output]
+            lengths = tf.reshape(lengths, [-1])
+        return lengths, lookup
+
+    def get_selected_states(self, backpointers, lengths, max_length):
+        beam_range = tf.range(self.beam_width, dtype=tf.int32)
+        beam_states = tf.reshape(tf.tile(beam_range, [self.rnn_model.batch_size * max_length]),
+                                 [-1, self.rnn_model.batch_size, self.beam_width])
+        batch_range = tf.expand_dims(tf.expand_dims(tf.range(self.rnn_model.batch_size, dtype=tf.int32), -1), 0)
+        tiled_batch_range = tf.tile(batch_range, [max_length, 1, self.beam_width])
+        time_range = tf.expand_dims(tf.expand_dims(tf.range(max_length, dtype=tf.int32), -1), -1)
+        tiled_time_range = tf.tile(time_range, [1, self.rnn_model.batch_size, self.beam_width])
+        selected_beam_states = self.decode(beam_states, backpointers, tf.reshape(lengths, [-1, self.beam_width]))
+        lookup = tf.stack([tiled_time_range, tiled_batch_range * self.beam_width + selected_beam_states], -1)
+        return lookup
 
     def decode(self, predictions, backpointers, lengths):
         #TODO: Replace with own

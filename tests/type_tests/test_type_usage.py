@@ -22,7 +22,7 @@ class TestTypeUsage(unittest.TestCase):
 
         value = ConstantValue("5.67", "float")
 
-        type = constant_type.build_value_type_model({}, value)["output"]
+        type = constant_type.build_value_type_model({}, value, mode="train")["output"]
 
         self.assertEqual("float", type.type)
         self.assertEqual([], type.dimensions)
@@ -39,7 +39,7 @@ class TestTypeUsage(unittest.TestCase):
 
         value = ConstantValue("5 2.7, 1 20", "float", tensor=True)
 
-        type = constant_type.build_value_type_model({}, value)["output"]
+        type = constant_type.build_value_type_model({}, value, mode="train")["output"]
 
         self.assertEqual("float", type.type)
         self.assertEqual([2,2], type.dimensions)

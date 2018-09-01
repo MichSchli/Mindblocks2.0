@@ -1,5 +1,7 @@
 import unittest
 
+from tests.setup_holder import SetupHolder
+
 from Mindblocks.error_handling.loading.component_type_not_found_exception import ComponentTypeNotFoundException
 from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepository
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
@@ -15,14 +17,8 @@ from Mindblocks.repository.identifier_repository.identifier_repository import Id
 class TestCreationComponentRepository(unittest.TestCase):
 
     def setUp(self):
-        self.identifier_repository = IdentifierRepository()
-        self.canvas_repository = CanvasRepository(self.identifier_repository)
-        self.type_repository = ComponentTypeRepository(self.identifier_repository)
-        self.graph_repository = GraphRepository(self.identifier_repository)
-        self.repository = CreationComponentRepository(self.identifier_repository,
-                                                      self.type_repository,
-                                                      self.canvas_repository,
-                                                      self.graph_repository)
+        self.setup_holder = SetupHolder(load_default_types=False)
+        self.repository = self.setup_holder.component_repository
 
     def testCreateAssignsUID(self):
         specs = CreationComponentSpecifications()
@@ -70,7 +66,7 @@ class TestCreationComponentRepository(unittest.TestCase):
         type_specs = ComponentTypeSpecifications()
         type_specs.name = "TestType"
 
-        component_type = self.type_repository.create(type_specs)
+        component_type = self.setup_holder.type_repository.create(type_specs)
 
         specs = CreationComponentSpecifications()
         specs.component_type_name = "TestType"
@@ -95,7 +91,7 @@ class TestCreationComponentRepository(unittest.TestCase):
         type_specs = ComponentTypeSpecifications()
         type_specs.name = "TestType"
 
-        component_type = self.type_repository.create(type_specs)
+        component_type = self.setup_holder.type_repository.create(type_specs)
 
         def test_assign(dic):
             dic["test_field"] = "test_value"
@@ -113,7 +109,7 @@ class TestCreationComponentRepository(unittest.TestCase):
         canvas_specs = CanvasSpecifications()
         canvas_specs.name = "TestCanvas"
 
-        canvas = self.canvas_repository.create(canvas_specs)
+        canvas = self.setup_holder.canvas_repository.create(canvas_specs)
 
         specs = CreationComponentSpecifications()
         specs.canvas_name = "TestCanvas"
@@ -129,14 +125,14 @@ class TestCreationComponentRepository(unittest.TestCase):
     def testCreateAddsToGraphRepository(self):
         specs = CreationComponentSpecifications()
 
-        self.assertEqual(0, self.graph_repository.count())
+        self.assertEqual(0, self.setup_holder.graph_repository.count())
 
         element_1 = self.repository.create(specs)
 
-        self.assertEqual(1, self.graph_repository.count())
+        self.assertEqual(1, self.setup_holder.graph_repository.count())
 
         specs = GraphSpecifications()
-        graph = self.graph_repository.get(specs)[0]
+        graph = self.setup_holder.graph_repository.get(specs)[0]
 
         self.assertEqual(element_1.get_graph_identifier(), graph.identifier)
         self.assertEqual(element_1.graph, graph)
@@ -147,7 +143,7 @@ class TestCreationComponentRepository(unittest.TestCase):
         type_specs = ComponentTypeSpecifications()
         type_specs.name = "TestType"
 
-        component_type = self.type_repository.create(type_specs)
+        component_type = self.setup_holder.type_repository.create(type_specs)
         component_type.out_sockets = ["out_1", "out_2"]
 
         specs = CreationComponentSpecifications()
@@ -169,7 +165,7 @@ class TestCreationComponentRepository(unittest.TestCase):
         type_specs = ComponentTypeSpecifications()
         type_specs.name = "TestType"
 
-        component_type = self.type_repository.create(type_specs)
+        component_type = self.setup_holder.type_repository.create(type_specs)
         component_type.in_sockets = ["in_1", "in_2"]
 
         specs = CreationComponentSpecifications()
@@ -191,7 +187,7 @@ class TestCreationComponentRepository(unittest.TestCase):
         type_specs = ComponentTypeSpecifications()
         type_specs.name = "TestType"
 
-        component_type = self.type_repository.create(type_specs)
+        component_type = self.setup_holder.type_repository.create(type_specs)
         component_type.languages = ["test_language", "other_test_language"]
 
         specs = CreationComponentSpecifications()

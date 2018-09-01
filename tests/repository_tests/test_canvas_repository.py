@@ -1,5 +1,7 @@
 import unittest
 
+from tests.setup_holder import SetupHolder
+
 from Mindblocks.repository.canvas_repository.canvas_repository import CanvasRepository
 from Mindblocks.repository.canvas_repository.canvas_specifications import CanvasSpecifications
 from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
@@ -8,8 +10,8 @@ from Mindblocks.repository.identifier_repository.identifier_repository import Id
 class TestCanvasRepository(unittest.TestCase):
 
     def setUp(self):
-        self.identifier_repository = IdentifierRepository()
-        self.repository = CanvasRepository(self.identifier_repository)
+        self.setup_holder = SetupHolder()
+        self.repository = self.setup_holder.canvas_repository
 
     def testCreateAssignsUID(self):
 

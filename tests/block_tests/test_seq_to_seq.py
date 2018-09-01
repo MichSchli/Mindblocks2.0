@@ -4,7 +4,7 @@ from Mindblocks.repository.creation_component_repository.creation_component_spec
 from tests.setup_holder import SetupHolder
 
 
-class TestSimpleBlocks(unittest.TestCase):
+class TestSeqToSeqBlocks(unittest.TestCase):
 
     def setUp(self):
         self.setup_holder = SetupHolder()

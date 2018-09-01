@@ -273,16 +273,28 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         backpointers = tf.reshape(loop[backpointer_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
 
         max_length = tf.shape(backpointers)[0]
-        lookup = self.get_selected_states(backpointers, lengths, max_length)
+        mask = tf.where(tf.equal(pred_stack, tf.constant(self.stop_symbol, dtype=tf.int32)), tf.zeros_like(pred_stack), tf.ones_like(pred_stack))
+        mask = tf.reshape(mask, [-1, self.rnn_model.batch_size, self.beam_width])
+        lookup = self.get_selected_states(backpointers, lengths, max_length, mask)
 
         lengths, lookup = self.remove_extra_beams(lengths, lookup)
         max_length = tf.reduce_max(lengths)
-        lookup = lookup[:max_length, :, :, :]
+        lookup = lookup[:max_length]
 
+        pred_stack = pred_stack[:max_length]
+        max_length = tf.Print(max_length, [mask], summarize=500, message="mask")
+        max_length = tf.Print(max_length, [lookup], summarize=500, message="stuff")
         decoded_sequences = tf.gather_nd(pred_stack, lookup)
+        # Mask has not had extra beams removed
+        #decoded_sequences = tf.where(tf.equal(mask[:max_length], tf.constant(1, dtype=tf.int32)),
+        #                             decoded_sequences,
+        #                             self.stop_symbol * tf.ones_like(decoded_sequences))
 
         decoded_sequences = tf.transpose(tf.reshape(decoded_sequences, [-1, self.rnn_model.batch_size * self.n_to_output]), [1,0])
         decoded_sequences = decoded_sequences[:, :max_length]
+
+        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences], summarize=200, message="seqs")
+        decoded_sequences = tf.Print(decoded_sequences, [lengths], summarize=200, message="lengths")
 
         return decoded_sequences, lengths
 
@@ -294,7 +306,8 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
             lengths = tf.reshape(lengths, [-1])
         return lengths, lookup
 
-    def get_selected_states(self, backpointers, lengths, max_length):
+    def get_selected_states(self, backpointers, lengths, max_length, mask):
+        #TODO: Decode end tokens properly
         beam_range = tf.range(self.beam_width, dtype=tf.int32)
         beam_states = tf.reshape(tf.tile(beam_range, [self.rnn_model.batch_size * max_length]),
                                  [-1, self.rnn_model.batch_size, self.beam_width])
@@ -302,16 +315,27 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         tiled_batch_range = tf.tile(batch_range, [max_length, 1, self.beam_width])
         time_range = tf.expand_dims(tf.expand_dims(tf.range(max_length, dtype=tf.int32), -1), -1)
         tiled_time_range = tf.tile(time_range, [1, self.rnn_model.batch_size, self.beam_width])
-        selected_beam_states = self.decode(beam_states, backpointers, tf.reshape(lengths, [-1, self.beam_width]))
-        lookup = tf.stack([tiled_time_range, tiled_batch_range * self.beam_width + selected_beam_states], -1)
+
+        old_beam_states = beam_states
+
+        beam_states = (beam_states + 1) * mask
+        selected_beam_states = self.decode(beam_states, backpointers, tf.reshape(lengths, [-1, self.beam_width]), 0)
+
+        selected_beam_states -= 1
+        selected_beam_states = tf.where(tf.equal(selected_beam_states, tf.constant(-1, dtype=tf.int32)), old_beam_states, selected_beam_states)
+
+        batch_beams = tiled_batch_range * self.beam_width + selected_beam_states
+        batch_beams = batch_beams
+        # Last element of every beam should be tiled_batch_range * self.beam_width + [0, 1, 2]
+        lookup = tf.stack([tiled_time_range, batch_beams], -1)
         return lookup
 
-    def decode(self, predictions, backpointers, lengths):
+    def decode(self, predictions, backpointers, lengths, stop_symbol):
         #TODO: Replace with own
         decoded_seqs = tf.contrib.seq2seq.gather_tree(predictions,
                                                       backpointers,
                                                       tf.reduce_max(lengths, axis=-1),
-                                                      self.stop_symbol)
+                                                      stop_symbol)
 
         return decoded_seqs
 

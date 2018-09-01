@@ -1,4 +1,7 @@
 import unittest
+
+from tests.setup_holder import SetupHolder
+
 from Mindblocks.repository.identifier_repository.identifier_repository import IdentifierRepository
 from Mindblocks.repository.variable_repository.variable_repository import VariableRepository
 from Mindblocks.repository.variable_repository.variable_specifications import VariableSpecifications
@@ -7,8 +10,8 @@ from Mindblocks.repository.variable_repository.variable_specifications import Va
 class TestVariableRepository(unittest.TestCase):
 
     def setUp(self):
-        self.identifier_repository = IdentifierRepository()
-        self.variable_repository = VariableRepository(self.identifier_repository)
+        self.setup_holder = SetupHolder()
+        self.variable_repository = self.setup_holder.variable_repository
 
     def testCreateAssignsUID(self):
 

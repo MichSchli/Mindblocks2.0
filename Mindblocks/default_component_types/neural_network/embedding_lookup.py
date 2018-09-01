@@ -28,6 +28,14 @@ class EmbeddingLookup(ComponentTypeModel):
             lengths = input_dictionary["indexes"].get_sequence_lengths()
 
             output_models["output"].assign_with_lengths(lookup, lengths)
+        elif input_dictionary["indexes"].is_value_type("list"):
+            idx = input_dictionary["indexes"].get_items()
+            lookup = tf.nn.embedding_lookup(input_dictionary["vectors"].get_value(),
+                                            idx)
+
+            lengths = input_dictionary["indexes"].get_lengths()
+
+            output_models["output"].assign_with_lengths(lookup, lengths)
 
         return output_models
 

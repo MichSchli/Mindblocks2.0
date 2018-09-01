@@ -1,5 +1,7 @@
 import unittest
 
+from tests.setup_holder import SetupHolder
+
 from Mindblocks.repository.component_type_repository.component_type_repository import ComponentTypeRepository
 from Mindblocks.repository.component_type_repository.component_type_specifications import ComponentTypeSpecifications
 from Mindblocks.repository.creation_component_repository.creation_component_specifications import CreationComponentSpecifications
@@ -8,9 +10,11 @@ from Mindblocks.repository.identifier_repository.identifier_repository import Id
 
 class TestComponentTypeRepository(unittest.TestCase):
 
+    def setUp(self):
+        self.setup_holder = SetupHolder(load_default_types=False)
+
     def testCreateAssignsUID(self):
-        identifier_repository = IdentifierRepository()
-        repository = ComponentTypeRepository(identifier_repository)
+        repository = self.setup_holder.type_repository
 
         specs = ComponentTypeSpecifications()
 
@@ -24,8 +28,7 @@ class TestComponentTypeRepository(unittest.TestCase):
         self.assertNotEqual(element_1.identifier, element_2.identifier)
 
     def testCreateAddsToRepository(self):
-        identifier_repository = IdentifierRepository()
-        repository = ComponentTypeRepository(identifier_repository)
+        repository = self.setup_holder.type_repository
 
         specs = CreationComponentSpecifications()
 
@@ -40,8 +43,7 @@ class TestComponentTypeRepository(unittest.TestCase):
         self.assertEqual(2, repository.count())
 
     def testGetByName(self):
-        identifier_repository = IdentifierRepository()
-        repository = ComponentTypeRepository(identifier_repository)
+        repository = self.setup_holder.type_repository
 
         specs = ComponentTypeSpecifications()
         specs.name = "testComponent"

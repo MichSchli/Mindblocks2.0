@@ -9,10 +9,10 @@ class TestToyRelationPrediction(unittest.TestCase):
     def setUp(self):
         self.setup_holder = SetupHolder()
 
-    def testValidateWithoutTraining(self):
+    def testPredictEmbeddings(self):
         interface = BasicInterface()
 
-        block_filename = "full_ml_tests/relation_prediction/pure_relation_prediction.xml"
+        block_filename = "full_ml_tests/relation_prediction/predict_embeddings.xml"
 
         block_filepath = self.setup_holder.filepath_handler.get_test_block_path(block_filename)
         data_filepath = self.setup_holder.filepath_handler.get_test_data_path("relation_prediction/toy-125/")
@@ -23,4 +23,11 @@ class TestToyRelationPrediction(unittest.TestCase):
         interface.set_variable("embedding_filepath", embedding_filepath)
         interface.initialize()
 
-        print(interface.predict())
+        embs = interface.predict()
+
+        self.assertEqual(51, len(embs))
+
+        self.assertEqual(81, len(embs[0]))
+        self.assertEqual(60, len(embs[1]))
+
+        self.assertEqual(181, len(embs[0][0]))

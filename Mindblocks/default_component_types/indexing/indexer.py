@@ -43,7 +43,7 @@ class IndexerValue(ExecutionComponentValueModel):
         self.input_column = column_index
 
     def apply_index(self, input_value, index):
-        if self.input_type == "sequence":
+        if self.input_type == "sequence" or self.input_type == "list":
             output = []
             for i in range(len(input_value)):
                 output.append([])

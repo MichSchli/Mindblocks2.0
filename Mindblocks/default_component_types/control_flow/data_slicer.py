@@ -11,17 +11,67 @@ class DataSlicer(ComponentTypeModel):
     languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return DataSlicerValue()
+        return DataSlicerValue(value_dictionary["slice"][0][0])
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-        exit()
+        inp_val = input_dictionary["input"]
+        if inp_val.is_value_type("list"):
+            val = inp_val.get_value()
+            #TODO: This is completely wrong
+
+            out = []
+            for i in range(len(val)):
+                out.append([None]*len(val[i]))
+                for j in range(len(val[i])):
+                    out[i][j] = val[i][j][value.slices[2]]
+
+            output_value_models["output"].assign_with_lengths(out, inp_val.get_lengths(), language="python")
+        else:
+            exit()
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        input_copy = input_types["input"].copy()
-        input_copy.set_inner_dim(1)
-        return {"output": input_copy}
+        output_type = input_types["input"].copy()
+        for i, dim_correction in enumerate(value.get_dim_corrections()):
+            if dim_correction == "unknown":
+                output_type.set_dim(i, None)
+            elif dim_correction == "singleton":
+                output_type.remove_dim(i)
+            elif dim_correction is not None:
+                output_type.set_dim(i, dim_correction)
+
+        return {"output": output_type}
 
 class DataSlicerValue(ExecutionComponentValueModel):
 
-    pass
+        slices = None
+        dim_corrections = None
+
+        def __init__(self, slice_string):
+            slice_parts = slice_string.split(",")
+            python_slices = []
+            self.dim_corrections = []
+            for slice_part in slice_parts:
+                if ":" not in slice_part:
+                    python_slices.append(int(slice_part.strip()))
+                    self.dim_corrections.append("singleton")
+                else:
+                    parts = [p.strip() for p in slice_part.split(":")]
+                    parts[0] = int(parts[0]) if parts[0] else 0
+                    parts[1] = int(parts[1]) if parts[1] else -1
+
+                    python_slices.append(slice(parts[0], 1, parts[1]))
+
+                    if parts[0] == 0 and parts[1] == -1:
+                        self.dim_corrections.append(None)
+                    else:
+                        self.dim_corrections.append("unknown")
+
+
+            self.slices = python_slices
+
+        def get_slice_dims(self):
+            return len(self.slices)
+
+        def get_dim_corrections(self):
+            return self.dim_corrections

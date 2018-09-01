@@ -36,7 +36,10 @@ class Concat(ComponentTypeModel):
             result = np.array([input_dictionary["left"].get_value(), input_dictionary["right"].get_value()])
         else:
             result = np.concatenate((input_dictionary["left"].get_value(), input_dictionary["right"].get_value()))
+
         output_value_models["output"].assign(result, value.language)
+        if value.out_type == "list":
+            output_value_models["output"].lengths = input_dictionary["left"].get_lengths()
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -45,8 +48,8 @@ class Concat(ComponentTypeModel):
 
         if left_type.is_value_type("list") and \
                 right_type.is_value_type("list"):
-            left_dims = int(input_types["left"].get_inner_dim())
-            right_dims = int(input_types["right"].get_inner_dim())
+            left_dims = input_types["left"].get_inner_dim()
+            right_dims = input_types["right"].get_inner_dim()
 
             left_num_dims = len(input_types["left"].inner_shape)
             right_num_dims = len(input_types["right"].inner_shape)
@@ -56,18 +59,21 @@ class Concat(ComponentTypeModel):
             elif left_num_dims < right_num_dims:
                 value.should_expand_left = right_num_dims - left_num_dims
 
+            value.out_type = "list"
+
             output = input_types["left"].copy()
-            output.set_inner_dim(left_dims + right_dims)
+            output.set_inner_dim(left_dims + right_dims if left_dims is not None and right_dims is not None else None)
             return {"output": output}
         if left_type.is_value_type("list") and \
                 right_type.is_value_type("tensor"):
-            left_dims = int(input_types["left"].get_inner_dim())
-            right_dims = int(input_types["right"].get_inner_dim())
+            left_dims = input_types["left"].get_inner_dim()
+            right_dims = input_types["right"].get_inner_dim()
 
             value.cover_list("right")
+            value.out_type = "list"
 
             output = input_types["left"].copy()
-            output.set_inner_dim(left_dims + right_dims)
+            output.set_inner_dim(left_dims + right_dims if left_dims is not None and right_dims is not None else None)
             return {"output": output}
 
         left_dims = input_types["left"].get_dimensions()
@@ -90,6 +96,8 @@ class ConcatValue(ExecutionComponentValueModel):
     cover_list = None
     should_expand_left = 0
     should_expand_right = 0
+
+    out_type = None
 
     def __init__(self, language):
         self.language = language

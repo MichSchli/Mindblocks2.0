@@ -9,7 +9,7 @@ class ListBatchTypeModel:
 
     def __init__(self, data_type, inner_shape, batch_size, max_length):
         self.data_type = data_type
-        self.inner_shape = inner_shape
+        self.inner_shape = inner_shape[:]
         self.batch_size = batch_size
         self.max_length = max_length
         self.cached_casts = {}
@@ -30,6 +30,9 @@ class ListBatchTypeModel:
             self.batch_size,
             self.max_length
         )
+
+    def get_cached_placeholders(self):
+        return self.placeholder_manager.get_placeholders()
 
     def get_tensorflow_placeholder(self):
         placeholder_model = self.initialize_value_model()
@@ -52,7 +55,7 @@ class ListBatchTypeModel:
         if dimension == 1:
             self.inner_shape = self.inner_shape[:-1]
         else:
-            self.inner_shape[-1] = int(dimension)
+            self.inner_shape[-1] = dimension
 
     def get_inner_dim(self):
         if len(self.inner_shape) == 0:
@@ -62,6 +65,14 @@ class ListBatchTypeModel:
 
     def extend_dims(self, dim):
         self.inner_shape.append(dim)
+
+    def set_dim(self, i, v):
+        if i > 1:
+            self.inner_shape[i-2] = v
+
+    def remove_dim(self, i):
+        if i > 1:
+            del self.inner_shape[i-2]
 
     cached_casts = None
 
@@ -76,11 +87,20 @@ class ListBatchTypeModel:
         return self.cached_casts[new_type]
 
     def initialize_value_model(self):
-        return ListBatchValueModel()
+        value_model = ListBatchValueModel(self.data_type, self.inner_shape)
+        value_model.maximum_length = self.max_length
+        return value_model
 
     def format_from_tensorflow_output(self, output_tensors):
+        seqs = output_tensors[0]
+        lens = output_tensors[1]
+
+        fixed_seqs = []
+        for i, length in enumerate(lens):
+            fixed_seqs.append(seqs[i][:length])
+
         value_model = self.initialize_value_model()
-        value_model.assign(output_tensors[0])
+        value_model.assign(fixed_seqs)
         return value_model
 
     def is_value_type(self, test_type):

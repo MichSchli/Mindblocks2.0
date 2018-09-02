@@ -216,6 +216,45 @@ class TestSeqToSeqBlocks(unittest.TestCase):
             pred_sent = " ".join(predictions[i*3 + 2])
             self.assertNotEqual(s, pred_sent)
 
+    def testBeamSearchSomeBeams(self):
+        filename = "seq_to_seq_tests/basic_language_model_with_beam_search_top_some.xml"
+
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "conll_reader_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+        self.setup_holder.variable_repository.set_variable_value("data_file", "larger_test_conll_file.conll")
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+
+        predictions = ml_helper.predict()
+        gold_sentences = ["this is a sentence . _STOP_",
+                          "so is this . _STOP_",
+                          "also this . _STOP_",
+                          "this is also a sentence . _STOP_",
+                          "also this is a sentence . _STOP_",
+                          "sentence . . . _STOP_",
+                          "this . is . a . sentence . _STOP_",
+                          "this . _STOP_",
+                          "this sentence . _STOP_",
+                          "this is a sentence also . _STOP_"]
+
+        self.assertEqual(20, len(predictions))
+
+        for i, s in enumerate(gold_sentences):
+            pred_sent = " ".join(predictions[i*3])
+            self.assertEqual(s, pred_sent)
+
+            pred_sent = " ".join(predictions[i*3 + 1])
+            self.assertNotEqual(s, pred_sent)
+
     def testBeamSearchBestBeam(self):
         filename = "seq_to_seq_tests/basic_language_model_with_beam_search_top_1.xml"
 

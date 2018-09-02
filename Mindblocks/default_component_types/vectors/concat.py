@@ -69,7 +69,7 @@ class Concat(ComponentTypeModel):
             left_dims = input_types["left"].get_inner_dim()
             right_dims = input_types["right"].get_inner_dim()
 
-            value.cover_list("right")
+            value.set_cover_list("right")
             value.out_type = "list"
 
             output = input_types["left"].copy()
@@ -102,5 +102,5 @@ class ConcatValue(ExecutionComponentValueModel):
     def __init__(self, language):
         self.language = language
 
-    def cover_list(self, inp):
+    def set_cover_list(self, inp):
         self.cover_list = inp

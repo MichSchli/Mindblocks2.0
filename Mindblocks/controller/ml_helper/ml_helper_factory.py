@@ -83,11 +83,6 @@ class MlHelperFactory:
             run_interpretations.append("update")
             ml_helper.report_loss_after_updates = False
             run_modes.append("train")
-        if loss is not None:
-            loss_socket = [loss]
-            runs.append(loss_socket)
-            run_interpretations.append("loss")
-            run_modes.append("train")
         if evaluate is not None:
             evaluate_socket = [evaluate]
             runs.append(evaluate_socket)

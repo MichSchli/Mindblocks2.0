@@ -23,6 +23,9 @@ class ExecutionInSocket:
         if self.dropout_rate is not None and mode == "train":
             value.apply_dropouts(self.dropout_rate)
 
+        if self.cast is not None:
+            value.cast(self.cast)
+
         return value
 
     def pull_type_model(self, mode):

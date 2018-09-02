@@ -16,7 +16,7 @@ class ListNegativeSampler(ComponentTypeModel):
         return {"output": input_dictionary["input"]}
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"output": input_types["input"].copy()}
+        return {"output": input_types["list"].copy()}
 
 
 class ListNegativeSamplerValue(ExecutionComponentValueModel):

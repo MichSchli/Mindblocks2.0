@@ -18,13 +18,29 @@ class MultilayerPerceptron(ComponentTypeModel):
         else:
             dropout_rate = 0.0
 
-        return MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"][0][0].split(",")],
+        v = MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"][0][0].split(",")],
                                          dropout_rate=dropout_rate)
+        v.language = language
+        return v
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-        post_value = value.transform(input_dictionary["input"].get_value(), mode)
+        in_value = input_dictionary["input"].get_value()
+        in_shape = tf.shape(in_value)
 
-        output_value_models["output"].assign(post_value)
+        to_mlp_value = tf.reshape(in_value, [-1, in_shape[-1]])
+        post_value = value.transform(to_mlp_value, mode)
+
+        if value.dims[-1] == 1:
+            out_shape = in_shape[:-1]
+        else:
+            out_shape = tf.concat([in_shape[:-1], [value.dims[-1]]], axis=-1)
+        post_value = tf.reshape(post_value, out_shape)
+
+        if input_dictionary["input"].is_value_type("list"):
+            lengths = input_dictionary["input"].lengths
+            output_value_models["output"].assign_with_lengths(post_value, lengths, language=value.language)
+        else:
+            output_value_models["output"].assign(post_value, language=value.language)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):

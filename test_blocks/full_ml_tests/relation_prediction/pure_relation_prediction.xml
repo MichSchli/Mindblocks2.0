@@ -108,6 +108,13 @@
                 <source socket="output">ns_split</source>
                 <target socket="input">score_slicer</target>
         </edge>
+        <component name="label_slicer" type="DataSlicer" language="python">
+            <slice>:,:,4</slice>
+        </component>
+        <edge>
+                <source socket="output">ns_split</source>
+                <target socket="input">label_slicer</target>
+        </edge>
 
         <component name="string_formatter" type="StringFormatter" language="python">
             <socket type="in">source_edge</socket>
@@ -212,6 +219,26 @@
         <edge>
                 <source socket="final_state">encoder</source>
                 <target socket="right">end_concat</target>
+        </edge>
+
+        <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
+            <dimensions>181,400,1</dimensions>
+        </component>
+        <edge>
+                <source socket="output">end_concat</source>
+                <target socket="input">mlp</target>
+        </edge>
+
+        <component name="cross_ent" type="SigmoidCrossEntropy" language="tensorflow">
+            <mark socket="output">loss</mark>
+        </component>
+        <edge>
+                <source socket="output">mlp</source>
+                <target socket="logits">cross_ent</target>
+        </edge>
+        <edge cast="bool">
+                <source socket="output">label_slicer</source>
+                <target socket="labels">cross_ent</target>
         </edge>
     </canvas>
 </block>

@@ -73,3 +73,12 @@ class ListBatchValueModel:
 
     def is_value_type(self, test_type):
         return test_type == "list"
+
+    def cast(self, type):
+        for i in range(len(self.lengths)):
+            for j in range(len(self.item[i])):
+                if type == "bool":
+                    self.item[i][j] = self.item[i][j] == "True"
+
+        self.type = "bool"
+        return self

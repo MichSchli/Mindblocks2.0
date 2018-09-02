@@ -17,6 +17,8 @@ class AbstractTensorflowPlaceholderModel:
             tf_type = tf.int32
         elif self.type == "float":
             tf_type = tf.float32
+        elif self.type == "bool":
+            tf_type = tf.bool
 
         return tf_type
 

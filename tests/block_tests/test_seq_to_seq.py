@@ -251,10 +251,10 @@ class TestSeqToSeqBlocks(unittest.TestCase):
         self.assertEqual(20, len(predictions))
 
         for i, s in enumerate(gold_sentences):
-            pred_sent = " ".join(predictions[i*3])
+            pred_sent = " ".join(predictions[i*2])
             self.assertEqual(s, pred_sent)
 
-            pred_sent = " ".join(predictions[i*3 + 1])
+            pred_sent = " ".join(predictions[i*2 + 1])
             self.assertNotEqual(s, pred_sent)
 
     def testBeamSearchBestBeam(self):

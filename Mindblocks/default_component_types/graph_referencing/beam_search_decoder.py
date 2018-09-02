@@ -304,7 +304,7 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
 
         decoded_sequences = self.apply_decoding(lookup, max_length, pred_stack)
         aux_out = self.get_aux_output_dict(lookup, max_length, loop)
-        
+
         return decoded_sequences, lengths, aux_out
 
     def get_aux_output_dict(self, lookup, max_length, loop):

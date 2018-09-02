@@ -84,4 +84,4 @@ class TestToyRelationPrediction(unittest.TestCase):
         interface.train()
 
         val = interface.validate()
-        self.assertGreater(0.01, val)
+        self.assertGreater(0.25, val)

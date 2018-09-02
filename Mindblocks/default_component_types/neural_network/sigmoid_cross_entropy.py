@@ -18,8 +18,6 @@ class SigmoidCrossEntropy(ComponentTypeModel):
     def execute(self, input_dictionary, value, output_value_models, mode):
         logits = input_dictionary["logits"].get_value()
         labels = tf.cast(tf.squeeze(input_dictionary["labels"].get_value()), tf.float32)
-        logits = tf.Print(logits, [tf.nn.sigmoid(logits)], summarize=100, message="logits")
-        logits = tf.Print(logits, [labels], summarize=100, message="labels")
         cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(logits=logits,
                                                                 labels=labels)
 

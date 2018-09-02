@@ -115,15 +115,24 @@ class RnnHelper:
     def get_sequence_output_values(self, rnn_model, mode, maximum_iterations=None):
         sequence_output_values = []
         counter = 0
-        for _, graph_output, _ in rnn_model.out_links:
+        for _, graph_output, desc in rnn_model.out_links:
+            desc_parts = desc.split("|")
+            if len(desc_parts) > 1 and desc_parts[1] == "int":
+                tf_type = tf.int32
+            else:
+                tf_type = tf.float32
+
             counter += 1
             # use tensor arrays
             parts = graph_output.split(":")
             socket = rnn_model.inner_graph.get_out_socket(parts[0], parts[1])
             out_type = socket.pull_type_model(mode)
             dims = out_type.get_dimensions()
+            print("TYPE")
+            print(mode)
+            print(dims)
             tf_value = tensor_array_ops.TensorArray(
-                dtype=tf.float32,
+                dtype=tf_type,
                 size=0 if maximum_iterations is None else maximum_iterations,
                 dynamic_size=maximum_iterations is None,
                 element_shape=dims,

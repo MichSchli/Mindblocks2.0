@@ -45,9 +45,15 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
     def execute(self, input_dictionary, value, output_models, mode):
         batch_size = self.compute_batch_size(input_dictionary, value)
         value.rnn_model.set_batch_size(batch_size)
-        decoded_sequences, lengths = value.assign_and_run(input_dictionary)
+        decoded_sequences, lengths, aux_out = value.assign_and_run(input_dictionary, mode)
 
         output_models["predictions"].assign_with_lengths(decoded_sequences, lengths)
+
+        for k,v in aux_out.items():
+            if output_models[k].is_value_type("sequence"):
+                output_models[k].assign_with_lengths(v, lengths)
+            else:
+                output_models[k].assign(v, language="tensorflow")
 
         return output_models
 
@@ -136,7 +142,7 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         old_finished = args[-2]
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
-        score_index = n_rec + 2
+        score_index = n_rec + n_out + 2
         # TODO: Fix indexes
         # TODO: Properly return output
 
@@ -177,7 +183,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
                                                                                            lambda: self.calculate_initial_iteration_word_and_beam_pointers(penalized_scores),
                                                                                            lambda: self.calculate_word_and_beam_pointers(penalized_scores))
 
-
         # Select recurrent states from the appropriate beam
         range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width, 1)
         gather_indices = tf.reshape(parent_beam_ids + range_, [-1])
@@ -194,16 +199,20 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         # Allocate lengths to beams:
         new_lengths = tf.gather(new_lengths, indices=gather_indices)
 
-        # Distribute reccurent values according to beams:
+        # Distribute recurrent values according to beams:
         for i in range(n_rec):
             if i != self.beam_index:
                 results[i] = tf.gather(results[i], indices=gather_indices)
             else:
                 results[i] = tf.reshape(next_word_ids, [-1])
 
+        # Write outputs:
+        for i in range(n_rec, n_rec + n_out):
+            results[i] = self.write_to_tensor_array(args[i], results[i], counter)
+
         # Store backpointers:
-        prediction_index = n_rec
-        backpointer_index = n_rec + 1
+        prediction_index = n_rec + n_out
+        backpointer_index = n_rec + n_out + 1
         results.append(self.write_to_tensor_array(args[prediction_index], tf.reshape(next_word_ids, [-1]), counter))
         results.append(self.write_to_tensor_array(args[backpointer_index], tf.reshape(parent_beam_ids, [-1]), counter))
 
@@ -233,7 +242,7 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
     def get_teacher_value(self, index):
         return self.teacher_values[index]
 
-    def assign_and_run(self, input_dictionary):
+    def assign_and_run(self, input_dictionary, mode):
         self.rnn_model.loop_vars = []
         rnn_helper = RnnHelper()
         rnn_helper.assign_static_inputs(self.rnn_model, input_dictionary)
@@ -246,6 +255,7 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         #        sequence_sockets.append((parts[0], parts[1]))
 
         rnn_helper.add_recurrency_initializers(self.rnn_model, input_dictionary)
+        rnn_helper.add_sequence_outputs(self.rnn_model, self.maximum_iterations, mode)
 
         # predictions, backpointers:
         self.rnn_model.build_tensor_array_loop_var("zero_tensor:|int", name="beamsearch_predictions", maximum_iterations=self.maximum_iterations)
@@ -256,6 +266,9 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         self.rnn_model.add_finished_var()
         self.rnn_model.add_counter_loop_var()
 
+        n_rec = self.rnn_model.count_recurrent_links()
+        n_out = self.rnn_model.count_output_links()
+
         loop = tf.while_loop(
             self.cond,
             self.body,
@@ -263,9 +276,8 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
             maximum_iterations=self.maximum_iterations
         )
 
-        n_rec = self.rnn_model.count_recurrent_links()
-        prediction_index = n_rec
-        backpointer_index = n_rec + 1
+        prediction_index = n_rec + n_out
+        backpointer_index = n_rec + n_out + 1
 
         pred_stack = loop[prediction_index].stack()
         lengths = loop[-3]
@@ -281,22 +293,32 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         max_length = tf.reduce_max(lengths)
         lookup = lookup[:max_length]
 
+        decoded_sequences = self.apply_decoding(lookup, max_length, pred_stack)
+        aux_out = self.get_aux_output_dict(lookup, max_length, loop)
+
+        return decoded_sequences, lengths, aux_out
+
+    def get_aux_output_dict(self, lookup, max_length, loop):
+        n_rec = self.rnn_model.count_recurrent_links()
+        n_out = self.rnn_model.count_output_links()
+
+        aux_out = []
+        for i in range(n_rec, n_rec + n_out):
+            v = loop[i].stack()
+            v = self.apply_decoding(lookup, max_length, v)
+            aux_out.append(v)
+
+        return {self.rnn_model.out_links[i][0]: aux_out[i] for i in range(len(self.rnn_model.out_links))}
+
+    def apply_decoding(self, lookup, max_length, pred_stack):
         pred_stack = pred_stack[:max_length]
-        max_length = tf.Print(max_length, [mask], summarize=500, message="mask")
-        max_length = tf.Print(max_length, [lookup], summarize=500, message="stuff")
         decoded_sequences = tf.gather_nd(pred_stack, lookup)
-        # Mask has not had extra beams removed
-        #decoded_sequences = tf.where(tf.equal(mask[:max_length], tf.constant(1, dtype=tf.int32)),
-        #                             decoded_sequences,
-        #                             self.stop_symbol * tf.ones_like(decoded_sequences))
 
-        decoded_sequences = tf.transpose(tf.reshape(decoded_sequences, [-1, self.rnn_model.batch_size * self.n_to_output]), [1,0])
-        decoded_sequences = decoded_sequences[:, :max_length]
-
-        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences], summarize=200, message="seqs")
-        decoded_sequences = tf.Print(decoded_sequences, [lengths], summarize=200, message="lengths")
-
-        return decoded_sequences, lengths
+        decode_shape = tf.concat([[-1, self.rnn_model.batch_size * self.n_to_output], tf.shape(tf.squeeze(decoded_sequences))[2:]], axis=-1)
+        transpose_shape = tf.concat([[1,0], tf.range(2, tf.shape(decode_shape)[0])], axis=-1)
+        decoded_sequences = tf.transpose(
+            tf.reshape(decoded_sequences, decode_shape), transpose_shape)
+        return decoded_sequences
 
     def remove_extra_beams(self, lengths, lookup):
         if self.n_to_output < self.beam_width:

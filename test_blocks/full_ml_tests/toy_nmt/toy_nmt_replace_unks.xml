@@ -142,7 +142,7 @@
             <vocabulary_size>$vocabulary_size</vocabulary_size>
             <in_link feed="per_batch">sentence_embeddings->attention:sequence</in_link>
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
-            <out_link>attention_argmax:output->max_attention</out_link>
+            <out_link feed="loop|int">attention_argmax:output->max_attention</out_link>
             <recurrence init="zero_tensor:100">decoder_lstm:output_c->previous_c:input</recurrence>
             <recurrence init="zero_tensor:100">attention:output->previous_attention:input</recurrence>
             <recurrence init="socket:encoder_final_state">decoder_lstm:output_h->previous_h:input</recurrence>

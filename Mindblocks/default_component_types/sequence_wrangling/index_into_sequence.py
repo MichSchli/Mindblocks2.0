@@ -20,11 +20,11 @@ class IndexIntoSequence(ComponentTypeModel):
         out = [None]*len(sequences)
 
         for i in range(len(sequences)):
-            out[i] = [None]*len(sequences[i])
-            for j in range(len(sequences[i])):
+            out[i] = [None]*len(indexes[i])
+            for j in range(len(indexes[i])):
                 out[i][j] = sequences[i][indexes[i][j]]
 
-        output_value_models["output"] = out
+        output_value_models["output"].assign(out)
 
         return output_value_models
 

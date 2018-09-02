@@ -27,6 +27,8 @@ class TokenReplacerSequence(ComponentTypeModel):
                 else:
                     out[i][j] = replacements[i][j]
 
+        output_value_models["output"].assign(out)
+
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):

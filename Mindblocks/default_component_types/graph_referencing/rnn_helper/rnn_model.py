@@ -118,7 +118,7 @@ class RnnModel:
         for output, result in zip(self.out_links, results):
             component_output, _, feed_type = output
 
-            if feed_type == "loop":
+            if feed_type.startswith("loop"):
                 out_type = result.to_sequence_type()
             else:
                 out_type = result

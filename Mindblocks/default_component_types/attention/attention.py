@@ -47,7 +47,7 @@ class AttentionComponent(ComponentTypeModel):
                                        mode)
 
         output_value_models["output"].assign(attention_result, language="tensorflow")
-        output_value_models["attention_weights"].assign(attention_weights)
+        output_value_models["attention_weights"].assign_with_lengths(attention_weights, lengths)
 
         return output_value_models
 
@@ -95,7 +95,8 @@ class AttentionComponent(ComponentTypeModel):
         output_type = input_types["key"].copy()
         output_type.set_inner_dim(value.output_dimension)
 
-        attention_weight_type = TensorTypeModel("float", [None])
+        attention_weight_type = input_types["sequence"].copy()
+        attention_weight_type.set_inner_dim(1)
 
         return {"output": output_type, "attention_weights": attention_weight_type}
 

@@ -11,7 +11,7 @@ class RnnHelper:
         pass
 
     def tile_batches(self, rnn_model, tiling_factor):
-        rnn_model.tiling_factor = 3
+        rnn_model.tiling_factor = tiling_factor
 
     def create_rnn_model(self, value_dictionary):
         graph_name = value_dictionary["graph"][0][0]

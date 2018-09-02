@@ -16,9 +16,12 @@ class SigmoidCrossEntropy(ComponentTypeModel):
         return SigmoidCrossEntropyValue()
 
     def execute(self, input_dictionary, value, output_value_models, mode):
-        cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(
-                labels=tf.cast(tf.squeeze(input_dictionary["labels"].get_value()), tf.float32),
-                logits=input_dictionary["logits"].get_value())
+        logits = input_dictionary["logits"].get_value()
+        labels = tf.cast(tf.squeeze(input_dictionary["labels"].get_value()), tf.float32)
+        logits = tf.Print(logits, [tf.nn.sigmoid(logits)], summarize=100, message="logits")
+        logits = tf.Print(logits, [labels], summarize=100, message="labels")
+        cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(logits=logits,
+                                                                labels=labels)
 
         if input_dictionary["labels"].is_value_type("list"):
             lengths = input_dictionary["labels"].lengths
@@ -30,7 +33,6 @@ class SigmoidCrossEntropy(ComponentTypeModel):
             cross_entropy *= mask
 
             sum = tf.reduce_sum(cross_entropy, axis=-1)
-            lengths = tf.Print(lengths, [lengths], message="lengths", summarize=100)
             # TODO: Hack to deal with zero length sequences should be smarter:
             cross_entropy = sum / (tf.cast(lengths, tf.float32) + 1e-8)
         else:

@@ -35,7 +35,8 @@ class VectorIndex(ComponentTypeModel):
         return output_models
 
     def initialize(self, input_dictionary, value, output_value_models, tensorflow_session_model):
-        value.initialize_vectors()
+        if value.get_vectors() is None:
+            value.initialize_vectors()
         output_value_models["vectors"].assign(value.get_vectors())
 
         return output_value_models

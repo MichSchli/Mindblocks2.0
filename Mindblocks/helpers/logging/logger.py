@@ -1,5 +1,7 @@
 import os
 
+import sys
+
 
 class Logger:
 
@@ -21,7 +23,7 @@ class Logger:
         if context in self.configuration:
             if subcontext in self.configuration[context] or "all" in self.configuration[context]:
                 if self.filename is None:
-                    print(message)
+                    print(message, flush=True)
                 else:
                     save_dir = os.path.dirname(self.filename)
                     if not os.path.isdir(save_dir):

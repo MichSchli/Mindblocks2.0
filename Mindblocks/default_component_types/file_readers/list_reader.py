@@ -41,6 +41,7 @@ class ListReaderValue(ExecutionComponentValueModel):
     filepath = None
     size = None
     separator = None
+    lines = None
 
     def __init__(self, filepath):
         self.filepath = filepath
@@ -57,6 +58,8 @@ class ListReaderValue(ExecutionComponentValueModel):
         return self.size
 
     def read(self):
+        if self.lines is not None:
+            return self.lines
         lines = [[]]
         f = open(self.filepath, 'r')
         for line in f:
@@ -71,6 +74,7 @@ class ListReaderValue(ExecutionComponentValueModel):
             lines = lines[:-1]
 
         self.size = len(lines)
+        self.lines = lines
 
         f.close()
 

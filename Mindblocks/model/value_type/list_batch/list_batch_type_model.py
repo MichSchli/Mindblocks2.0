@@ -91,6 +91,9 @@ class ListBatchTypeModel:
         value_model.maximum_length = self.max_length
         return value_model
 
+    def set_batch_size(self, size):
+        self.batch_size = size
+
     def format_from_tensorflow_output(self, output_tensors):
         seqs = output_tensors[0]
         lens = output_tensors[1]

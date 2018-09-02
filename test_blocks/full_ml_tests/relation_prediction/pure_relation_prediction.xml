@@ -3,8 +3,8 @@
         <variable name="max_iterations">
             <default_value>5000</default_value>
         </variable>
-        <variable name="report_loss_every_n">
-            <default_value>10</default_value>
+        <variable name="validate_every_n">
+            <default_value>50</default_value>
         </variable>
 
         <variable name="data_folder">
@@ -63,7 +63,7 @@
         </edge>
 
         <component name="negative_sampler" type="ListNegativeSampler">
-            <is_gold_column>3</is_gold_column>
+            <is_gold_column>4</is_gold_column>
             <sample_rate>5</sample_rate>
             <use_all_golds>True</use_all_golds>
         </component>
@@ -210,7 +210,6 @@
         </edge>
 
         <component name="end_concat" type="Concat" language="tensorflow">
-            <mark socket="output">prediction</mark>
         </component>
         <edge>
                 <source socket="output">rel_concat</source>
@@ -222,7 +221,8 @@
         </edge>
 
         <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
-            <dimensions>181,400,1</dimensions>
+            <dimensions>181,200,1</dimensions>
+            <dropout_rate>0.5</dropout_rate>
         </component>
         <edge>
                 <source socket="output">end_concat</source>
@@ -239,6 +239,35 @@
         <edge cast="bool">
                 <source socket="output">label_slicer</source>
                 <target socket="labels">cross_ent</target>
+        </edge>
+
+        <component name="upd" type="AdamUpdater" language="tensorflow">
+            <learning_rate>0.001</learning_rate>
+            <gradient_clip>1.0</gradient_clip>
+            <mark socket="update">update</mark>
+        </component>
+        <edge>
+                <source socket="output">cross_ent</source>
+                <target socket="loss">upd</target>
+        </edge>
+
+        <component name="argmax" type="Argmax" language="tensorflow">
+        </component>
+        <edge>
+                <source socket="output">mlp</source>
+                <target socket="input">argmax</target>
+        </edge>
+
+        <component name="rel_chooser" type="IndexIntoList" language="python">
+            <mark socket="output">prediction</mark>
+        </component>
+        <edge>
+            <source socket="output">argmax</source>
+            <target socket="indexes">rel_chooser</target>
+        </edge>
+        <edge>
+            <source socket="output">string_formatter</source>
+            <target socket="list">rel_chooser</target>
         </edge>
     </canvas>
 </block>

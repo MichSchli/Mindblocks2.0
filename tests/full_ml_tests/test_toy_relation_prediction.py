@@ -47,6 +47,41 @@ class TestToyRelationPrediction(unittest.TestCase):
         interface.initialize()
 
         val = interface.validate()
-        print(val)
-
         self.assertLess(0.5, val)
+
+    def testPredictWithoutTraining(self):
+        interface = BasicInterface()
+
+        block_filename = "full_ml_tests/relation_prediction/pure_relation_prediction.xml"
+
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(block_filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_data_path("relation_prediction/toy-125/")
+        embedding_filepath = self.setup_holder.filepath_handler.get_test_data_path("embeddings/glove.6B.100d.txt")
+        interface.load_file(block_filepath)
+
+        interface.set_variable("data_folder", data_filepath)
+        interface.set_variable("embedding_filepath", embedding_filepath)
+        interface.initialize()
+
+        pred = interface.predict()
+        self.assertEqual(51, len(pred))
+        self.assertIn("->", pred[0])
+
+    def testTrainAndValidate(self):
+        interface = BasicInterface()
+
+        block_filename = "full_ml_tests/relation_prediction/pure_relation_prediction.xml"
+
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(block_filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_data_path("relation_prediction/toy-125/")
+        embedding_filepath = self.setup_holder.filepath_handler.get_test_data_path("embeddings/glove.6B.100d.txt")
+        interface.load_file(block_filepath)
+
+        interface.set_variable("data_folder", data_filepath)
+        interface.set_variable("embedding_filepath", embedding_filepath)
+        interface.initialize()
+
+        interface.train()
+
+        val = interface.validate()
+        self.assertGreater(0.01, val)

@@ -204,6 +204,8 @@ class TestSeqToSeqBlocks(unittest.TestCase):
                           "this sentence . _STOP_",
                           "this is a sentence also . _STOP_"]
 
+        for p in predictions:
+            print(p)
         self.assertEqual(30, len(predictions))
 
         for i, s in enumerate(gold_sentences):

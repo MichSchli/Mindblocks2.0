@@ -47,6 +47,10 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         value.rnn_model.set_batch_size(batch_size)
         decoded_sequences, lengths, aux_out = value.assign_and_run(input_dictionary, mode)
 
+        # TODO: This is a hack
+        decoded_shape = tf.shape(decoded_sequences)
+        decoded_sequences = tf.reshape(decoded_sequences, [decoded_shape[0], -1])
+
         output_models["predictions"].assign_with_lengths(decoded_sequences, lengths)
 
         for k,v in aux_out.items():

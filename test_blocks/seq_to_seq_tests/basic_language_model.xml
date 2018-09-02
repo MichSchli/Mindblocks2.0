@@ -117,7 +117,7 @@
             <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
             <dimensions>20, 9</dimensions>
             </component>
-            <edge cast="float">
+            <edge>
                 <source socket="output_h">decoder_lstm</source>
                 <target socket="input">mlp</target>
             </edge>

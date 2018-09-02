@@ -62,9 +62,9 @@ class TensorValueModel:
     def cast(self, new_type):
         if new_type == "float":
             new_value_model = TensorValueModel("float", self.dimensions)
-            new_value_model.assign(float(self.value))
+            new_value_model.assign(np.array(self.value).astype(np.float32))
         if new_type == "int":
             new_value_model = TensorValueModel("int", self.dimensions)
-            new_value_model.assign(int(self.value))
+            new_value_model.assign(np.array(self.value).astype(np.int32))
 
         return new_value_model

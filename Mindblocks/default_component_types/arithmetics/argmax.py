@@ -26,11 +26,7 @@ class Argmax(ComponentTypeModel):
                                         dtype=tf.bool)
                 val = tf.where(mask, val, tf.ones_like(val)*tf.float32.min)
 
-            print(val)
-            val = tf.Print(val, [tf.shape(val)], message="vals", summarize=100)
             argmax = tf.argmax(val, axis=-1, output_type=tf.int32)
-            print(argmax)
-            argmax = tf.Print(argmax, [tf.shape(argmax), argmax], message="argmax "+value.get_name(), summarize=100)
         else:
             argmax = np.argmax(input_dictionary["input"].get_value(), axis=-1)
         output_value_models["output"].assign(argmax, value.language)

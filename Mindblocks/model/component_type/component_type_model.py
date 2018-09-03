@@ -23,7 +23,7 @@ class ComponentTypeModel(AbstractModel):
     def get_in_sockets(self):
         return self.in_sockets
 
-    def has_batches(self, value, previous_values):
+    def has_batches(self, value, previous_values, mode):
         for inp in previous_values.values():
             if not inp:
                 return False

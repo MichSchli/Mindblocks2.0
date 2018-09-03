@@ -31,7 +31,7 @@ class ListReader(ComponentTypeModel):
         return {"output": ListBatchTypeModel("string", [len(read_value[0][0])], len(read_value), max([len(v) for v in read_value])),
                 "count": TensorTypeModel("int", [])}
 
-    def has_batches(self, value, previous_values):
+    def has_batches(self, value, previous_values, mode):
         has_batch = value.has_batch
         value.has_batch = False
         return has_batch

@@ -34,8 +34,8 @@ class ExecutionGraphModel:
         self.clear_all_caches()
         self.head_component.init_batches()
 
-    def has_batches(self):
-        return self.head_component.has_batches()
+    def has_batches(self, mode):
+        return self.head_component.has_batches(mode)
 
     def get_out_socket(self, component_name, socket_name):
         for component in self.components:

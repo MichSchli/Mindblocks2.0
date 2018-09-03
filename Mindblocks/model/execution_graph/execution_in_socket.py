@@ -43,8 +43,8 @@ class ExecutionInSocket:
         if self.source is not None:
             self.source.clear_caches()
 
-    def has_batches(self):
-        return self.source.has_batches()
+    def has_batches(self, mode):
+        return self.source.has_batches(mode)
 
     def replace_type(self, type):
         self.replaced_type = type

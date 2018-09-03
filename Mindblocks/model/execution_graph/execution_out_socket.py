@@ -34,8 +34,8 @@ class ExecutionOutSocket:
         self.cached_value = None
         self.execution_component.clear_caches()
 
-    def has_batches(self):
-        return self.execution_component.has_batches()
+    def has_batches(self, mode):
+        return self.execution_component.has_batches(mode)
 
     def pull_type_model(self, mode):
         if self.cached_type is None:

@@ -31,7 +31,7 @@ class ConllReader(ComponentTypeModel):
         return {"output": SequenceBatchTypeModel("string", [value.count_columns()], len(value.read()), max([len(v) for v in value.read()])),
                 "count": TensorTypeModel("int", [])}
 
-    def has_batches(self, value, previous_values):
+    def has_batches(self, value, previous_values, mode):
         has_batch = value.has_batch
         value.has_batch = False
         return has_batch

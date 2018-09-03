@@ -93,10 +93,10 @@ class ExecutionComponentModel(AbstractModel):
 
     cached_has_batches = None
 
-    def has_batches(self):
+    def has_batches(self, mode):
         if self.cached_has_batches is None:
-            in_batches = {k:v.has_batches() for k,v in self.in_sockets.items()}
-            self.cached_has_batches = self.execution_type.has_batches(self.execution_value, in_batches)
+            in_batches = {k:v.has_batches(mode) for k,v in self.in_sockets.items()}
+            self.cached_has_batches = self.execution_type.has_batches(self.execution_value, in_batches, mode)
 
         return self.cached_has_batches
 

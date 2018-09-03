@@ -323,14 +323,11 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         pred_stack = pred_stack[:max_length]
         decoded_sequences = tf.gather_nd(pred_stack, lookup)
 
-        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences[:3][0][0]], message="first", summarize=30)
-
         decode_shape = tf.concat([[-1, self.rnn_model.batch_size * self.n_to_output], tf.shape(tf.squeeze(decoded_sequences))[3:]], axis=-1)
         transpose_shape = tf.concat([[1,0], tf.range(2, tf.shape(decode_shape)[0])], axis=-1)
         decoded_sequences = tf.transpose(
             tf.reshape(decoded_sequences, decode_shape), transpose_shape)
 
-        decoded_sequences = tf.Print(decoded_sequences, [decoded_sequences[0][:3]], message="second", summarize=30)
         return decoded_sequences
 
     def remove_extra_beams(self, lengths, lookup):

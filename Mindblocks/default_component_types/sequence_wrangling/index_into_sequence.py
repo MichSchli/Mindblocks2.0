@@ -36,6 +36,7 @@ class IndexIntoSequence(ComponentTypeModel):
 
         return {"output": output_type}
 
+
 class IndexIntoSequenceValue(ExecutionComponentValueModel):
 
     pass

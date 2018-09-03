@@ -30,7 +30,7 @@ class BatchGenerator(ComponentTypeModel):
     def build_value_type_model(self, input_types, value, mode):
         return {"batch": TensorTypeModel("int", [value.batch_size])}
 
-    def has_batches(self, value, previous_values):
+    def has_batches(self, value, previous_values, mode):
         return value.has_unyielded_batches()
 
 

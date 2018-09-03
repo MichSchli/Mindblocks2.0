@@ -50,7 +50,7 @@ class MlHelper:
         self.evaluate_function.init_batches()
         performance = 0.0
         count = 0
-        while self.evaluate_function.has_batches():
+        while self.evaluate_function.has_batches("test"):
             batch_result = self.evaluate_function.execute()[0]
             for b in batch_result:
                 performance += b
@@ -67,7 +67,7 @@ class MlHelper:
         self.prediction_function.init_batches()
         predictions = []
 
-        while self.prediction_function.has_batches():
+        while self.prediction_function.has_batches("test"):
             predictions.extend(self.prediction_function.execute()[0])
 
         return predictions
@@ -122,7 +122,7 @@ class MlHelper:
         self.validate_function.init_batches()
         performance = 0.0
         count = 0
-        while self.validate_function.has_batches():
+        while self.validate_function.has_batches("validate"):
             batch_result = self.validate_function.execute()[0]
             for b in batch_result:
                 performance += b
@@ -159,7 +159,7 @@ class MlHelper:
 
         loss_tracker = 0
         count = 0
-        while self.update_and_loss_function.has_batches():
+        while self.update_and_loss_function.has_batches("train"):
             _, loss = self.update_and_loss_function.execute()
 
             if self.first_batch and self.profile_dir is not None:

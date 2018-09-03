@@ -101,9 +101,9 @@ class TensorflowSection(ExecutionComponentModel):
         for _, in_socket in self.matched_in_sockets:
             in_socket.clear_caches()
 
-    def has_batches(self):
+    def has_batches(self, mode):
         for _, in_socket in self.matched_in_sockets:
-            if not in_socket.has_batches():
+            if not in_socket.has_batches(mode):
                 return False
         return True
 

@@ -32,7 +32,7 @@ class Batcher(ComponentTypeModel):
         data_type.subsample(None)
         return {"output": data_type}
 
-    def has_batches(self, value, previous_values):
+    def has_batches(self, value, previous_values, mode):
         return previous_values["indexes"]
 
 

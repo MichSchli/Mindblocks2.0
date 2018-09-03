@@ -109,6 +109,7 @@ class ValueDictionaryBuilder:
                 updated_dict[k] = [(variable.replace_in_string(val[0], mode=mode), val[1]) for val in updated_dict[k]]
 
         value = component.component_type.initialize_value(updated_dict, component.language)
+        value.logger_manager = component.component_type.logger_manager
         value.set_component_name(component.name, mode)
 
         return value

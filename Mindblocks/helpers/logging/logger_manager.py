@@ -19,7 +19,8 @@ class LoggerManager:
         default_config = {"training": ["status",
                                        "loss",
                                        "parameters"],
-                          "validation": ["all"]}
+                          "validation": ["all"],
+                          "batching": ["status"]}
         self.add_console_logger(default_config)
 
     def log(self, message, context, field):

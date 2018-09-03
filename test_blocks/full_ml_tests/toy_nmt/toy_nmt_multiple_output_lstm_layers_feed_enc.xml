@@ -1,7 +1,7 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>5000</default_value>
+            <default_value>2000</default_value>
         </variable>
         <variable name="report_loss_every_n">
             <default_value>10</default_value>
@@ -69,7 +69,8 @@
 
         <component name="encoder" type="BiRnn" language="tensorflow">
             <cell>lstm</cell>
-            <dimension>100</dimension>
+            <dimension>50</dimension>
+            <layers>2</layers>
         </component>
         <edge>
                 <source socket="output">embedding_lookup</source>
@@ -80,12 +81,13 @@
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">embedding_vectors</socket>
             <socket type="in">sentence_embeddings</socket>
+            <socket type="in">encoder_final_states</socket>
             <socket type="out">logits</socket>
             <in_link feed="per_batch">sentence_embeddings->concat:right</in_link>
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <out_link feed="loop">mlp:output->logits</out_link>
             <recurrence init="zero_tensor:2,50">decoder_lstm:layer_output_cs->previous_c:input</recurrence>
-            <recurrence init="zero_tensor:2,50">decoder_lstm:layer_output_hs->previous_h:input</recurrence>
+            <recurrence init="socket:encoder_final_states">decoder_lstm:layer_output_hs->previous_h:input</recurrence>
             <recurrence init="zero_tensor:|int" teacher="true">argmax:output->input_token:input</recurrence>
         </component>
         <edge>
@@ -99,6 +101,10 @@
         <edge>
                 <source socket="output">target_indexer</source>
                 <target socket="teacher_inputs">training_rnn</target>
+        </edge>
+        <edge>
+                <source socket="layer_final_states">encoder</source>
+                <target socket="encoder_final_states">training_rnn</target>
         </edge>
 
         <component name="loss" type="SequenceCrossEntropy" language="tensorflow">
@@ -125,11 +131,12 @@
             <graph canvas="decoder">decoder-graph</graph>
             <socket type="in">embedding_vectors</socket>
             <socket type="in">sentence_embeddings</socket>
+            <socket type="in">encoder_final_states</socket>
             <vocabulary_size>$vocabulary_size</vocabulary_size>
             <in_link feed="per_batch">sentence_embeddings->concat:right</in_link>
             <in_link>embedding_vectors->encoder_embedding:vectors</in_link>
             <recurrence init="zero_tensor:2,50">decoder_lstm:layer_output_cs->previous_c:input</recurrence>
-            <recurrence init="zero_tensor:2,50">decoder_lstm:layer_output_hs->previous_h:input</recurrence>
+            <recurrence init="socket:encoder_final_states">decoder_lstm:layer_output_hs->previous_h:input</recurrence>
             <beam>mlp:output->input_token:input</beam>
         </component>
         <edge>
@@ -139,6 +146,10 @@
         <edge>
                 <source socket="final_state">encoder</source>
                 <target socket="sentence_embeddings">beam_search</target>
+        </edge>
+        <edge>
+                <source socket="layer_final_states">encoder</source>
+                <target socket="encoder_final_states">beam_search</target>
         </edge>
 
         <component name="deindexer" type="DeIndexer">

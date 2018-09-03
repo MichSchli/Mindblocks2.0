@@ -77,26 +77,26 @@ class TestIrisBlocks(unittest.TestCase):
         run_graphs[0].init_batches()
 
         result = run_graphs[0].execute()[0]
-        self.assertTrue(run_graphs[0].has_batches())
+        self.assertTrue(run_graphs[0].has_batches("test"))
         self.assertEqual(50, len(result))
         result = run_graphs[0].execute()[0]
-        self.assertTrue(run_graphs[0].has_batches())
+        self.assertTrue(run_graphs[0].has_batches("test"))
         self.assertEqual(50, len(result))
         result = run_graphs[0].execute()[0]
         self.assertEqual(50, len(result))
-        self.assertFalse(run_graphs[0].has_batches())
+        self.assertFalse(run_graphs[0].has_batches("test"))
 
         run_graphs[0].init_batches()
 
         result = run_graphs[0].execute()[0]
-        self.assertTrue(run_graphs[0].has_batches())
+        self.assertTrue(run_graphs[0].has_batches("test"))
         self.assertEqual(50, len(result))
         result = run_graphs[0].execute()[0]
-        self.assertTrue(run_graphs[0].has_batches())
+        self.assertTrue(run_graphs[0].has_batches("test"))
         self.assertEqual(50, len(result))
         result = run_graphs[0].execute()[0]
         self.assertEqual(50, len(result))
-        self.assertFalse(run_graphs[0].has_batches())
+        self.assertFalse(run_graphs[0].has_batches("test"))
 
     def testAccuracyOnlyWithoutMlHelper(self):
         filename = "iris_tests/untrained_iris_accuracy.xml"
@@ -142,7 +142,7 @@ class TestIrisBlocks(unittest.TestCase):
 
         self.assertGreaterEqual(1.0, performance)
         self.assertLessEqual(0.0, performance)
-        self.assertFalse(ml_helper.evaluate_function.has_batches())
+        self.assertFalse(ml_helper.evaluate_function.has_batches("test"))
 
     def testFullTraining(self):
         filename = "iris_tests/full_iris.xml"

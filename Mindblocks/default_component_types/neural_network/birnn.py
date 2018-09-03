@@ -2,12 +2,14 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
 
+from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+
 
 class BiRnn(ComponentTypeModel):
 
     name = "BiRnn"
     in_sockets = ["input"]
-    out_sockets = ["output", "final_state"]
+    out_sockets = ["output", "final_state", "layer_final_states"]
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
@@ -26,6 +28,8 @@ class BiRnn(ComponentTypeModel):
         sequences = input_dictionary["input"].get_sequences()
         lengths = input_dictionary["input"].get_sequence_lengths()
 
+        layer_final_states = []
+
         for layer in range(value.layers):
             cell_forward = value.cells_forward[layer]
             cell_backward = value.cells_backward[layer]
@@ -42,10 +46,14 @@ class BiRnn(ComponentTypeModel):
             if mode == "train" and value.layer_dropout_keep_prob is not None:
                 sequences = tf.nn.dropout(sequences, value.layer_dropout_keep_prob)
 
-        final_states = tf.concat([rnn_output[1][i][1] for i in [0,1]], -1)
+            final_states = tf.concat([rnn_output[1][i][1] for i in [0,1]], -1)
+            layer_final_states.append(final_states)
+
+        layer_final_states = tf.stack(layer_final_states, 1)
 
         output_value_models["output"].assign_with_lengths(out_sequences, lengths, language="tensorflow")
         output_value_models["final_state"].assign(final_states)
+        output_value_models["layer_final_states"].assign(layer_final_states)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -55,8 +63,11 @@ class BiRnn(ComponentTypeModel):
 
         final_state_type = new_type.get_single_token_type()
         final_state_type.extend_outer_dim(input_types["input"].get_batch_size())
+
+        layer_final_state_type = TensorTypeModel("float", [new_type.get_batch_size(), value.layers, final_state_type.get_inner_dim()])
         return {"output": new_type,
-                "final_state": final_state_type}
+                "final_state": final_state_type,
+                "layer_final_states": layer_final_state_type}
 
 class BiRnnValue(ExecutionComponentValueModel):
 

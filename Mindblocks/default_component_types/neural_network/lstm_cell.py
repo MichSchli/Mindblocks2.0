@@ -2,12 +2,14 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
 
+from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+
 
 class LstmCell(ComponentTypeModel):
 
     name = "LstmCell"
     in_sockets = ["input_x", "previous_c", "previous_h"]
-    out_sockets = ["output_c", "output_h"]
+    out_sockets = ["output_c", "output_h", "layer_output_cs", "layer_output_hs"]
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
@@ -24,15 +26,23 @@ class LstmCell(ComponentTypeModel):
         return value
 
     def build_value_type_model(self, in_types, execution_value, mode):
-        new_h_type = in_types["previous_h"].copy()
-        execution_value.input_dimension = new_h_type.get_inner_dim()
-        new_h_type.set_inner_dim(execution_value.get_final_cell_size())
+        batch_size = in_types["previous_c"].get_batch_size()
+        execution_value.input_dimension = in_types["input_x"].get_inner_dim()
 
-        new_c_type = in_types["previous_c"].copy()
-        new_c_type.set_inner_dim(execution_value.get_final_cell_size())
+        new_h_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
+        new_c_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
+
+        if execution_value.layers == 1:
+            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
+            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
+        else:
+            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size])
+            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size])
 
         return {"output_c": new_c_type,
-                "output_h": new_h_type}
+                "output_h": new_h_type,
+                "layer_output_cs": new_c_layers_type,
+                "layer_output_hs": new_h_layers_type}
 
     def execute(self, input_dictionary, execution_value, output_value_models, mode):
         input_x = input_dictionary["input_x"].get_value()
@@ -48,22 +58,34 @@ class LstmCell(ComponentTypeModel):
             h, new_state = execution_value.cells[0](input_x, cell_input)
             c = new_state[0]
 
-            new_hs = h
-            new_cs = c
+            final_cs = c
+            final_hs = h
         else:
+            layer_input = input_x
             for i in range(execution_value.layers):
-                cell_input = (previous_c[i], previous_h[i])
-                h, new_state = execution_value.cells[i](input_x, cell_input)
+                cell_input = (previous_c[:,i,:], previous_h[:,i,:])
+                h, new_state = execution_value.cells[i](layer_input, cell_input)
                 c = new_state[0]
 
                 new_cs.append(c)
                 new_hs.append(h)
 
-            new_cs = tf.concat(new_cs, 1)
-            new_hs = tf.concat(new_hs, 1)
+                layer_input = h
 
-        output_value_models["output_c"].assign(new_cs)
-        output_value_models["output_h"].assign(new_hs)
+                if mode == "train" and execution_value.layer_dropout_keep_prob is not None:
+                    layer_input = tf.nn.dropout(layer_input, execution_value.layer_dropout_keep_prob)
+
+            final_cs = new_cs[-1]
+            final_hs = new_hs[-1]
+
+            new_cs = tf.stack(new_cs, axis=1)
+            new_hs = tf.stack(new_hs, axis=1)
+
+        output_value_models["output_c"].assign(final_cs)
+        output_value_models["output_h"].assign(final_hs)
+
+        output_value_models["layer_output_cs"].assign(new_cs)
+        output_value_models["layer_output_hs"].assign(new_hs)
 
         return output_value_models
 
@@ -88,8 +110,7 @@ class LstmCellValue(ExecutionComponentValueModel):
         self.layer_dropout_keep_prob = dropout_rate
 
     def initialize_tensorflow_variable(self):
-        if self.layers == 1:
-            self.cells = [tf.nn.rnn_cell.LSTMCell(self.dimension)]
+        self.cells = [tf.nn.rnn_cell.LSTMCell(self.dimension) for _ in range(self.layers)]
 
     def get_final_cell_size(self):
         return self.dimension

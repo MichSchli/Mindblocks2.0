@@ -74,12 +74,14 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
         return self.batches[mode] is None
 
     def register_lengths(self, lengths, mode):
-        print("REGISTERING SHOULD ONLY HAPPEN THRICE")
+        self.log("Creating batches with mode " + mode + "...", "batching", "status")
         if not self.should_reorder:
             self.batches[mode] = []
             for i in range(0, len(lengths), self.batch_size):
                 batch = list(range(i, min(i+self.batch_size, len(lengths))))
                 self.batches[mode].append(batch)
+
+            self.log("Created " + str(len(self.batches)) + " batches.", "batching", "status")
 
             return
 
@@ -103,6 +105,7 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
                 self.batches[mode][-1].append(indexes_by_size[i])
                 length_tracker = current_length
 
+        self.log("Created " + str(len(self.batches)) + " batches.", "batching", "status")
         self.pointer = 0
 
     def should_shuffle_now(self, mode):

@@ -101,11 +101,23 @@ class TensorflowSection(ExecutionComponentModel):
         for _, in_socket in self.matched_in_sockets:
             in_socket.clear_caches()
 
+    def describe_graph(self, indent=0):
+        print("\t"*indent + "TF Section")
+
+        for _, in_socket in self.matched_in_sockets:
+            in_socket.describe_graph(indent=indent+1)
+
     def has_batches(self, mode):
         for _, in_socket in self.matched_in_sockets:
             if not in_socket.has_batches(mode):
                 return False
         return True
+
+    def get_referenced_components(self):
+        cs = self.components[:]
+        for referenced_graph in self.get_referenced_graphs():
+            cs.extend(referenced_graph.get_components())
+        return cs
 
     def init_batches(self):
         #TODO: We are not initing in graph

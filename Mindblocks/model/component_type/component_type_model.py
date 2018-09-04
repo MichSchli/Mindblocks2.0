@@ -38,3 +38,12 @@ class ComponentTypeModel(AbstractModel):
 
     def is_used(self, socket_name, value, mode):
         return True
+
+    def make_inferences(self, execution_value, tf_run_variables):
+        pass
+
+    def check_inferences(self, execution_value, tf_run_variables):
+        pass
+
+    def apply_inferences(self, execution_value, tf_run_variables):
+        pass

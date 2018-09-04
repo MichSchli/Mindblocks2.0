@@ -38,7 +38,8 @@ class BiRnn(ComponentTypeModel):
                                                          cell_backward,
                                                          sequences,
                                                          dtype=tf.float32,
-                                                         sequence_length=lengths)
+                                                         sequence_length=lengths,
+                                                         scope=value.get_name())
 
             out_sequences = tf.concat(rnn_output[0], axis=-1)
             sequences = out_sequences

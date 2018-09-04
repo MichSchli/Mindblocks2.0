@@ -81,18 +81,18 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
                 batch = list(range(i, min(i+self.batch_size, len(lengths))))
                 self.batches[mode].append(batch)
 
-            self.log("Created " + str(len(self.batches)) + " batches.", "batching", "status")
+            self.log("Created " + str(len(self.batches[mode])) + " batches.", "batching", "status")
 
             return
 
         indexes = list(range(len(lengths)))
+
         if self.should_shuffle and mode == "train":
             random.shuffle(indexes)
 
         reordered_lengths = [lengths[i] for i in indexes]
-
-        indexes_by_size = [x for _, x in sorted(zip(reordered_lengths, indexes), key=lambda pair: pair[0])]
-        lengths_by_size = [reordered_lengths[i] for i in indexes_by_size]
+        indexes_by_size = [x for _,x in sorted(zip(reordered_lengths, indexes), key=lambda pair: pair[0])]
+        lengths_by_size = [lengths[i] for i in indexes_by_size]
 
         self.batches[mode] = [[]]
         length_tracker = None
@@ -100,12 +100,13 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
             for i in range(len(indexes_by_size)):
                 current_length = lengths_by_size[i]
                 if len(self.batches[mode][-1]) == self.batch_size or (len(self.batches[mode][-1]) > 0 and current_length > length_tracker):
+                    self.log("Created batch with " + str(len(self.batches[mode][-1])) + " sequences of length " + str(length_tracker) + ".", "batching", "update")
                     self.batches[mode].append([])
 
                 self.batches[mode][-1].append(indexes_by_size[i])
                 length_tracker = current_length
 
-        self.log("Created " + str(len(self.batches)) + " batches.", "batching", "status")
+        self.log("Created " + str(len(self.batches[mode])) + " batches.", "batching", "status")
         self.pointer = 0
 
     def should_shuffle_now(self, mode):

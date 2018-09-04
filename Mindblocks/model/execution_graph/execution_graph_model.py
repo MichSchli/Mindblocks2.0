@@ -1,3 +1,5 @@
+
+
 class ExecutionGraphModel:
 
     head_component = None
@@ -22,6 +24,13 @@ class ExecutionGraphModel:
 
     def get_components(self):
         return self.components
+
+    def get_all_components(self):
+        components = self.get_components()[:]
+        for component in components:
+            components.extend(component.get_referenced_components())
+
+        return list(set(components))
 
     def add_execution_component(self, execution_component):
         self.components.append(execution_component)

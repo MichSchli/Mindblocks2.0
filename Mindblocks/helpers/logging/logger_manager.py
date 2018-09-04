@@ -20,7 +20,8 @@ class LoggerManager:
                                        "loss",
                                        "parameters"],
                           "validation": ["all"],
-                          "batching": ["status"]}
+                          "batching": ["status",
+                                       "update"]} #TODO: Should be status
         self.add_console_logger(default_config)
 
     def log(self, message, context, field):

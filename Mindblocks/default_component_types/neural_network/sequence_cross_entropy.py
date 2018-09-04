@@ -42,6 +42,10 @@ class SequenceCrossEntropy(ComponentTypeModel):
     def build_value_type_model(self, input_types, value, mode):
         return {"output": TensorTypeModel("float", [])}
 
+    def make_inferences(self, execution_value, tf_run_variables):
+        pass
+
+
 class SequenceCrossEntropyValue(ExecutionComponentValueModel):
 
     average_across_timesteps = None

@@ -29,15 +29,15 @@ class LstmCell(ComponentTypeModel):
         batch_size = in_types["previous_c"].get_batch_size()
         execution_value.input_dimension = in_types["input_x"].get_inner_dim()
 
-        new_h_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
-        new_c_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
+        new_h_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
+        new_c_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
 
         if execution_value.layers == 1:
-            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
-            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size])
+            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
+            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
         else:
-            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size])
-            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size])
+            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size()])
+            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size()])
 
         return {"output_c": new_c_type,
                 "output_h": new_h_type,

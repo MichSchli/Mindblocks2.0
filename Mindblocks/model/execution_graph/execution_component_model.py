@@ -77,6 +77,12 @@ class ExecutionComponentModel(AbstractModel):
     def get_value(self):
         return self.execution_value
 
+    def get_referenced_components(self):
+        cs = []
+        for referenced_graph in self.get_referenced_graphs():
+            cs.extend(referenced_graph.get_components())
+        return cs
+
     def get_referenced_graphs(self):
         return self.execution_value.get_referenced_graphs()
 
@@ -101,7 +107,7 @@ class ExecutionComponentModel(AbstractModel):
         return self.cached_has_batches
 
     def describe_graph(self, indent=0):
-        print("\t"*indent + self.execution_type.name)
+        print("\t"*indent + self.get_name() + " (" + self.execution_type.name + ")")
 
         for in_socket in self.get_in_sockets():
             in_socket.describe_graph(indent=indent+1)

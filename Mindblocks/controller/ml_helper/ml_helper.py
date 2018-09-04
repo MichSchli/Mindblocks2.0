@@ -76,9 +76,8 @@ class MlHelper:
         return self.validate_function is not None
 
     def train(self, iterations=None):
-        self.count_parameters()
-        self.log("Starting training at iteration " + str(self.current_iteration), "training", "status")
         self.initialize_model()
+        self.log("Starting training at iteration " + str(self.current_iteration), "training", "status")
 
         if iterations is None:
             iteration_range = range(self.current_iteration, self.configuration.max_iterations)
@@ -111,12 +110,13 @@ class MlHelper:
 
     def initialize_model(self):
         if not self.has_initialized:
-            self.log("Initializing model.", "initialization", "status")
+            self.log("Initializing model.", "training", "status")
             self.initialization_helper.initialize([self.update_and_loss_function,
                                                    self.prediction_function,
                                                    self.validate_function,
                                                    self.evaluate_function])
             self.has_initialized = True
+            self.count_parameters()
 
     def do_validate(self):
         self.validate_function.init_batches()

@@ -79,6 +79,18 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
     def set_graph(self, graph):
         self.rnn_model.set_inner_graph(graph)
 
+    def initialize_tensorflow_variables(self, tensorflow_session_model):
+        teacher_prob = tf.Variable(self.initial_teacher_probability, trainable=False)
+
+        if self.decay_rate is not None and self.decay_rate != 1:
+            iteration = tf.cast(tensorflow_session_model.get_tensorflow_iteration(), tf.float32)
+            teacher_prob = tf.maximum(self.final_teacher_probability, self.initial_teacher_probability * self.decay_rate ** iteration)
+
+        self.teacher_probability = teacher_prob
+
+    def get_teacher_probability(self):
+        return self.teacher_probability
+
     def body(self, *args):
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
@@ -93,7 +105,7 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
                 teacher_shape = tf.shape(next_teacher_value)
 
                 coin_flip = tf.random_uniform([teacher_shape[0]], minval=0, maxval=1)
-                chosen_input = tf.where(coin_flip < self.teacher_probability, x=next_teacher_value, y=student_suggestion)
+                chosen_input = tf.where(coin_flip < self.get_teacher_probability(), x=next_teacher_value, y=student_suggestion)
 
                 actual_input = tf.where(counter > 0, x=chosen_input, y=student_suggestion)
 
@@ -133,9 +145,10 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
         batch_size = tf.shape(input_dictionary["teacher_inputs"].get_value())[0]
         self.rnn_model.set_batch_size(batch_size)
 
-        self.teacher_probability = tf.assign(self.teacher_probability,
-                                        value=tf.reduce_max([self.teacher_probability * self.decay_rate,
-                                                             self.final_teacher_probability]))
+        #self.teacher_probability = tf.assign(self.teacher_probability,
+        #                                value=tf.reduce_max([self.teacher_probability * self.decay_rate,
+        #                                                     self.final_teacher_probability]))
+
         self.rnn_model.loop_vars = []
         rnn_helper = RnnHelper()
         rnn_helper.assign_static_inputs(self.rnn_model, input_dictionary)

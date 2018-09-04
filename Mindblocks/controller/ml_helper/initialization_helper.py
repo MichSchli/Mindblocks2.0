@@ -7,6 +7,7 @@ class InitializationHelper:
         session_model = None
         for run in run_graphs:
             if run is not None:
+                print("======")
                 run.initialize()
 
             if run is not None and run.tensorflow_session_model is not None:

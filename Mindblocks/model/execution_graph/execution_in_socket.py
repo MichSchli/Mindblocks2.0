@@ -1,6 +1,9 @@
 import numpy as np
 import tensorflow as tf
 
+from Mindblocks.error_handling.connectivity.unconnected_socket_exception import UnconnectedSocketException
+
+
 class ExecutionInSocket:
 
     source = None
@@ -28,9 +31,16 @@ class ExecutionInSocket:
 
         return value
 
+    def get_name(self):
+        #TODO
+        return self.execution_component.get_name()
+
     def pull_type_model(self, mode):
         if self.replaced_type is not None:
             return self.replaced_type
+
+        if self.source is None:
+            raise UnconnectedSocketException("Attempted type pull from unconnected in socket \"" + self.get_name() + "\"")
 
         source_type = self.source.pull_type_model(mode)
 

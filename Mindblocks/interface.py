@@ -111,6 +111,9 @@ class BasicInterface:
     def add_file_logger(self, config, filepath):
         self.logger_manager.add_file_logger(config, filepath)
 
+    def add_console_logger(self, config):
+        self.logger_manager.add_console_logger(config)
+
     def get_execution_component(self, name):
         spec = self.execution_component_repository.get_specifications()
         spec.name = name

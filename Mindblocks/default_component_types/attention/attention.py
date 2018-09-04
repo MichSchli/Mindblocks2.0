@@ -46,6 +46,10 @@ class AttentionComponent(ComponentTypeModel):
                                        input_dimension,
                                        mode)
 
+        #self.tf_log(attention_weights, "Attention values (mode=" + mode + "): ", "attention", "mode")
+        if mode == "test":
+            attention_weights = tf.Print(attention_weights, [attention_weights], message="attn weights ", summarize=500)
+
         output_value_models["output"].assign(attention_result, language="tensorflow")
         output_value_models["attention_weights"].assign_with_lengths(attention_weights, lengths)
 

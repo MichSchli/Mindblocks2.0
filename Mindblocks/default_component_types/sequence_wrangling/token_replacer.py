@@ -25,6 +25,7 @@ class TokenReplacerSequence(ComponentTypeModel):
                 if sequences[i][j] != value.target_token:
                     out[i][j] = sequences[i][j]
                 else:
+                    self.log("Replaced \"" + sequences[i][j] + "\" with \"" + replacements[i][j] + "\" at index " + str(j) + " in sentence \"" + " ".join(sequences[i]) + "\"", "formatting", "token_replacement")
                     out[i][j] = replacements[i][j]
 
         output_value_models["output"].assign(out)

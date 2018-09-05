@@ -35,7 +35,6 @@ class AttentionComponent(ComponentTypeModel):
             value_dim = input_dictionary["sequence"].get_inner_dim()
             value.initialize_transforms(key_dim, value_dim)
 
-
         lengths = input_dictionary["sequence"].get_sequence_lengths()
 
         input_dimension = input_dictionary["sequence"].get_inner_dim()
@@ -45,10 +44,6 @@ class AttentionComponent(ComponentTypeModel):
                                        value,
                                        input_dimension,
                                        mode)
-
-        #self.tf_log(attention_weights, "Attention values (mode=" + mode + "): ", "attention", "mode")
-        if mode == "test":
-            attention_weights = tf.Print(attention_weights, [attention_weights], message="attn weights ", summarize=500)
 
         output_value_models["output"].assign(attention_result, language="tensorflow")
         output_value_models["attention_weights"].assign_with_lengths(attention_weights, lengths)
@@ -131,15 +126,15 @@ class AttentionValue(ExecutionComponentValueModel):
 
     def initialize_transforms(self, key_dim, value_dim):
         if self.scoring_type == "bilinear":
-            self.key_transform = MlpHelper([int(key_dim), int(value_dim)], "attention_key_input_transform")
-            self.output_transform = MlpHelper([int(value_dim) + int(key_dim), int(self.output_dimension)], "attention_output_transform")
+            self.key_transform = MlpHelper([int(key_dim), int(value_dim)], "attention_key_input_transform", use_bias=False)
+            self.output_transform = MlpHelper([int(value_dim) + int(key_dim), int(self.output_dimension)], "attention_output_transform", use_bias=False)
 
         self.initialized = True
 
     def count_parameters(self):
         if self.scoring_type == "bilinear":
-            parameters = self.key_transform.dims[0] * self.key_transform.dims[1] + self.key_transform.dims[1]
-            parameters += self.output_transform.dims[0] * self.output_transform.dims[1] + self.output_transform.dims[1]
+            parameters = self.key_transform.count_parameters()
+            parameters += self.output_transform.count_parameters()
 
             return parameters
 

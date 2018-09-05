@@ -153,7 +153,7 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
         rnn_helper = RnnHelper()
         rnn_helper.assign_static_inputs(self.rnn_model, input_dictionary)
 
-        maximum_iterations = input_dictionary["teacher_inputs"].get_maximum_sequence_length()
+        maximum_iterations = tf.shape(input_dictionary["teacher_inputs"].get_sequences())[1]
 
         self.teacher_values = tf.transpose(input_dictionary["teacher_inputs"].get_sequences(), perm=[1,0])
 

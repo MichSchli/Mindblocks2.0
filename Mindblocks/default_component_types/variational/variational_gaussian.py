@@ -29,7 +29,12 @@ class VariationalGaussian(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value, mode):
         if value.prior is None:
-            value.initialize_prior()
+            if mode == "train":
+                inner_dim = input_types["train"].get_inner_dim()
+            else:
+                inner_dim = input_types["test_input"].get_inner_dim()
+
+            value.initialize_prior(inner_dim)
 
         output_type = TensorTypeModel("float", [None, value.dim])
 
@@ -41,17 +46,15 @@ class VariationalGaussian(ComponentTypeModel):
         elif socket_name == "test_input":
             return mode != "train"
 
-    def check_inferences(self, execution_value, tf_run_variables):
-        tf_run_variables.get_tensorflow_batch_size()
 
 class VariationalGaussianValue(ExecutionComponentValueModel):
-
-    dim = 50
 
     def __init__(self):
         self.prior = None
 
-    def initialize_prior(self):
+    def initialize_prior(self, dim):
+        self.dim = dim
+
         mu = tf.zeros(self.dim)
         sigma = tf.ones(self.dim)
         self.prior = tfp.distributions.MultivariateNormalDiag(mu, sigma)

@@ -40,7 +40,6 @@ class Argmax(ComponentTypeModel):
         elif input_types["input"].is_value_type("sequence"):
             output_type = TensorTypeModel(input_types["input"].type,
                                           [input_types["input"].get_batch_size()])
-            print(output_type.dimensions)
         else:
             output_type = input_types["input"].copy()
             output_type.set_inner_dim(1)

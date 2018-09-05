@@ -158,7 +158,7 @@ class TestToyNmt(unittest.TestCase):
         ml_helper = interface.ml_helper
         params = ml_helper.count_parameters()
 
-        self.assertEqual(276454, params)
+        self.assertEqual(376454, params)
 
     def testSeqtoSeqWithBatches(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_batches.xml"

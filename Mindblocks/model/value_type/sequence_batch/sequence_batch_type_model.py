@@ -16,11 +16,11 @@ class SequenceBatchTypeModel:
         self.type = type
         self.item_shape = item_shape[:]
         self.batch_size = batch_size
-        self.maximum_sequence_length = maximum_sequence_length
+        self.maximum_sequence_length = None
 
     def initialize_value_model(self):
         value_model = SequenceBatchValueModel(self.type, self.item_shape)
-        value_model.maximum_sequence_length = self.maximum_sequence_length
+        value_model.max_length = None
         #value_model.batch_size = self.batch_size
 
         return value_model

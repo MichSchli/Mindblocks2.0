@@ -83,11 +83,11 @@ class BiRnnValue(ExecutionComponentValueModel):
         self.cells_backward = [None] * layers
 
         for i in range(layers):
-            self.cells_forward[i] = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name= self.get_name() + "-forward_"+str(i))
-            self.cells_backward[i] = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name=self.get_name() + "-backward_"+str(i))
+            self.cells_forward[i] = tf.nn.rnn_cell.LSTMCell(self.cell_size / 2, name= self.get_name() + "-forward_"+str(i))
+            self.cells_backward[i] = tf.nn.rnn_cell.LSTMCell(self.cell_size / 2, name=self.get_name() + "-backward_"+str(i))
 
-        self.cell_forward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name= self.get_name() + "-forward")
-        self.cell_backward = tf.nn.rnn_cell.LSTMCell(self.cell_size, num_proj=self.cell_size/2, name= self.get_name() + "-backward")
+        self.cell_forward = tf.nn.rnn_cell.LSTMCell(self.cell_size / 2, name= self.get_name() + "-forward")
+        self.cell_backward = tf.nn.rnn_cell.LSTMCell(self.cell_size / 2, name= self.get_name() + "-backward")
 
     def set_layer_dropout(self, dropout):
         self.layer_dropout_keep_prob = 1 - dropout
@@ -97,6 +97,7 @@ class BiRnnValue(ExecutionComponentValueModel):
 
     def count_parameters(self):
         parameters = 0
+        direction_output_dim = int(self.cell_size / 2)
 
         input_dim = self.input_dimension
         output_dim = self.cell_size
@@ -105,6 +106,6 @@ class BiRnnValue(ExecutionComponentValueModel):
             if layer > 0:
                 input_dim = output_dim
 
-            parameters += 4 * output_dim * (input_dim + output_dim + 1)
+            parameters += 2 * (4 * direction_output_dim * (input_dim + direction_output_dim + 1))
 
         return parameters

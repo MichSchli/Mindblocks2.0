@@ -128,9 +128,6 @@ class RnnHelper:
             socket = rnn_model.inner_graph.get_out_socket(parts[0], parts[1])
             out_type = socket.pull_type_model(mode)
             dims = out_type.get_dimensions()
-            print("TYPE")
-            print(mode)
-            print(dims)
             tf_value = tensor_array_ops.TensorArray(
                 dtype=tf_type,
                 size=0 if maximum_iterations is None else maximum_iterations,

@@ -220,7 +220,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         results.append(self.write_to_tensor_array(args[prediction_index], tf.reshape(next_word_ids, [-1]), counter))
         results.append(self.write_to_tensor_array(args[backpointer_index], tf.reshape(parent_beam_ids, [-1]), counter))
 
-        # TODO: This needs to be log prob sums
         total_log_probs = tf.reshape(scores, [self.rnn_model.batch_size * self.beam_width, -1])
         range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width * self.vocab_size, 1)
         gather_indices = tf.reshape(combined_beam_word_ids + range_, [-1])
@@ -250,7 +249,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         self.rnn_model.loop_vars = []
         rnn_helper = RnnHelper()
         rnn_helper.assign_static_inputs(self.rnn_model, input_dictionary)
-        print("tile: " + str(self.rnn_model.tiling_factor))
 
         # TODO: Code for feeding input sequence missing;
         #for component_input, graph_input, feed_type in self.in_links:
@@ -261,13 +259,11 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
 
         rnn_helper.add_recurrency_initializers(self.rnn_model, input_dictionary)
         rnn_helper.add_sequence_outputs(self.rnn_model, self.maximum_iterations, mode)
-        print("tile: " + str(self.rnn_model.tiling_factor))
 
         # predictions, backpointers:
         self.rnn_model.build_tensor_array_loop_var("zero_tensor:|int", name="beamsearch_predictions", maximum_iterations=self.maximum_iterations)
         self.rnn_model.build_tensor_array_loop_var("zero_tensor:|int", name="beamsearch_backpointers", maximum_iterations=self.maximum_iterations)
         self.rnn_model.build_loop_var("zero_tensor:|float", name="beamsearch_propagated_scores")
-        print("tile: " + str(self.rnn_model.tiling_factor))
 
         self.rnn_model.add_length_var()
         self.rnn_model.add_finished_var()
@@ -275,7 +271,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
 
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
-        print("tile: " + str(self.rnn_model.tiling_factor))
 
         loop = tf.while_loop(
             self.cond,
@@ -289,7 +284,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
 
         pred_stack = loop[prediction_index].stack()
         lengths = loop[-3]
-        print("tile: " + str(self.rnn_model.tiling_factor))
 
         backpointers = tf.reshape(loop[backpointer_index].stack(), [-1, self.rnn_model.batch_size, self.beam_width])
 

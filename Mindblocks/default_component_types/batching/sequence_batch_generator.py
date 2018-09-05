@@ -117,6 +117,7 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
 
     def get_next_batch(self, mode):
         batch = self.batches[mode][self.pointer]
+
         self.pointer += 1
 
         return batch

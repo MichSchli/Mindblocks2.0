@@ -109,7 +109,7 @@ class RnnModel:
         in_socket = self.list_of_in_sockets[n]
         type = in_socket.replaced_type
         value_model = type.initialize_value_model()
-        value_model.assign(value)
+        value_model.assign(value, language="tensorflow")
         in_socket.replace_value(value_model)
 
     def get_inner_graph_output_types(self, mode):

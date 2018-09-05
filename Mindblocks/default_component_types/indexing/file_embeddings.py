@@ -37,7 +37,7 @@ class FileEmbeddings(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
 
         output_models["index"].assign(value.get_index())
         output_models["vectors"].assign(value.get_vectors())

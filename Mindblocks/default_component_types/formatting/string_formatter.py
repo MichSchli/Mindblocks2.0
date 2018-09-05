@@ -12,8 +12,7 @@ class StringFormatter(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return StringFormatterValue(value_dictionary["action"][0][0])
 
-    def execute(self, input_dictionary, value, output_models, mode):
-        string = value.action[:]
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         out = []
 
         first_val = list(input_dictionary.values())[0].get_value()

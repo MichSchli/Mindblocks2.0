@@ -25,7 +25,7 @@ class ListNegativeSampler(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         input_list = input_dictionary["list"]
         input_values = input_list.get_value()
 

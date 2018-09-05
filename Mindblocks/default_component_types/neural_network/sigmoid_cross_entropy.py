@@ -15,7 +15,7 @@ class SigmoidCrossEntropy(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return SigmoidCrossEntropyValue()
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         logits = input_dictionary["logits"].get_value()
         labels = tf.cast(tf.squeeze(input_dictionary["labels"].get_value()), tf.float32)
         cross_entropy = tf.nn.sigmoid_cross_entropy_with_logits(logits=logits,

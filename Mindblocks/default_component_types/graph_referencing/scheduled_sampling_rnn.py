@@ -32,7 +32,7 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         outputs, lengths = value.assign_and_run(input_dictionary, mode)
 
         for k,v in outputs.items():

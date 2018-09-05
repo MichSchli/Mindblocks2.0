@@ -12,7 +12,7 @@ class ModeSplitter(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return ModeSplitterValue()
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         result = input_dictionary[mode].get_value()
         output_value_models["output"].assign(result)
         return output_value_models

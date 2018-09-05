@@ -42,7 +42,7 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         batch_size = self.compute_batch_size(input_dictionary, value)
         value.rnn_model.set_batch_size(batch_size)
         decoded_sequences, lengths, aux_out = value.assign_and_run(input_dictionary, mode)

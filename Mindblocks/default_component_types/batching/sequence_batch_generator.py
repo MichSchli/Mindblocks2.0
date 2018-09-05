@@ -27,7 +27,7 @@ class BatchGenerator(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         if value.should_initialize(mode):
             value.register_lengths(input_dictionary["reference_sequences"].get_sequence_lengths(), mode)
 

@@ -24,7 +24,7 @@ class MultilayerPerceptron(ComponentTypeModel):
         v.language = language
         return v
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         in_value = input_dictionary["input"].get_value()
         in_shape = tf.shape(in_value)
 

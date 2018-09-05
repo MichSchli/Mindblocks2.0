@@ -22,7 +22,7 @@ class ConllReader(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         output_models["output"].assign(value.read())
         output_models["count"].assign(value.count())
         return output_models

@@ -15,7 +15,7 @@ class Argmax(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return ArgmaxValue(language)
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         if value.language == "tensorflow":
             val = input_dictionary["input"].get_value()
             if input_dictionary["input"].is_value_type("list") or input_dictionary["input"].is_value_type("sequence"):

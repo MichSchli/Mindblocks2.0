@@ -15,7 +15,7 @@ class CrossEntropy(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return CrossEntropyValue()
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
                 labels=tf.cast(tf.squeeze(input_dictionary["labels"].get_value()), tf.int32),
                 logits=input_dictionary["logits"].get_value())

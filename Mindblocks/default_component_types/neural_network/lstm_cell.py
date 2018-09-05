@@ -44,7 +44,7 @@ class LstmCell(ComponentTypeModel):
                 "layer_output_cs": new_c_layers_type,
                 "layer_output_hs": new_h_layers_type}
 
-    def execute(self, input_dictionary, execution_value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, execution_value, output_value_models, mode):
         input_x = input_dictionary["input_x"].get_value()
         previous_c = input_dictionary["previous_c"].get_value()
         previous_h = input_dictionary["previous_h"].get_value()

@@ -20,7 +20,7 @@ class SequenceCrossEntropy(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         mask = tf.sequence_mask(input_dictionary["labels"].get_sequence_lengths(),
                                 maxlen=input_dictionary["labels"].get_maximum_sequence_length(),
                                 dtype=tf.float32)

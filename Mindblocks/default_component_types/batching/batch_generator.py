@@ -20,7 +20,7 @@ class BatchGenerator(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         if value.needs_count():
             value.register_count(input_dictionary["count"].get_value(), mode)
 

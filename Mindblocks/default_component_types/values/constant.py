@@ -15,7 +15,7 @@ class Constant(ComponentTypeModel):
         return ConstantValue(value_dictionary["value"][0][0],
                              value_dictionary["type"][0][0])
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         output_value_models["output"].assign(value.value)
         return output_value_models
 

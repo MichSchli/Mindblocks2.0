@@ -24,7 +24,7 @@ class BiRnn(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         sequences = input_dictionary["input"].get_sequences()
         lengths = input_dictionary["input"].get_sequence_lengths()
 

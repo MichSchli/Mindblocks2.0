@@ -28,7 +28,7 @@ class BasicRecurrenceComponent(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         outputs = value.assign_and_run(input_dictionary)
 
         for k,v in outputs.items():

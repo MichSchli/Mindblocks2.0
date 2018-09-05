@@ -139,16 +139,18 @@ class MlHelper:
         return average_performance
 
     def count_parameters(self):
-        message = "Parameter count: "
+        message = "Learnable parameter count: "
         context = "training"
         field = "parameters"
         self.log(message, context, field)
 
-        parameters = self.update_and_loss_function.count_parameters()
+        if self.update_and_loss_function is not None:
+            parameters = self.update_and_loss_function.count_parameters()
+        else:
+            parameters = 0
+            self.log("No learnable parameters as no update graph has been defined", context, field)
 
         message = " * Total: " + str(parameters)
-        context = "training"
-        field = "parameters"
         self.log(message, context, field)
 
         return parameters

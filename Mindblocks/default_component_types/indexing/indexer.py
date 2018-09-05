@@ -17,7 +17,7 @@ class Indexer(ComponentTypeModel):
 
         return indexer_value
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         transformed_input = value.apply_index(input_dictionary["input"].get_value(),
                                               input_dictionary["index"].get_index())
 

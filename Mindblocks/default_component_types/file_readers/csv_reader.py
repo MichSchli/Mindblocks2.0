@@ -14,7 +14,7 @@ class CsvReader(ComponentTypeModel):
         return CsvReaderValue(value_dictionary["file_path"][0][0],
                               value_dictionary["columns"][0][0].split(","))
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         output_value_models["output"].assign(value.read())
         output_value_models["count"].assign(value.count())
         return output_value_models

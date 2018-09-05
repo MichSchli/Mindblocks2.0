@@ -21,7 +21,7 @@ class GraphComponent(ComponentTypeModel):
             value.add_out_link(parts[1], parts[0])
         return value
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         value.assign_input(input_dictionary)
         outputs = value.run_graph()
 

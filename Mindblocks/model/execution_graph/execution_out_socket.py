@@ -63,3 +63,6 @@ class ExecutionOutSocket:
             self.execution_component.initialize(mode, tensorflow_session_model)
 
         return self.cached_init_value
+
+    def get_past(self):
+        return self.execution_component.get_past()

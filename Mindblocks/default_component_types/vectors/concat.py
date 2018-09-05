@@ -14,7 +14,7 @@ class Concat(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return ConcatValue(language)
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         if value.language == "tensorflow":
             left_value = input_dictionary["left"].get_value()
             right_value = input_dictionary["right"].get_value()

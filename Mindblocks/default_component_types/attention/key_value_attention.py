@@ -24,7 +24,7 @@ class KeyValueAttentionComponent(ComponentTypeModel):
 
         return value
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         if not value.initialized:
             key_dim = input_dictionary["key"].get_inner_dim()
             value_dim = input_dictionary["sequence"].get_inner_dim()

@@ -12,7 +12,7 @@ class Add(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return AddValue()
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         result = input_dictionary["left"].get_value() + input_dictionary["right"].get_value()
         output_value_models["output"].assign(result)
         return output_value_models

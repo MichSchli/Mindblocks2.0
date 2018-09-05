@@ -13,7 +13,7 @@ class TokenReplacerSequence(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return TokenReplacerValue(value_dictionary["token"][0][0])
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         sequences = input_dictionary["target"].get_sequence()
         replacements = input_dictionary["replacement"].get_sequence()
 

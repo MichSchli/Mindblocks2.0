@@ -27,7 +27,7 @@ class ExecutionComponentModel(AbstractModel):
         input_dictionary = {k : in_socket.pull(mode) for k,in_socket in self.in_sockets.items()}
         output_value_models = {k : type_model.initialize_value_model() for k,type_model in self.output_type_models.items()}
 
-        output_dictionary = self.execution_type.execute(input_dictionary, self.execution_value, output_value_models, mode)
+        output_dictionary = self.execution_type.execute(self, input_dictionary, self.execution_value, output_value_models, mode)
 
         for k,v in output_dictionary.items():
             self.out_sockets[k].set_cached_value(v)
@@ -119,3 +119,21 @@ class ExecutionComponentModel(AbstractModel):
 
     def __str__(self):
         return "Unknown" if self.execution_type is None else self.execution_type.name
+
+    def get_past(self):
+        past = [self]
+
+        for socket in self.get_in_sockets():
+            past.extend(socket.get_past())
+
+        return list(set(past))
+
+    def get_regularization(self, mode="train"):
+        return self.execution_type.compute_regularization(self, mode=mode)
+
+    def past_regularization(self, mode="train"):
+        reg = 0
+        for component in self.get_past():
+            reg += component.get_regularization(mode=mode)
+
+        return reg

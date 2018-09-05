@@ -1,3 +1,5 @@
+from tensorflow_probability.python.mcmc.slice_sampler_utils import tfd
+
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
@@ -13,16 +15,22 @@ class VariationalGaussian(ComponentTypeModel):
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return VariationalGaussianValue()
+        value = VariationalGaussianValue()
 
-    def execute(self, input_dictionary, value, output_models, mode):
+        if "kl_scaling" in value_dictionary:
+            value.set_kl_scaling(float(value_dictionary["kl_scaling"][0][0]))
+
+        return value
+
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         if mode != "train":
             batch_size = tf.shape(input_dictionary["test_input"].get_value())[0]
-            output = value.prior.sample(batch_size)
+            output = value.get_prior().sample(batch_size)
             output_models["output"].assign(output)
         else:
             mu, sigma = tf.split(input_dictionary["input"].get_value(), 2, axis=-1)
-            encoder = tfp.distributions.MultivariateNormalDiag(mu, sigma).sample()
+            value.set_posterior(mu, sigma)
+            encoder = value.get_posterior().sample()
             output_models["output"].assign(encoder)
 
         return output_models
@@ -30,9 +38,9 @@ class VariationalGaussian(ComponentTypeModel):
     def build_value_type_model(self, input_types, value, mode):
         if value.prior is None:
             if mode == "train":
-                inner_dim = input_types["train"].get_inner_dim()
+                inner_dim = input_types["input"].get_inner_dim() / 2
             else:
-                inner_dim = input_types["test_input"].get_inner_dim()
+                inner_dim = input_types["test_input"].get_inner_dim() / 2
 
             value.initialize_prior(inner_dim)
 
@@ -46,11 +54,31 @@ class VariationalGaussian(ComponentTypeModel):
         elif socket_name == "test_input":
             return mode != "train"
 
+    def compute_regularization(self, component, mode="train"):
+        value = component.get_value()
+        divergence = tfd.kl_divergence(value.get_posterior(), value.get_prior())
+        return value.kl_scaling * tf.reduce_mean(divergence)
+
 
 class VariationalGaussianValue(ExecutionComponentValueModel):
 
+    kl_scaling = 0.001
+
     def __init__(self):
         self.prior = None
+        self.posterior = None
+
+    def set_kl_scaling(self, factor):
+        self.kl_scaling = factor
+
+    def set_posterior(self, mu, sigma):
+        self.posterior = tfp.distributions.MultivariateNormalDiag(mu, sigma)
+
+    def get_prior(self):
+        return self.prior
+
+    def get_posterior(self):
+        return self.posterior
 
     def initialize_prior(self, dim):
         self.dim = dim

@@ -13,7 +13,7 @@ class DataSlicer(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return DataSlicerValue(value_dictionary["slice"][0][0])
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         inp_val = input_dictionary["input"]
         if inp_val.is_value_type("list"):
             val = inp_val.get_value()

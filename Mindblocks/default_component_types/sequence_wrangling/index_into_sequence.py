@@ -13,7 +13,7 @@ class IndexIntoSequence(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return IndexIntoSequenceValue()
 
-    def execute(self, input_dictionary, value, output_value_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         sequences = input_dictionary["sequence"].get_sequence()
         indexes = input_dictionary["indexes"].get_sequence()
 

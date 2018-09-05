@@ -14,7 +14,7 @@ class EmbeddingLookup(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         return EmbeddingLookupValue()
 
-    def execute(self, input_dictionary, value, output_models, mode):
+    def execute(self, execution_component, input_dictionary, value, output_models, mode):
         if input_dictionary["indexes"].is_value_type("tensor"):
             lookup = tf.nn.embedding_lookup(input_dictionary["vectors"].get_value(),
                                         input_dictionary["indexes"].get_value())

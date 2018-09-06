@@ -1,7 +1,8 @@
 from Mindblocks.model.abstract.abstract_model import AbstractModel
+from Mindblocks.model.abstract.abstract_execution_model import AbstractExecutionModel
 
 
-class ExecutionComponentValueModel(AbstractModel):
+class ExecutionComponentValueModel(AbstractModel, AbstractExecutionModel):
 
     component_name = None
     component_mode = None

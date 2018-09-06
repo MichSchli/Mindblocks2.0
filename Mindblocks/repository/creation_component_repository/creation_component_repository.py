@@ -66,10 +66,12 @@ class CreationComponentRepository(AbstractRepository):
 
             for out_socket_name in model.component_type.get_out_sockets():
                 out_socket = CreationComponentOutSocket(model, out_socket_name)
+                out_socket.identifier = self.identifier_repository.create()
                 model.add_out_socket(out_socket)
 
             for in_socket_name in model.component_type.get_in_sockets():
                 in_socket = CreationComponentInSocket(model, in_socket_name)
+                in_socket.identifier = self.identifier_repository.create()
                 model.add_in_socket(in_socket)
 
     def assign_canvas(self, model, specifications):

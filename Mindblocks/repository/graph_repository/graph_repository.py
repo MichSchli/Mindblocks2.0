@@ -32,6 +32,7 @@ class GraphRepository(AbstractRepository):
             self.merge(g1, g2)
 
         edge = EdgeModel(out_socket, in_socket)
+        edge.identifier = self.identifier_repository.create()
 
         g1.add_edge(edge)
         out_socket.add_edge(edge)

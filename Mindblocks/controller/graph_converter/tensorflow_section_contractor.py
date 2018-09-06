@@ -42,11 +42,13 @@ class TensorflowSectionContractor:
         tensorflow_section_map[component.identifier] = tensorflow_section
 
         for in_socket in component.get_in_sockets():
-            if in_socket.source.execution_component.language == "tensorflow" and in_socket.source.execution_component.identifier not in tensorflow_section_map:
-                self.expand_tensorflow_section(in_socket.source.execution_component, tensorflow_section, tensorflow_section_map)
+            source_component = in_socket.edge.source.execution_component
+            if source_component.language == "tensorflow" and source_component.identifier not in tensorflow_section_map:
+                self.expand_tensorflow_section(source_component, tensorflow_section, tensorflow_section_map)
 
         for out_socket in component.get_out_sockets():
-            for target in out_socket.targets:
+            target_in_sockets = [edge.target for edge in out_socket.edges]
+            for target in target_in_sockets:
                 if target.execution_component.language == "tensorflow" and target.execution_component.identifier not in tensorflow_section_map:
                     self.expand_tensorflow_section(target.execution_component, tensorflow_section, tensorflow_section_map)
 
@@ -54,30 +56,25 @@ class TensorflowSectionContractor:
         execution_graph.add_execution_component(tensorflow_section)
         for component in tensorflow_section.components:
             for out_socket in component.get_out_sockets():
-                target_in_sockets = out_socket.targets
+                target_in_sockets = [edge.target for edge in out_socket.edges]
                 for in_socket in target_in_sockets:
                     if in_socket.execution_component.language != "tensorflow":
                         new_out_socket = ExecutionOutSocket()
-                        in_socket.set_source(new_out_socket)
+                        in_socket.edge.set_source(new_out_socket)
                         new_out_socket.execution_component = tensorflow_section
 
                         tensorflow_section.map_out_socket(out_socket, new_out_socket)
 
             for in_socket in component.get_in_sockets():
-                source_out_socket = in_socket.source
+                source_out_socket = in_socket.edge.source
                 if source_out_socket.execution_component.language != "tensorflow":
                     new_in_socket = ExecutionInSocket()
-                    source_out_socket.targets.remove(in_socket)
-                    source_out_socket.add_target(new_in_socket)
-                    new_in_socket.set_source(source_out_socket)
-                    new_in_socket.cast = in_socket.cast
-                    in_socket.cast = None
+                    edge = in_socket.edge
+                    edge.set_target(new_in_socket)
+                    new_in_socket.add_edge(edge)
 
                     new_in_socket.execution_component = tensorflow_section
 
                     tensorflow_section.map_in_socket(in_socket, new_in_socket)
 
             execution_graph.components.remove(component)
-
-        #tensorflow_section.initialize_placeholders()
-        #tensorflow_section.compile(mode)

@@ -1,8 +1,9 @@
 from Mindblocks.error_handling.loading.socket_not_found_exception import SocketNotFoundException
+from Mindblocks.model.abstract.abstract_creation_model import AbstractCreationModel
 from Mindblocks.model.abstract.abstract_model import AbstractModel
 
 
-class CreationComponentModel(AbstractModel):
+class CreationComponentModel(AbstractModel, AbstractCreationModel):
 
     identifier = None
     name = None
@@ -18,6 +19,7 @@ class CreationComponentModel(AbstractModel):
     language = None
 
     def __init__(self):
+        AbstractCreationModel.__init__(self)
         self.in_sockets = {}
         self.out_sockets = {}
 
@@ -82,3 +84,12 @@ class CreationComponentModel(AbstractModel):
 
     def __str__(self):
         return self.name + " (" +self.component_type.name + ")"
+
+    def get_name(self):
+        return self.name
+
+    def get_description(self):
+        return self.name
+
+    def get_identifier(self):
+        return self.identifier

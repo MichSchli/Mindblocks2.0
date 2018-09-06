@@ -1,13 +1,19 @@
+from Mindblocks.model.abstract.abstract_execution_model import AbstractExecutionModel
 
 
-class ExecutionGraphModel:
+class ExecutionGraphModel(AbstractExecutionModel):
 
     head_component = None
     components = None
     run_mode = None
+    execution_objects = None
 
     def __init__(self):
         self.components = []
+        self.execution_objects = []
+
+    def get_execution_objects(self):
+        return self.execution_objects
 
     def add_head_component(self, head_component):
         self.head_component = head_component
@@ -34,6 +40,9 @@ class ExecutionGraphModel:
 
     def add_execution_component(self, execution_component):
         self.components.append(execution_component)
+
+    def add_execution_object(self, execution_object):
+        self.execution_objects.append(execution_object)
 
     def initialize(self):
         self.clear_all_caches()
@@ -64,20 +73,20 @@ class ExecutionGraphModel:
         in_socket = self.get_in_socket(component, socket)
         in_socket.replace_type(type)
 
-    def initialize_type_models(self, mode):
-        return self.head_component.initialize_type_models(mode)
+    def initialize_type_models(self):
+        return self.head_component.initialize_type_models(self.run_mode)
 
     def count_parameters(self):
         parameters = 0
         counted_values = []
         for component in self.components:
-            v = component.get_value()
+            v = component.get_value_model()
             if v not in counted_values:
                 counted_values.append(v)
                 parameters += component.count_parameters()
 
         for component in self.referenced_graph_components():
-            v = component.get_value()
+            v = component.get_value_model()
             if v not in counted_values:
                 counted_values.append(v)
                 parameters += component.count_parameters()
@@ -94,4 +103,4 @@ class ExecutionGraphModel:
         return values
 
     def get_all_values(self):
-        return [component.get_value() for component in self.components]
+        return [component.get_value_model() for component in self.components]

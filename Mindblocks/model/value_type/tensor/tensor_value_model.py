@@ -27,6 +27,7 @@ class TensorValueModel:
             tf_type = tf.int32
         elif self.type == "float":
             tf_type = tf.float32
+
         return tf_type
 
     def get_numpy_type(self):
@@ -55,6 +56,7 @@ class TensorValueModel:
     def apply_dropouts(self, dropout_rate):
         keep_prob = 1 - float(dropout_rate)
         self.value = tf.nn.dropout(self.value, keep_prob=keep_prob)
+        return self
 
     def is_value_type(self, test_type):
         return test_type == "tensor"

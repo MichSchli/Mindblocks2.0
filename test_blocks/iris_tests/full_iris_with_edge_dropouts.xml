@@ -60,11 +60,18 @@
                 <target socket="index">indexer</target>
         </edge>
 
-        <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
-            <dimensions>4,20,3</dimensions>
+        <component name="dropout_standin" type="PassThrough" language="tensorflow">
         </component>
         <edge cast="float">
             <source socket="left">data_splitter</source>
+            <target socket="input">dropout_standin</target>
+        </edge>
+
+        <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
+            <dimensions>4,20,3</dimensions>
+        </component>
+        <edge>
+            <source socket="output">dropout_standin</source>
             <target socket="input">mlp</target>
             <dropout>$input_dropout</dropout>
         </edge>

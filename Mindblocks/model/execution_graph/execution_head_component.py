@@ -1,4 +1,7 @@
-class ExecutionHeadComponent:
+from Mindblocks.model.abstract.abstract_execution_model import AbstractExecutionModel
+
+
+class ExecutionHeadComponent(AbstractExecutionModel):
 
     run_output_sockets = None
     language = "python"

@@ -9,51 +9,6 @@ class TestGraphConverter(unittest.TestCase):
     def setUp(self):
         self.setup_holder = SetupHolder()
 
-    def testInitializingValues(self):
-        filename = "add_constants.xml"
-        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
-        self.setup_holder.block_loader.load(filepath)
-
-        component_spec = CreationComponentSpecifications()
-        component_spec.name = "adder"
-        adder = self.setup_holder.component_repository.get(component_spec)[0]
-        target_socket = adder.get_out_socket("output")
-
-        runs = [[target_socket]]
-
-        value_dictionary = self.setup_holder.graph_converter.value_dictionary_builder.build_value_dictionary(runs, ["train"])
-
-        self.assertIsNotNone(value_dictionary)
-        self.assertEqual(3, len(value_dictionary))
-
-        keys = list(value_dictionary.keys())
-
-        for component in list(self.setup_holder.component_repository.elements.values()):
-            self.assertIn(component.identifier, keys)
-
-    def testExcludesIrrelevantPartsFromValues(self):
-        filename = "add_constants_with_extra_adder.xml"
-        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
-        self.setup_holder.block_loader.load(filepath)
-
-        component_spec = CreationComponentSpecifications()
-        component_spec.name = "adder"
-        adder = self.setup_holder.component_repository.get(component_spec)[0]
-        target_socket = adder.get_out_socket("output")
-
-        runs = [[target_socket]]
-
-        value_dictionary = self.setup_holder.graph_converter.value_dictionary_builder.build_value_dictionary(runs, ["train"])
-
-        self.assertIsNotNone(value_dictionary)
-        self.assertEqual(3, len(value_dictionary))
-
-        keys = list(value_dictionary.keys())
-
-        for component in list(self.setup_holder.component_repository.elements.values()):
-            if component.name != "adder_2":
-                self.assertIn(component.identifier, keys)
-
     def testCreatesExecutionGraphs(self):
         filename = "add_constants.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)

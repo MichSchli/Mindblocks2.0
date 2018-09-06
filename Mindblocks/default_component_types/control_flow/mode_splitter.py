@@ -20,7 +20,7 @@ class ModeSplitter(ComponentTypeModel):
     def build_value_type_model(self, input_types, value, mode):
         return {"output": input_types[mode].copy()}
 
-    def is_used(self, socket_name, value, mode):
+    def is_used(self, socket_name, mode):
         return socket_name == mode
 
 class ModeSplitterValue(ExecutionComponentValueModel):

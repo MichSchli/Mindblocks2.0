@@ -70,7 +70,8 @@ class BasicInterface:
         self.graph_converter = GraphConverter(self.variable_repository,
                                               self.graph_repository,
                                               self.tensorflow_session_repository,
-                                              self.execution_component_repository)
+                                              self.execution_component_repository,
+                                              self.logger_manager)
 
         self.ml_helper_factory = MlHelperFactory(self.graph_converter,
                                                  self.variable_repository,

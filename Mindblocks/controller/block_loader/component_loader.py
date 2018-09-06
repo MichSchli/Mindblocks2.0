@@ -56,6 +56,6 @@ class ComponentLoader:
             next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 
         for key, value in value_lines.items():
-            component.set_attribute(key, value)
+            component.add_value_lines(key, value)
 
         return component, pointer

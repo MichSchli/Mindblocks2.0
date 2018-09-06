@@ -1,33 +1,33 @@
-import numpy as np
-import tensorflow as tf
-
 from Mindblocks.error_handling.connectivity.unconnected_socket_exception import UnconnectedSocketException
+from Mindblocks.model.abstract.abstract_execution_model import AbstractExecutionModel
 
 
-class ExecutionInSocket:
+class ExecutionInSocket(AbstractExecutionModel):
 
-    source = None
+
+    """
+    New:
+    """
+
+    edge = None
+
+    def add_edge(self, edge):
+        self.edge = edge
+
+    """
+    Old:
+    """
+
     execution_component = None
 
     replaced_value = None
     replaced_type = None
-    cast = None
-    dropout_rate = None
-
-    def set_source(self, execution_out_socket):
-        self.source = execution_out_socket
 
     def pull(self, mode):
         if self.replaced_value is not None:
             value = self.replaced_value
         else:
-            value = self.source.pull(mode)
-
-        if self.dropout_rate is not None and mode == "train":
-            value.apply_dropouts(self.dropout_rate)
-
-        if self.cast is not None:
-            value.cast(self.cast)
+            value = self.edge.pull(mode)
 
         return value
 
@@ -39,22 +39,18 @@ class ExecutionInSocket:
         if self.replaced_type is not None:
             return self.replaced_type
 
-        if self.source is None:
-            raise UnconnectedSocketException("Attempted type pull from unconnected in socket \"" + self.get_name() + "\"")
+        if self.edge is None:
+            raise UnconnectedSocketException("Attempted type pull from unconnected in socket \"" + self.get_description() + "\"")
 
-        source_type = self.source.pull_type_model(mode)
-
-        if self.cast is not None:
-            return source_type.cast(self.cast)
-        else:
-            return source_type
+        source_type = self.edge.pull_type_model(mode)
+        return source_type
 
     def clear_caches(self):
-        if self.source is not None:
-            self.source.clear_caches()
+        if self.edge is not None:
+            self.edge.clear_caches()
 
     def has_batches(self, mode):
-        return self.source.has_batches(mode)
+        return self.edge.has_batches(mode)
 
     def replace_type(self, type):
         self.replaced_type = type
@@ -63,24 +59,24 @@ class ExecutionInSocket:
         self.replaced_value = value
 
     def describe_graph(self, indent=0):
-        if self.source is not None:
-            self.source.describe_graph(indent=indent)
+        if self.edge is not None:
+            self.edge.describe_graph(indent=indent)
 
     def init_batches(self):
-        if self.source is not None:
-            self.source.init_batches()
+        if self.edge is not None:
+            self.edge.init_batches()
 
     def should_use_placeholder_for_tensorflow(self):
-        return self.source.should_use_placeholder_for_tensorflow()
+        return self.edge.source.should_use_placeholder_for_tensorflow()
 
     def initialize(self, mode, tensorflow_session_model):
-        if self.source is not None:
-            return self.source.initialize(mode, tensorflow_session_model)
+        if self.edge is not None:
+            return self.edge.initialize(mode, tensorflow_session_model)
         elif self.replaced_value is not None:
             return self.replaced_value
 
     def get_past(self):
-        if self.source is not None:
-            return self.source.get_past()
+        if self.edge is not None:
+            return self.edge.get_past()
         else:
             return []

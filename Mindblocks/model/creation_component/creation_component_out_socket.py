@@ -1,4 +1,8 @@
-class CreationComponentOutSocket:
+from Mindblocks.model.abstract.abstract_creation_model import AbstractCreationModel
+from Mindblocks.model.abstract.abstract_model import AbstractModel
+
+
+class CreationComponentOutSocket(AbstractModel, AbstractCreationModel):
 
     component = None
     name = None
@@ -6,6 +10,7 @@ class CreationComponentOutSocket:
     mark = None
 
     def __init__(self, component, name):
+        AbstractCreationModel.__init__(self)
         self.component = component
         self.name = name
         self.edges = []
@@ -24,3 +29,9 @@ class CreationComponentOutSocket:
 
     def get_mark(self):
         return self.mark
+
+    def get_name(self):
+        return self.name
+
+    def get_description(self):
+        return self.component.get_name() + ":" + self.get_name()

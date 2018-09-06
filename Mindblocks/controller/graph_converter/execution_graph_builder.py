@@ -1,4 +1,5 @@
 from Mindblocks.model.execution_graph.execution_component_model import ExecutionComponentModel
+from Mindblocks.model.execution_graph.execution_edge import ExecutionEdge
 from Mindblocks.model.execution_graph.execution_graph_model import ExecutionGraphModel
 from Mindblocks.model.execution_graph.execution_head_component import ExecutionHeadComponent
 from Mindblocks.model.execution_graph.execution_in_socket import ExecutionInSocket
@@ -14,24 +15,31 @@ class ExecutionGraphBuilder:
     execution_component_repository = None
     variable_repository = None
 
-    def __init__(self, graph_repository, execution_component_repository, variable_repository):
+    def __init__(self, graph_repository, execution_component_repository, logger_manager):
         self.graph_repository = graph_repository
         self.execution_component_repository = execution_component_repository
-        self.variable_repository = variable_repository
+        self.logger_manager = logger_manager
 
-    def build_execution_graph(self, run, mode, value_dictionary):
-        head_component, execution_components = self.get_run_components_and_edges(run, mode, value_dictionary)
+    def build_execution_graph(self, run, mode):
+        self.log_graph_construction_start(mode, run)
+
         run_graph = ExecutionGraphModel()
+        head_component, execution_components = self.get_run_components_and_edges(run, run_graph, mode)
         run_graph.run_mode = mode
         run_graph.add_head_component(head_component)
 
         for execution_component in execution_components:
             run_graph.add_execution_component(execution_component)
 
-        run_graph.get_components()
-
         return run_graph
 
+    def log_graph_construction_start(self, mode, run):
+        component_names = reversed([c.get_description() for c in run])
+        self.logger_manager.log(
+            "Contructing execution graph with end sockets [" + ", ".join(component_names) + "] and mode " + mode + ".",
+            "graph_construction", "status")
+
+    """
     def should_populate(self, value):
         for populate_key, populate_spec_dict in value.get_populate_items():
             if populate_key == "graph":
@@ -55,14 +63,15 @@ class ExecutionGraphBuilder:
                 value.set_graph(execution_graph)
 
         return value
+    """
 
-    def get_run_components_and_edges(self, run, run_mode, value_dictionary):
+    def get_run_components_and_edges(self, run, run_graph, run_mode):
         run_output_socket_ids = [str(socket.component.identifier) + ":" + socket.name for socket in run]
 
         activated_output_sockets = run[:]
         processed_components = []
 
-        unmatched_in_sockets = {}
+        unmatched_execution_edges = {}
         execution_out_sockets = {}
 
         execution_components = []
@@ -76,85 +85,95 @@ class ExecutionGraphBuilder:
 
             processed_components.append(component.identifier)
 
-            component_vals = value_dictionary[component.identifier]
+            self.logger_manager.log("Adding component " + component.get_name(), "graph_construction", "component")
 
-            if run_mode in component_vals:
-                execution_value = component_vals[run_mode]
-            else:
-                execution_value = component_vals["default"]
-
-            if self.should_populate(execution_value):
-                execution_value = self.do_populate(execution_value, run_mode, value_dictionary)
-
-            execution_component = self.build_execution_component(component, execution_value)
+            execution_component = self.build_execution_component(component, run_mode)
             execution_components.append(execution_component)
+            run_graph.add_execution_object(execution_component)
 
             for name, socket in component.out_sockets.items():
-                execution_out_socket = ExecutionOutSocket()
-                execution_component.add_out_socket(name, execution_out_socket)
-                execution_out_socket.execution_component = execution_component
+                execution_out_socket = self.build_execution_out_socket(execution_component, socket, run_mode)
+                run_graph.add_execution_object(execution_out_socket)
 
                 socket_id = str(component.identifier) + ":" + name
-                execution_out_socket.socket_id = socket_id
                 execution_out_sockets[socket_id] = execution_out_socket
 
             for name, socket in component.in_sockets.items():
-                if not self.should_use(name, component, execution_value, run_mode):
+                if not self.should_use(name, component, run_mode):
                     continue
 
-                execution_in_socket = ExecutionInSocket()
-                execution_component.add_in_socket(name, execution_in_socket)
-                execution_in_socket.execution_component = execution_component
+                execution_in_socket = self.build_execution_in_socket(execution_component, socket, run_mode)
+                run_graph.add_execution_object(execution_in_socket)
 
                 if socket.edge is not None:
-
-                    execution_in_socket.cast = socket.edge.cast
-
-                    if socket.edge.dropout_rate is not None:
-                        self.handle_dropouts(execution_in_socket, socket.edge.dropout_rate, run_mode)
+                    execution_edge = self.build_execution_edge(execution_in_socket, socket.edge, run_mode)
+                    run_graph.add_execution_object(execution_edge)
 
                     desired_source_id = str(socket.edge.source_socket.component.identifier) + ":" + socket.edge.source_socket.name
-                    if desired_source_id not in unmatched_in_sockets:
-                        unmatched_in_sockets[desired_source_id] = []
-
-                    unmatched_in_sockets[desired_source_id].append(execution_in_socket)
+                    if desired_source_id not in unmatched_execution_edges:
+                        unmatched_execution_edges[desired_source_id] = []
+                    unmatched_execution_edges[desired_source_id].append(execution_edge)
 
                     activated_output_sockets.append(socket.edge.source_socket)
 
-        for execution_out_socket in list(execution_out_sockets.values()):
+        self.match_out_sockets_to_edges(execution_out_sockets, unmatched_execution_edges)
 
-            if execution_out_socket.socket_id in unmatched_in_sockets:
-                for in_socket in unmatched_in_sockets[execution_out_socket.socket_id]:
-                    in_socket.set_source(execution_out_socket)
-                    execution_out_socket.add_target(in_socket)
+        head_component = self.build_execution_head_components(execution_out_sockets, run_output_socket_ids, run_mode)
 
+        return head_component, execution_components
+
+    def match_out_sockets_to_edges(self, execution_out_sockets, unmatched_in_sockets):
+        for socket_id, execution_out_socket in execution_out_sockets.items():
+            if socket_id in unmatched_in_sockets:
+                for execution_edge in unmatched_in_sockets[socket_id]:
+                    execution_edge.set_source(execution_out_socket)
+                    execution_out_socket.add_edge(execution_edge)
+
+    def should_use(self, name, creation_component, mode):
+        execution_type = creation_component.component_type
+        return execution_type.is_used(name, mode)
+
+    def build_execution_head_components(self, execution_out_sockets, run_output_socket_ids, mode):
         head_component = ExecutionHeadComponent()
-
         for socket_id in run_output_socket_ids:
             socket = execution_out_sockets[socket_id]
 
             head_in_socket = ExecutionInSocket()
-            head_in_socket.set_source(socket)
-            socket.add_target(head_in_socket)
+            output_edge = self.build_execution_edge(head_in_socket, None, mode)
             head_in_socket.execution_component = head_component
-
             head_component.add_in_socket(head_in_socket)
 
-        return head_component, execution_components
+            output_edge.set_source(socket)
+            socket.add_edge(output_edge)
 
-    def should_use(self, name, creation_component, execution_value, mode):
-        execution_type = creation_component.component_type
-        return execution_type.is_used(name, execution_value, mode)
+        return head_component
 
-    def handle_dropouts(self, execution_in_socket, dropout_rate, mode):
-        for variable in self.get_all_variables():
-            dropout_rate = variable.replace_in_string(dropout_rate, mode=mode)
-        execution_in_socket.dropout_rate = float(dropout_rate)
-
-    def get_all_variables(self):
-        return self.variable_repository.get_all()
-
-    def build_execution_component(self, component, execution_value):
+    def build_execution_component(self, component, mode):
         execution_component_model = self.execution_component_repository.create_from_creation_component(component)
-        execution_component_model.execution_value = execution_value
+        execution_component_model.set_origin(component)
+        execution_component_model.set_mode(mode)
         return execution_component_model
+
+    def build_execution_in_socket(self, execution_component, socket, mode):
+        execution_in_socket = ExecutionInSocket()
+        execution_in_socket.set_origin(socket)
+        execution_component.add_in_socket(socket.get_name(), execution_in_socket)
+        execution_in_socket.execution_component = execution_component
+        execution_in_socket.set_mode(mode)
+        return execution_in_socket
+
+    def build_execution_out_socket(self, execution_component, socket, mode):
+        execution_out_socket = ExecutionOutSocket()
+        execution_out_socket.set_origin(socket)
+        execution_component.add_out_socket(socket.get_name(), execution_out_socket)
+        execution_out_socket.execution_component = execution_component
+        execution_out_socket.set_mode(mode)
+        return execution_out_socket
+
+    def build_execution_edge(self, execution_in_socket, creation_edge, run_mode):
+        execution_edge = ExecutionEdge()
+        execution_edge.set_origin(creation_edge)
+        execution_edge.set_mode(run_mode)
+        execution_in_socket.add_edge(execution_edge)
+        execution_edge.set_target(execution_in_socket)
+        return execution_edge

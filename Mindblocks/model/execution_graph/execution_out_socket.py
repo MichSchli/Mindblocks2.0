@@ -1,4 +1,24 @@
-class ExecutionOutSocket:
+from Mindblocks.model.abstract.abstract_execution_model import AbstractExecutionModel
+
+
+class ExecutionOutSocket(AbstractExecutionModel):
+
+
+    """
+    New:
+    """
+
+    edges = None
+
+    def __init__(self):
+        self.edges = []
+
+    def add_edge(self, edge):
+        self.edges.append(edge)
+
+    """
+    Old:
+    """
 
     cached_value = None
     cached_init_value = None
@@ -8,9 +28,6 @@ class ExecutionOutSocket:
 
     execution_component = None
     targets = None
-
-    def __init__(self):
-        self.targets = []
 
     def pull(self, mode):
         if self.cached_value is None:

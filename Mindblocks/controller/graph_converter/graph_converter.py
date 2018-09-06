@@ -14,27 +14,41 @@ class GraphConverter:
     tensorflow_section_contractor = None
     variable_repository = None
     graph_repository = None
+    logger_manager = None
 
-    def __init__(self, variable_repository, graph_repository, tensorflow_session_repository, execution_component_repository):
+    def __init__(self, variable_repository, graph_repository, tensorflow_session_repository, execution_component_repository, logger_manager):
         self.tensorflow_section_contractor = TensorflowSectionContractor(tensorflow_session_repository)
         self.variable_repository = variable_repository
         self.graph_repository = graph_repository
+        self.logger_manager = logger_manager
 
-        self.value_dictionary_builder = ValueDictionaryBuilder(variable_repository, graph_repository)
-        self.execution_graph_builder = ExecutionGraphBuilder(graph_repository, execution_component_repository, variable_repository)
+        self.execution_graph_builder = ExecutionGraphBuilder(graph_repository, execution_component_repository, logger_manager)
+        self.value_dictionary_builder = ValueDictionaryBuilder(variable_repository, graph_repository, logger_manager)
 
     def to_executable(self, runs, run_modes=None, tensorflow_session_model=None):
         if run_modes is None:
             run_modes = ["test" for _ in runs]
 
-        value_dictionary = self.value_dictionary_builder.build_value_dictionary(runs, run_modes)
+        self.logger_manager.log("Contructing " + str(len(runs)) + " execution graphs...", "graph_construction", "status")
 
         execution_graphs = []
 
         for run, mode in zip(runs, run_modes):
-            run_graph = self.execution_graph_builder.build_execution_graph(run, mode, value_dictionary)
-            run_graph.initialize_type_models(mode)
-            execution_graphs.append(run_graph)
+            execution_graph = self.execution_graph_builder.build_execution_graph(run, mode)
+            execution_graphs.append(execution_graph)
+
+        self.logger_manager.log("Initializing values...", "graph_construction", "status")
+
+        self.value_dictionary_builder.initialize_values(execution_graphs)
+
+        self.logger_manager.log("Managing referenced graphs...", "graph_construction", "status")
+
+        self.logger_manager.log("Initializing type models and performing type checking...", "graph_construction", "status")
+
+        for execution_graph in execution_graphs:
+            execution_graph.initialize_type_models()
+
+        self.logger_manager.log("Building tensorflow sections...", "graph_construction", "status")
 
         self.tensorflow_section_contractor.contract_tensorflow_sections_in_graphs(execution_graphs,
                                                                                   run_modes,

@@ -34,6 +34,9 @@ class VariableModel(AbstractModel):
                 defined_for_modes.append(key)
         return defined_for_modes
 
+    def unique_for(self, mode):
+        return mode in self.values
+
     def replace_in_string(self, string, mode=None):
         if mode in self.values and mode != "default":
             replacement = self.values[mode]

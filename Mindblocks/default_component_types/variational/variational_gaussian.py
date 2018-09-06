@@ -48,7 +48,7 @@ class VariationalGaussian(ComponentTypeModel):
 
         return {"output": output_type}
 
-    def is_used(self, socket_name, value, mode):
+    def is_used(self, socket_name, mode):
         if socket_name == "input":
             return mode == "train"
         elif socket_name == "test_input":

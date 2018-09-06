@@ -73,9 +73,15 @@ class EdgeLoader:
             elif next_symbol == "dropout":
                 next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
                 dropout_rate = next_symbol
+                dropout_attributes = {}
                 next_symbol, attributes, pointer = self.xml_helper.pop_symbol(text, start_index=pointer)
 
-        edge = self.graph_repository.add_edge(source_socket, target_socket, cast=cast)
-        edge.dropout_rate = dropout_rate
+        edge = self.graph_repository.add_edge(source_socket, target_socket)
+
+        if dropout_rate is not None:
+            edge.add_value_line("dropout_rate", (dropout_rate, dropout_attributes))
+
+        if cast is not None:
+            edge.add_value_line("cast", (cast, {}))
 
         return edge, pointer

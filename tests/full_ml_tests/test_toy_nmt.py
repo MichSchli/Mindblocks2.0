@@ -260,7 +260,7 @@ class TestToyNmt(unittest.TestCase):
         f.close()
 
         upd_component = interface.get_execution_component("upd")
-        learning_rate_variable = upd_component.execution_value.get_learning_rate()
+        learning_rate_variable = upd_component.value_model.get_learning_rate()
         lr = interface.ml_helper.tensorflow_session_model.run(learning_rate_variable, {})
         self.assertAlmostEqual(0.1, lr)
 
@@ -453,6 +453,34 @@ class TestToyNmt(unittest.TestCase):
         interface.load_file(block_filepath)
         interface.set_variable("data_folder", data_filepath)
         interface.set_variable("embedding_folder", embedding_filepath)
+        interface.initialize()
+
+        f = open(data_filepath+"tgt.txt")
+        lines = [l.strip() for l in f]
+        gold_sentences = [l + " EOS" for l in lines]
+        f.close()
+
+        interface.train()
+        predictions = interface.predict()
+
+        self.assertEqual(len(gold_sentences), len(predictions))
+
+        for i, s in enumerate(gold_sentences):
+            pred_sent = " ".join(predictions[i])
+            self.assertEqual(s, pred_sent)
+
+    def testSeqtoSeqWithMultipleDecoderLayers(self):
+        filename = "full_ml_tests/toy_nmt/toy_nmt_variable_output_lstm_layers.xml"
+
+        block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        data_filepath = self.setup_holder.filepath_handler.get_test_data_path("nmt/toy/")
+        embedding_filepath = self.setup_holder.filepath_handler.get_test_data_path("embeddings/")
+
+        interface = BasicInterface()
+        interface.load_file(block_filepath)
+        interface.set_variable("data_folder", data_filepath)
+        interface.set_variable("embedding_folder", embedding_filepath)
+        interface.set_variable("lstm_layers", "3")
         interface.initialize()
 
         f = open(data_filepath+"tgt.txt")

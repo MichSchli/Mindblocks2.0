@@ -27,6 +27,7 @@ class ExecutionComponentModel(AbstractModel, AbstractExecutionModel):
         value = self.execution_type.initialize_value(corrected_value_dictionary, mode)
         value.language = self.language
         value.set_component_name(self.name, self.mode)
+        value.logger_manager = self.logger_manager
         return value
 
     def add_out_socket(self, key, socket):

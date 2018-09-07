@@ -6,6 +6,13 @@ class AbstractExecutionModel:
     origin = None
     mode = None
     value_model = None
+    language = None
+
+    def set_language(self, language):
+        self.language = language
+
+    def get_language(self):
+        return self.language
 
     def set_value_model(self, value_model):
         self.value_model = value_model
@@ -30,6 +37,9 @@ class AbstractExecutionModel:
 
     def get_description(self):
         return self.origin.get_description() + "@" + self.mode
+
+    def always_require_unique(self, mode):
+        return False
 
     # TODO: This makes execution models default to using updated dictionaries as values
     def initialize_value(self, updated_dict, mode):

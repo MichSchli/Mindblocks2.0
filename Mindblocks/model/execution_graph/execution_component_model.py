@@ -17,8 +17,17 @@ class ExecutionComponentModel(AbstractModel, AbstractExecutionModel):
         self.out_sockets = {}
         self.in_sockets = {}
 
+    def get_language(self):
+        return self.language
+
+    def always_require_unique(self, mode):
+        return self.has_referenced_graphs(mode)
+
     def initialize_value(self, corrected_value_dictionary, mode):
-        return self.execution_type.initialize_value(corrected_value_dictionary, mode)
+        value = self.execution_type.initialize_value(corrected_value_dictionary, mode)
+        value.language = self.language
+        value.set_component_name(self.name, self.mode)
+        return value
 
     def add_out_socket(self, key, socket):
         self.out_sockets[key] = socket
@@ -137,3 +146,9 @@ class ExecutionComponentModel(AbstractModel, AbstractExecutionModel):
             reg += component.get_regularization(mode=mode)
 
         return reg
+
+    def has_referenced_graphs(self, mode):
+        return self.execution_type.has_referenced_graphs(self.value_model, mode)
+
+    def get_referenced_sockets(self, mode):
+        return self.value_model.get_referenced_sockets(mode)

@@ -29,9 +29,11 @@ class MomentumUpdater(ComponentTypeModel):
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         per_example_loss = input_dictionary["loss"].get_value()
         per_batch_loss = tf.reduce_mean(per_example_loss)
+        total_loss = per_batch_loss + execution_component.past_regularization(mode=mode)
+
         optim = tf.train.MomentumOptimizer(learning_rate=value.learning_rate,
                                            momentum=value.momentum)
-        grad_and_var_pairs = optim.compute_gradients(per_batch_loss)
+        grad_and_var_pairs = optim.compute_gradients(total_loss)
 
         grads = [gvp[0] for gvp in grad_and_var_pairs]
         tvars = [gvp[1] for gvp in grad_and_var_pairs]

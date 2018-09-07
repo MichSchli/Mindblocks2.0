@@ -38,17 +38,17 @@ class CreationComponentRepository(AbstractRepository):
         except ComponentTypeNotFoundException:
             raise
 
+        if specifications.language is not None:
+            model.language = specifications.language
+        elif model.component_type is not None and model.component_type.languages is not None:
+            model.language = model.component_type.languages[0]
+
         self.assign_canvas(model, specifications)
         self.assign_graph(model, specifications)
 
         model.component_value = {}
         if model.component_type is not None:
             model.component_type.assign_default_value(model.component_value)
-
-        if specifications.language is not None:
-            model.language = specifications.language
-        elif model.component_type is not None and model.component_type.languages is not None:
-            model.language = model.component_type.languages[0]
 
         return model
 
@@ -67,11 +67,13 @@ class CreationComponentRepository(AbstractRepository):
             for out_socket_name in model.component_type.get_out_sockets():
                 out_socket = CreationComponentOutSocket(model, out_socket_name)
                 out_socket.identifier = self.identifier_repository.create()
+                out_socket.language = model.language
                 model.add_out_socket(out_socket)
 
             for in_socket_name in model.component_type.get_in_sockets():
                 in_socket = CreationComponentInSocket(model, in_socket_name)
                 in_socket.identifier = self.identifier_repository.create()
+                in_socket.language = model.language
                 model.add_in_socket(in_socket)
 
     def assign_canvas(self, model, specifications):

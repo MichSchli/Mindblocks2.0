@@ -41,3 +41,6 @@ class ComponentTypeModel(AbstractModel):
 
     def compute_regularization(self, component, mode="train"):
         return 0
+
+    def has_referenced_graphs(self, value_model, mode):
+        return False

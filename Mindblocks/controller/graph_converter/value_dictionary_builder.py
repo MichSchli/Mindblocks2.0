@@ -4,36 +4,39 @@ from Mindblocks.repository.graph_repository.graph_specifications import GraphSpe
 class ValueDictionaryBuilder:
 
     variable_repository = None
+    stored_values = None
 
     def __init__(self, variable_repository, graph_repository, logger_manager):
         self.variable_repository = variable_repository
         self.graph_repository = graph_repository
         self.logger_manager = logger_manager
+        self.stored_values = {}
 
     def initialize_values(self, execution_graphs):
-        value_dictionary = {}
-
         for execution_graph in execution_graphs:
             for execution_object in execution_graph.get_execution_objects():
                 creation_value = execution_object.get_value_dictionary()
                 mode = execution_object.get_mode()
 
-                if self.requires_unique_value(creation_value, mode):
+                requires_unique = execution_object.always_require_unique(mode)
+                requires_unique = requires_unique or self.requires_unique_value_due_to_variable(creation_value, mode)
+
+                if requires_unique:
                     build_mode = mode
                 else:
                     build_mode = "default"
 
                 value_ref = str(execution_object.get_origin_identifier()) + build_mode
 
-                if value_ref not in value_dictionary:
+                if value_ref not in self.stored_values:
                     value_model = self.build_value_model(execution_object, build_mode)
-                    value_dictionary[value_ref] = value_model
+                    self.stored_values[value_ref] = value_model
                 else:
-                    value_model = value_dictionary[value_ref]
+                    value_model = self.stored_values[value_ref]
 
                 execution_object.set_value_model(value_model)
 
-    def requires_unique_value(self, creation_value, mode):
+    def requires_unique_value_due_to_variable(self, creation_value, mode):
         for k, v in creation_value.items():
             for variable in self.get_all_variables():
                 if self.referenced_in(v, variable):

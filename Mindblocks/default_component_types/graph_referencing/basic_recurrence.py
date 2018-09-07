@@ -45,6 +45,8 @@ class BasicRecurrenceComponent(ComponentTypeModel):
     def get_used_in_sockets(self, value):
         return []
 
+    def has_referenced_graphs(self, value_model, mode):
+        return True
 
 class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
 
@@ -158,6 +160,15 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
 
     def get_populate_items(self):
         return [("graph", {"name": self.graph_name})]
+
+    def get_referenced_sockets(self, mode):
+        ref_c = [l[1].split(":")[0] for l in self.out_links] + \
+               [l[0].split(":")[0] for l in self.recurrences]
+
+        ref_s = [l[1].split(":")[1] for l in self.out_links] + \
+               [l[0].split(":")[1] for l in self.recurrences]
+
+        return self.graph_name, ref_c, ref_s
 
     def get_required_graph_outputs(self):
         return [(l[1].split(":")[0], l[1].split(":")[1]) for l in self.out_links] + \

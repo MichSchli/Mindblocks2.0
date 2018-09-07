@@ -61,6 +61,9 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
 
         return output_models
 
+    def has_referenced_graphs(self, value_model, mode):
+        return True
+
     def build_value_type_model(self, input_types, value, mode):
         rnn_helper = RnnHelper()
 
@@ -146,9 +149,7 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         old_finished = args[-2]
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
-        score_index = n_rec + n_out + 2
-        # TODO: Fix indexes
-        # TODO: Properly return output
+        score_index = -4
 
         for i in range(n_rec):
             self.rnn_model.set_nths_input(i, args[i])
@@ -215,8 +216,9 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
             results[i] = self.write_to_tensor_array(args[i], results[i], counter)
 
         # Store backpointers:
-        prediction_index = n_rec + n_out
-        backpointer_index = n_rec + n_out + 1
+        prediction_index = -6
+        backpointer_index = -5
+
         results.append(self.write_to_tensor_array(args[prediction_index], tf.reshape(next_word_ids, [-1]), counter))
         results.append(self.write_to_tensor_array(args[backpointer_index], tf.reshape(parent_beam_ids, [-1]), counter))
 
@@ -269,9 +271,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         self.rnn_model.add_finished_var()
         self.rnn_model.add_counter_loop_var()
 
-        n_rec = self.rnn_model.count_recurrent_links()
-        n_out = self.rnn_model.count_output_links()
-
         loop = tf.while_loop(
             self.cond,
             self.body,
@@ -279,8 +278,8 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
             maximum_iterations=self.maximum_iterations
         )
 
-        prediction_index = n_rec + n_out
-        backpointer_index = n_rec + n_out + 1
+        prediction_index = -6
+        backpointer_index = -5
 
         pred_stack = loop[prediction_index].stack()
         lengths = loop[-3]
@@ -388,3 +387,8 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
 
     def get_graph_inputs(self):
         return self.rnn_model.get_required_graph_inputs()
+
+    def get_referenced_sockets(self, mode):
+        graph_name, ref_c, ref_s = self.rnn_model.get_referenced_sockets(mode)
+
+        return graph_name, ref_c, ref_s

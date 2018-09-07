@@ -35,6 +35,8 @@ class GraphComponent(ComponentTypeModel):
         output_types = value.compute_types(mode)
         return output_types
 
+    def has_referenced_graphs(self, value_model, mode):
+        return True
 
 class GraphComponentValue(ExecutionComponentValueModel):
 
@@ -86,3 +88,12 @@ class GraphComponentValue(ExecutionComponentValueModel):
 
     def get_graph_inputs(self):
         return [(l[1].split(":")[0], l[1].split(":")[1]) for l in self.in_links]
+
+    def get_referenced_sockets(self, mode):
+        ref_c = [l[1].split(":")[0] for l in self.out_links] + \
+               [l[0].split(":")[0] for l in self.recurrences]
+
+        ref_s = [l[1].split(":")[1] for l in self.out_links] + \
+               [l[0].split(":")[1] for l in self.recurrences]
+
+        return self.graph_name, ref_c, ref_s

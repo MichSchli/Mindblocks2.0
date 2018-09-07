@@ -29,6 +29,7 @@ class Argmax(ComponentTypeModel):
             argmax = tf.argmax(val, axis=-1, output_type=tf.int32)
         else:
             argmax = np.argmax(input_dictionary["input"].get_value(), axis=-1)
+
         output_value_models["output"].assign(argmax, value.language)
 
         return output_value_models

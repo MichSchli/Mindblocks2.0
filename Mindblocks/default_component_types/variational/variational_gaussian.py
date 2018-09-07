@@ -62,7 +62,7 @@ class VariationalGaussian(ComponentTypeModel):
 
 class VariationalGaussianValue(ExecutionComponentValueModel):
 
-    kl_scaling = 0.001
+    kl_scaling = None
 
     def __init__(self):
         self.prior = None

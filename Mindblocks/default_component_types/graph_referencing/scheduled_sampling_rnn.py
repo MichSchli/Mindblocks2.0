@@ -51,6 +51,9 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
 
         return output_types
 
+    def has_referenced_graphs(self, value_model, mode):
+        return True
+
 
 class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
 
@@ -92,6 +95,7 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
         return self.teacher_probability
 
     def body(self, *args):
+        print(args)
         n_rec = self.rnn_model.count_recurrent_links()
         n_out = self.rnn_model.count_output_links()
 
@@ -114,6 +118,7 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
                 self.rnn_model.set_nths_input(i, args[i])
 
         results = self.rnn_model.run()
+        print(results)
 
         for i in range(n_rec, n_rec+n_out):
             results[i] = self.write_to_tensor_array(args[i],results[i], counter)
@@ -213,3 +218,8 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
 
     def get_graph_inputs(self):
         return self.rnn_model.get_required_graph_inputs()
+
+    def get_referenced_sockets(self, mode):
+        graph_name, ref_c, ref_s = self.rnn_model.get_referenced_sockets(mode)
+
+        return graph_name, ref_c, ref_s

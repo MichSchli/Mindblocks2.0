@@ -113,7 +113,7 @@ class RnnModel:
         in_socket.replace_value(value_model)
 
     def get_inner_graph_output_types(self, mode):
-        results = self.inner_graph.initialize_type_models(mode)
+        results = self.inner_graph.initialize_type_models()
         out_type_dict = {}
         for output, result in zip(self.out_links, results):
             component_output, _, feed_type = output
@@ -129,3 +129,12 @@ class RnnModel:
     def run(self):
         results = self.inner_graph.execute(discard_value_models=True)
         return results
+
+    def get_referenced_sockets(self, mode):
+        ref_c = [l[0].split(":")[0] for l in self.recurrences] + \
+               [l[1].split(":")[0] for l in self.out_links]
+
+        ref_s = [l[0].split(":")[1] for l in self.recurrences] + \
+               [l[1].split(":")[1] for l in self.out_links]
+
+        return self.inner_graph_name, ref_c, ref_s

@@ -1,12 +1,16 @@
 from Mindblocks.model.graph.edge_model import EdgeModel
 from Mindblocks.model.graph.graph_model import GraphModel
 from Mindblocks.repository.abstract.abstract_repository import AbstractRepository
+from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
 
 
 class GraphRepository(AbstractRepository):
 
     def __initialize_model__(self):
         return GraphModel()
+
+    def get_specifications(self):
+        return GraphSpecifications()
 
     def create(self, specifications):
         model = self.__create__()

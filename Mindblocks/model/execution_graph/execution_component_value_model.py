@@ -2,7 +2,7 @@ from Mindblocks.model.abstract.abstract_model import AbstractModel
 from Mindblocks.model.abstract.abstract_execution_model import AbstractExecutionModel
 
 
-class ExecutionComponentValueModel(AbstractModel, AbstractExecutionModel):
+class ExecutionComponentValueModel(AbstractModel):
 
     component_name = None
     component_mode = None
@@ -28,3 +28,6 @@ class ExecutionComponentValueModel(AbstractModel, AbstractExecutionModel):
 
     def get_referenced_graphs(self):
         return []
+
+    def get_description(self):
+        return str(self.component_name) + ": value id " + str(self)

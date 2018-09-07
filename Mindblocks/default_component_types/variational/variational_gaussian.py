@@ -55,7 +55,7 @@ class VariationalGaussian(ComponentTypeModel):
             return mode != "train"
 
     def compute_regularization(self, component, mode="train"):
-        value = component.get_value()
+        value = component.get_value_model()
         divergence = tfd.kl_divergence(value.get_posterior(), value.get_prior())
         return value.kl_scaling * tf.reduce_mean(divergence)
 
@@ -63,6 +63,7 @@ class VariationalGaussian(ComponentTypeModel):
 class VariationalGaussianValue(ExecutionComponentValueModel):
 
     kl_scaling = None
+    increase_per_iteration = 0.1
 
     def __init__(self):
         self.prior = None
@@ -79,6 +80,10 @@ class VariationalGaussianValue(ExecutionComponentValueModel):
 
     def get_posterior(self):
         return self.posterior
+
+    def initialize_tensorflow_variables(self, tensorflow_session_model):
+        kl_scaling = tf.maximum(1.0, self.kl_scaling + self.increase_per_iteration * tf.cast(tensorflow_session_model.get_tensorflow_iteration(), dtype=tf.float32))
+        self.kl_scaling = kl_scaling
 
     def initialize_prior(self, dim):
         self.dim = dim

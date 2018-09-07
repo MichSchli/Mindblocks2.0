@@ -25,9 +25,11 @@ class AdamUpdater(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         per_example_loss = input_dictionary["loss"].get_value()
-        per_batch_loss = tf.reduce_mean(per_example_loss)
+        reg = execution_component.past_regularization(mode=mode)
 
-        total_loss = per_batch_loss + execution_component.past_regularization(mode=mode)
+        per_example_loss = tf.Print(per_example_loss, [reg], message="reg")
+        per_batch_loss = tf.reduce_mean(per_example_loss)
+        total_loss = per_batch_loss + reg
 
         adam = tf.train.AdamOptimizer(learning_rate=value.learning_rate)
         grad_and_var_pairs = adam.compute_gradients(total_loss)

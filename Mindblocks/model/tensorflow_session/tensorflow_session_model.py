@@ -60,7 +60,7 @@ class TensorflowSessionModel(AbstractModel):
 
     def get_tensorflow_iteration(self):
         if self.__tensorflow_iteration__ is None:
-            self.__tensorflow_iteration__ = tf.placeholder(tf.int32, shape=[])
+            self.__tensorflow_iteration__ = tf.placeholder(tf.int32, shape=[], name="iteration_number")
         return self.__tensorflow_iteration__
 
     def save(self, filepath):

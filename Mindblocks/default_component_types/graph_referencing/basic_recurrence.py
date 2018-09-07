@@ -141,7 +141,7 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
     def compute_types(self, mode):
-        results = self.graph.initialize_type_models(mode)
+        results = self.graph.initialize_type_models()
         out_type_dict = {}
         for output, result in zip(self.out_links, results):
             component_output, _, feed_type = output

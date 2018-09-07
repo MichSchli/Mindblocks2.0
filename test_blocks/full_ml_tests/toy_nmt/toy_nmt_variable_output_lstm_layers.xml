@@ -73,7 +73,8 @@
         <component name="encoder" type="BiRnn" language="tensorflow">
             <cell>lstm</cell>
             <layers>$lstm_layers</layers>
-            <dimension>100</dimension>
+            <dimension>50</dimension>
+            <layer_dropout>0.3</layer_dropout>
         </component>
         <edge>
                 <source socket="output">embedding_lookup</source>

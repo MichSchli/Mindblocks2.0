@@ -74,7 +74,7 @@ class GraphComponentValue(ExecutionComponentValueModel):
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
     def compute_types(self, mode):
-        results = self.graph.initialize_type_models(mode)
+        results = self.graph.initialize_type_models()
         return {output[0]: result for output, result in zip(self.out_links, results)}
 
     def set_graph_name(self, name):
@@ -90,10 +90,8 @@ class GraphComponentValue(ExecutionComponentValueModel):
         return [(l[1].split(":")[0], l[1].split(":")[1]) for l in self.in_links]
 
     def get_referenced_sockets(self, mode):
-        ref_c = [l[1].split(":")[0] for l in self.out_links] + \
-               [l[0].split(":")[0] for l in self.recurrences]
+        ref_c = [l[1].split(":")[0] for l in self.out_links]
 
-        ref_s = [l[1].split(":")[1] for l in self.out_links] + \
-               [l[0].split(":")[1] for l in self.recurrences]
+        ref_s = [l[1].split(":")[1] for l in self.out_links]
 
         return self.graph_name, ref_c, ref_s

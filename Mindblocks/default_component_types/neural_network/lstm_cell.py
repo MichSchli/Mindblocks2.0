@@ -53,6 +53,13 @@ class LstmCell(ComponentTypeModel):
         new_cs = []
 
         if execution_value.layers == 1:
+            previous_c_shape = tf.shape(previous_c)
+            previous_h_shape = tf.shape(previous_h)
+
+            previous_c = tf.reshape(previous_c, [previous_c_shape[0], 1, previous_c_shape[-1]])
+            previous_h = tf.reshape(previous_c, [previous_h_shape[0], 1, previous_h_shape[-1]])
+
+        if False: #execution_value.layers == 1:
             cell_input = (previous_c, previous_h)
 
             h, new_state = execution_value.cells[0](input_x, cell_input)

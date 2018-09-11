@@ -34,7 +34,7 @@ class ExecutionEdge(AbstractExecutionModel):
         if self.value_model is not None and "cast" in self.value_model:
             source_value = source_value.cast(self.value_model["cast"])
 
-        if self.value_model is not None and "dropout_rate" in self.value_model:
+        if self.value_model is not None and "dropout_rate" in self.value_model and mode == "train":
             dropout_dim = None if "dropout_dim" not in self.value_model else self.value_model["dropout_dim"]
             source_value = source_value.apply_dropouts(self.value_model["dropout_rate"], dropout_dim=dropout_dim)
 

@@ -79,13 +79,6 @@
                 <target socket="input">encoder</target>
         </edge>
 
-        <component name="grad_block" type="GradientBlocker" language="tensorflow">
-        </component>
-        <edge>
-            <source socket="final_state">encoder</source>
-            <target socket="input">grad_block</target>
-        </edge>
-
         <component name="question_embedding_lookup" type="EmbeddingLookup" language="tensorflow">
         </component>
         <edge>
@@ -113,7 +106,7 @@
                 <target socket="left">vae_concat</target>
             </edge>
             <edge>
-                <source socket="output">grad_block</source>
+                <source socket="final_state">encoder</source>
                 <target socket="right">vae_concat</target>
             </edge>
 
@@ -125,7 +118,15 @@
             <target socket="input">vae_mlp</target>
         </edge>
 
-        <component name="z" type="VariationalGaussian" language="tensorflow">
+        <component name="prior_mlp" type="MultilayerPerceptron" language="tensorflow">
+            <dimensions>100,100</dimensions>
+        </component>
+        <edge>
+            <source socket="final_state">question_encoder</source>
+            <target socket="input">prior_mlp</target>
+        </edge>
+
+        <component name="z" type="VariationalGaussianConditionalPrior" language="tensorflow">
             <kl_scaling>0.001</kl_scaling>
         </component>
         <edge>
@@ -133,8 +134,8 @@
             <target socket="input">z</target>
         </edge>
         <edge>
-            <source socket="output">source_indexer</source>
-            <target socket="test_input">z</target>
+            <source socket="output">prior_mlp</source>
+            <target socket="prior_input">z</target>
         </edge>
 
         <component name="training_rnn" type="ScheduledSamplingRnn" language="tensorflow">

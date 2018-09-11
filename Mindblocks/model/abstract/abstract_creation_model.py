@@ -11,11 +11,11 @@ class AbstractCreationModel:
         else:
             self.value_dictionary[key].append(item)
 
-    def add_value_lines(self, key, item):
+    def add_value_lines(self, key, items):
         if key not in self.value_dictionary:
-            self.value_dictionary[key] = item[:]
+            self.value_dictionary[key] = items[:]
         else:
-            self.value_dictionary[key].extend(item)
+            self.value_dictionary[key].extend(items)
 
     def get_value_dictionary(self):
         return self.value_dictionary

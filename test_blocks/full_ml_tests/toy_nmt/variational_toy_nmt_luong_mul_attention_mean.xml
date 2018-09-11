@@ -79,10 +79,18 @@
                 <target socket="input">encoder</target>
         </edge>
 
+        <component name="encoder_mean" type="Mean" language="tensorflow">
+            <axis>1</axis>
+        </component>
+        <edge>
+            <source socket="output">encoder</source>
+            <target socket="input">encoder_mean</target>
+        </edge>
+
         <component name="grad_block" type="GradientBlocker" language="tensorflow">
         </component>
         <edge>
-            <source socket="final_state">encoder</source>
+            <source socket="output">encoder_mean</source>
             <target socket="input">grad_block</target>
         </edge>
 

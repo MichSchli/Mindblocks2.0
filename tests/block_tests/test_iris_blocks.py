@@ -331,5 +331,45 @@ class TestIrisBlocks(unittest.TestCase):
         ml_helper.train()
         performance = ml_helper.evaluate()
 
-        self.assertGreater(0.5, performance)
+        self.assertGreater(0.7, performance)
+
+    def testDimDropouts(self):
+        filename = "iris_tests/full_iris_with_dim_dropouts.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+        self.setup_holder.variable_repository.set_variable_value("input_dropout", 0.1)
+        self.setup_holder.variable_repository.set_variable_value("output_dropout", 0.9999999)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertGreater(0.7, performance)
+
+    def testFullTrainingWithBlockedGradient(self):
+        filename = "iris_tests/full_iris_with_blocked_gradient.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        ml_helper.train()
+        performance = ml_helper.evaluate()
+
+        self.assertGreater(0.8, performance)
 

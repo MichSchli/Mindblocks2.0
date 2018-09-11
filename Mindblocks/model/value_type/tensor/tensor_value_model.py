@@ -53,9 +53,18 @@ class TensorValueModel:
     def get_tensorflow_output_tensors(self):
         return [self.value]
 
-    def apply_dropouts(self, dropout_rate):
+    def apply_dropouts(self, dropout_rate, dropout_dim=None):
         keep_prob = 1 - float(dropout_rate)
-        self.value = tf.nn.dropout(self.value, keep_prob=keep_prob)
+
+        noise_shape = None
+        if dropout_dim is not None:
+            in_shape = tf.shape(self.value)
+            kept_shape_dims = in_shape[:dropout_dim+1]
+            dropped_out_dims = in_shape[dropout_dim+1:]
+
+            noise_shape = tf.concat([kept_shape_dims, tf.ones_like(dropped_out_dims)], axis=-1)
+
+        self.value = tf.nn.dropout(self.value, keep_prob=keep_prob, noise_shape=noise_shape)
         return self
 
     def is_value_type(self, test_type):

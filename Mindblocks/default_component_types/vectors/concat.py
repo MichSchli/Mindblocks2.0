@@ -31,7 +31,7 @@ class Concat(ComponentTypeModel):
                 nd = tf.concat([[1, expand_to_cover], tf.ones_like(tf.shape(right_value)[2:])], axis=-1)
                 right_value = tf.tile(right_value, nd)
 
-            result = tf.concat([left_value, right_value], axis=-1)
+            result = tf.concat([left_value, right_value], axis=-1, name=execution_component.get_name())
         elif value.new_array:
             result = np.array([input_dictionary["left"].get_value(), input_dictionary["right"].get_value()])
         else:

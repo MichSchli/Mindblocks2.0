@@ -59,7 +59,8 @@ class GraphConverter:
         self.value_dictionary_builder.initialize_values(execution_graphs)
 
     def build_execution_graphs(self, run_modes, runs):
-        self.logger_manager.log("Contructing " + str(len(runs)) + " execution graphs...", "graph_construction",
+        suffix = "" if len(runs) == 1 else "s"
+        self.logger_manager.log("Contructing " + str(len(runs)) + " execution graph" + suffix + "...", "graph_construction",
                                 "status")
         execution_graphs = []
         for run, mode in zip(runs, run_modes):

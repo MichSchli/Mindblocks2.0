@@ -21,7 +21,7 @@ class LoggerManager:
                                        "parameters"],
                           "validation": ["all"],
                           "batching": ["status"],
-                          "graph_construction": ["all"]} # should be status
+                          "graph_construction": ["status"]}
         self.add_console_logger(default_config)
 
     def log(self, message, context, field):

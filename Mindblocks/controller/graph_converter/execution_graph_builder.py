@@ -1,12 +1,8 @@
-from Mindblocks.model.execution_graph.execution_component_model import ExecutionComponentModel
 from Mindblocks.model.execution_graph.execution_edge import ExecutionEdge
 from Mindblocks.model.execution_graph.execution_graph_model import ExecutionGraphModel
 from Mindblocks.model.execution_graph.execution_head_component import ExecutionHeadComponent
 from Mindblocks.model.execution_graph.execution_in_socket import ExecutionInSocket
 from Mindblocks.model.execution_graph.execution_out_socket import ExecutionOutSocket
-from Mindblocks.repository.execution_component_repository.execution_component_specifications import \
-    ExecutionComponentSpecifications
-from Mindblocks.repository.graph_repository.graph_specifications import GraphSpecifications
 
 
 class ExecutionGraphBuilder:
@@ -38,32 +34,6 @@ class ExecutionGraphBuilder:
         self.logger_manager.log(
             "Contructing execution graph with end sockets [" + ", ".join(component_names) + "] and mode " + mode + ".",
             "graph_construction", "status")
-
-    """
-    def should_populate(self, value):
-        for populate_key, populate_spec_dict in value.get_populate_items():
-            if populate_key == "graph":
-                return True
-
-        return False
-
-    def do_populate(self, value, run_mode, value_dictionary):
-        for populate_key, populate_spec_dict in value.get_populate_items():
-            if populate_key == "graph":
-                spec = GraphSpecifications()
-                spec.add_all(populate_spec_dict)
-                graph = self.graph_repository.get(spec)[0]
-
-                run = []
-                for component_name, socket_name in value.get_required_graph_outputs():
-                    run.append(graph.get_out_socket(component_name, socket_name))
-
-                execution_graph = self.build_execution_graph(run, run_mode, value_dictionary)
-
-                value.set_graph(execution_graph)
-
-        return value
-    """
 
     def get_run_components_and_edges(self, run, run_graph, run_mode):
         run_output_socket_ids = [str(socket.component.identifier) + ":" + socket.name for socket in run]

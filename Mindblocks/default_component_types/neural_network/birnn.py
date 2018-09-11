@@ -34,20 +34,20 @@ class BiRnn(ComponentTypeModel):
             cell_forward = value.cells_forward[layer]
             cell_backward = value.cells_backward[layer]
 
-            rnn_output = tf.nn.bidirectional_dynamic_rnn(cell_forward,
+            out_sequences, final_states = tf.nn.bidirectional_dynamic_rnn(cell_forward,
                                                          cell_backward,
                                                          sequences,
                                                          dtype=tf.float32,
                                                          sequence_length=lengths,
                                                          scope=value.get_name())
 
-            out_sequences = tf.concat(rnn_output[0], axis=-1)
+            out_sequences = tf.concat(out_sequences, axis=-1)
             sequences = out_sequences
 
             if mode == "train" and value.layer_dropout_keep_prob is not None:
                 sequences = tf.nn.dropout(sequences, value.layer_dropout_keep_prob)
 
-            final_states = tf.concat([rnn_output[1][i][1] for i in [0,1]], -1)
+            final_states = tf.concat([final_states[i][1] for i in [0,1]], -1)
             layer_final_states.append(final_states)
 
         layer_final_states = tf.stack(layer_final_states, 1)

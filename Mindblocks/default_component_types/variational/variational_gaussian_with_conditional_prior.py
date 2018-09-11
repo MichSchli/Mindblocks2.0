@@ -7,15 +7,15 @@ import tensorflow as tf
 from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import tensorflow_probability as tfp
 
-class VariationalGaussian(ComponentTypeModel):
+class VariationalGaussianConditionalPrior(ComponentTypeModel):
 
-    name = "VariationalGaussian"
-    in_sockets = ["input", "test_input"]
+    name = "VariationalGaussianConditionalPrior"
+    in_sockets = ["input", "prior_input"]
     out_sockets = ["output"]
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        value = VariationalGaussianValue()
+        value = VariationalGaussianConditionalPriorValue()
 
         if "kl_scaling" in value_dictionary:
             value.set_kl_scaling(float(value_dictionary["kl_scaling"][0][0]))
@@ -24,26 +24,23 @@ class VariationalGaussian(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         if mode != "train":
-            batch_size = tf.shape(input_dictionary["test_input"].get_value())[0]
-            output = value.get_prior().sample(batch_size)
+            mu, sigma = tf.split(input_dictionary["prior_input"].get_value(), 2, axis=-1)
+            value.set_prior(mu, sigma)
+            output = value.get_prior().sample()
             output_models["output"].assign(output)
         else:
             mu, sigma = tf.split(input_dictionary["input"].get_value(), 2, axis=-1)
+            prior_mu, prior_sigma = tf.split(input_dictionary["prior_input"].get_value(), 2, axis=-1)
             value.set_posterior(mu, sigma)
+            value.set_prior(prior_mu, prior_sigma)
             encoder = value.get_posterior().sample()
             output_models["output"].assign(encoder)
 
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        if value.prior is None:
-            if mode == "train":
-                inner_dim = input_types["input"].get_inner_dim() / 2
-            else:
-                inner_dim = input_types["test_input"].get_inner_dim() / 2
-
-            value.initialize_prior(inner_dim)
-
+        inner_dim = input_types["prior_input"].get_inner_dim() / 2
+        value.set_dim(inner_dim)
         output_type = TensorTypeModel("float", [None, value.dim])
 
         return {"output": output_type}
@@ -51,8 +48,8 @@ class VariationalGaussian(ComponentTypeModel):
     def is_used(self, socket_name, mode):
         if socket_name == "input":
             return mode == "train"
-        elif socket_name == "test_input":
-            return mode != "train"
+        else:
+            return True
 
     def compute_regularization(self, component, mode="train"):
         value = component.get_value_model()
@@ -62,7 +59,7 @@ class VariationalGaussian(ComponentTypeModel):
         return value.kl_scaling * tf.reduce_mean(divergence)
 
 
-class VariationalGaussianValue(ExecutionComponentValueModel):
+class VariationalGaussianConditionalPriorValue(ExecutionComponentValueModel):
 
     kl_scaling = None
     increase_per_iteration = 0.1
@@ -73,6 +70,9 @@ class VariationalGaussianValue(ExecutionComponentValueModel):
 
     def set_kl_scaling(self, factor):
         self.kl_scaling = factor
+
+    def set_prior(self, mu, sigma):
+        self.prior = tfp.distributions.MultivariateNormalDiag(mu, sigma)
 
     def set_posterior(self, mu, sigma):
         self.posterior = tfp.distributions.MultivariateNormalDiag(mu, sigma)
@@ -87,9 +87,5 @@ class VariationalGaussianValue(ExecutionComponentValueModel):
         kl_scaling = tf.minimum(1.0, self.kl_scaling + self.increase_per_iteration * tf.cast(tensorflow_session_model.get_tensorflow_iteration(), dtype=tf.float32))
         self.kl_scaling = kl_scaling
 
-    def initialize_prior(self, dim):
+    def set_dim(self, dim):
         self.dim = dim
-
-        mu = tf.zeros(self.dim)
-        sigma = tf.ones(self.dim)
-        self.prior = tfp.distributions.MultivariateNormalDiag(mu, sigma)

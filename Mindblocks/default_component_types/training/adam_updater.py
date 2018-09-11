@@ -27,7 +27,6 @@ class AdamUpdater(ComponentTypeModel):
         per_example_loss = input_dictionary["loss"].get_value()
         reg = execution_component.past_regularization(mode=mode)
 
-        per_example_loss = tf.Print(per_example_loss, [reg], message="reg")
         per_batch_loss = tf.reduce_mean(per_example_loss)
         total_loss = per_batch_loss + reg
 

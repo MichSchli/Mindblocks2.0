@@ -35,7 +35,8 @@ class ExecutionEdge(AbstractExecutionModel):
             source_value = source_value.cast(self.value_model["cast"])
 
         if self.value_model is not None and "dropout_rate" in self.value_model:
-            source_value = source_value.apply_dropouts(self.value_model["dropout_rate"])
+            dropout_dim = None if "dropout_dim" not in self.value_model else self.value_model["dropout_dim"]
+            source_value = source_value.apply_dropouts(self.value_model["dropout_rate"], dropout_dim=dropout_dim)
 
         return source_value
 
@@ -51,6 +52,10 @@ class ExecutionEdge(AbstractExecutionModel):
 
         if "dropout_rate" in updated_dict:
             value_model["dropout_rate"] = float(updated_dict["dropout_rate"][0][0])
+            if "dims" in updated_dict["dropout_rate"][0][1]:
+                dims = int(updated_dict["dropout_rate"][0][1]["dims"])
+
+                value_model["dropout_dim"] = dims
 
         return value_model
 

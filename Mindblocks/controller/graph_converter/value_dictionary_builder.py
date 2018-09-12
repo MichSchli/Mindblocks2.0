@@ -29,7 +29,7 @@ class ValueDictionaryBuilder:
                 value_ref = str(execution_object.get_origin_identifier()) + build_mode
 
                 if value_ref not in self.stored_values:
-                    value_model = self.build_value_model(execution_object, build_mode)
+                    value_model = self.build_value_model(execution_object)
                     self.stored_values[value_ref] = value_model
                 else:
                     value_model = self.stored_values[value_ref]
@@ -61,22 +61,24 @@ class ValueDictionaryBuilder:
     def get_all_variables(self):
         return self.variable_repository.get_all()
 
-    def build_value_model(self, execution_object, mode):
+    def build_value_model(self, execution_object):
         self.logger_manager.log("Building value model for " + execution_object.get_description(), "graph_construction", "value")
         updated_dict = {}
+
+        run_mode = execution_object.get_mode()
 
         for k,v in execution_object.get_value_dictionary().items():
             updated_list = v
             for variable in self.get_all_variables():
                 index = 0
                 for item, attributes in updated_list:
-                    replaced_item = variable.replace_in_string(item, mode=mode)
-                    replaced_attributes = {idx: variable.replace_in_string(attr, mode=mode) for idx, attr in attributes.items()}
+                    replaced_item = variable.replace_in_string(item, mode=run_mode)
+                    replaced_attributes = {idx: variable.replace_in_string(attr, mode=run_mode) for idx, attr in attributes.items()}
                     updated_list[index] = (replaced_item, replaced_attributes)
                     index += 1
 
             updated_dict[k] = updated_list
 
-        value = execution_object.initialize_value(updated_dict, mode)
+        value = execution_object.initialize_value(updated_dict, run_mode)
 
         return value

@@ -14,8 +14,9 @@ class MlHelperFactory:
         self.tensorflow_session_repository = tensorflow_session_repository
         self.logger_manager = logger_manager
 
-    def build_configuration(self):
+    def build_configuration(self, minimize_valid_score):
         configuration = MlHelperConfiguration()
+        configuration.minimize_validation_score = minimize_valid_score
 
         vars = self.variable_repository.get_by_name("max_iterations")
         if len(vars) > 0:
@@ -45,7 +46,7 @@ class MlHelperFactory:
 
         return configuration
 
-    def build_ml_helper_from_graph(self, graph, profile=False, log_dir=None):
+    def build_ml_helper_from_graph(self, graph, profile=False, log_dir=None, minimize_valid_score=True):
         marked_sockets = graph.get_marked_sockets()
 
         update = marked_sockets["update"] if "update" in marked_sockets else None
@@ -58,9 +59,10 @@ class MlHelperFactory:
                                     evaluate=evaluate,
                                     prediction=prediction,
                                     profile=profile,
-                                    log_dir=log_dir)
+                                    log_dir=log_dir,
+                                    minimize_valid_score=minimize_valid_score)
 
-    def build_ml_helper(self, update=None, loss=None, evaluate=None, prediction=None, profile=False, log_dir=None):
+    def build_ml_helper(self, update=None, loss=None, evaluate=None, prediction=None, profile=False, log_dir=None, minimize_valid_score=True):
         ml_helper = MlHelper()
         tensorflow_session_model = self.tensorflow_session_repository.new()
         tensorflow_session_model.should_profile = profile
@@ -120,7 +122,7 @@ class MlHelperFactory:
             elif interpretation == "prediction":
                 ml_helper.set_prediction_function(run_graph)
 
-        ml_helper.configuration = self.build_configuration()
+        ml_helper.configuration = self.build_configuration(minimize_valid_score)
         ml_helper.logger_manager = self.logger_manager
 
         return ml_helper

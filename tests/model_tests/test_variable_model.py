@@ -7,25 +7,25 @@ class TestVariableModel(unittest.TestCase):
     def testGetValueSpecificMode(self):
         element_1 = VariableModel()
         element_1.name = "testElement"
-        element_1.set_value(45, mode="validate")
-        element_1.set_value(547, mode="test")
+        element_1.set_value("45", mode="validate")
+        element_1.set_value("547", mode="test")
 
         self.assertEqual(None, element_1.get_value(mode=None))
         self.assertEqual(None, element_1.get_value(mode="train"))
-        self.assertEqual(45, element_1.get_value(mode="validate"))
-        self.assertEqual(547, element_1.get_value(mode="test"))
+        self.assertEqual("45", element_1.get_value(mode="validate"))
+        self.assertEqual("547", element_1.get_value(mode="test"))
 
     def testGetValueSpecificModeWithDefault(self):
         element_1 = VariableModel()
         element_1.name = "testElement"
-        element_1.set_value(233, mode=None)
-        element_1.set_value(45, mode="validate")
-        element_1.set_value(547, mode="test")
+        element_1.set_value("233", mode=None)
+        element_1.set_value("45", mode="validate")
+        element_1.set_value("547", mode="test")
 
-        self.assertEqual(233, element_1.get_value(mode=None))
-        self.assertEqual(233, element_1.get_value(mode="train"))
-        self.assertEqual(45, element_1.get_value(mode="validate"))
-        self.assertEqual(547, element_1.get_value(mode="test"))
+        self.assertEqual("233", element_1.get_value(mode=None))
+        self.assertEqual("233", element_1.get_value(mode="train"))
+        self.assertEqual("45", element_1.get_value(mode="validate"))
+        self.assertEqual("547", element_1.get_value(mode="test"))
 
     def testReplaceInString(self):
         element_1 = VariableModel()

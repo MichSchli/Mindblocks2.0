@@ -24,6 +24,8 @@ class MlHelper:
     profile_dir = None
 
     def __init__(self):
+        self.best_validation_score = None
+        self.best_epoch = None
         self.current_iteration = 0
         self.initialization_helper = InitializationHelper()
 
@@ -60,7 +62,8 @@ class MlHelper:
 
     def validate(self):
         self.initialize_model()
-        return self.do_validate()
+        score = self.do_validate()
+        return score
 
     def predict(self):
         self.initialize_model()
@@ -74,6 +77,12 @@ class MlHelper:
 
     def should_validate(self):
         return self.validate_function is not None
+
+    def get_best_epoch(self):
+        return self.best_epoch
+
+    def get_best_validation_score(self):
+        return self.best_validation_score
 
     def train(self, iterations=None):
         self.initialize_model()
@@ -127,7 +136,15 @@ class MlHelper:
             for b in batch_result:
                 performance += b
                 count += 1
-        return self.process_result_for_reporting(performance, count, mode="validate")
+        score = self.process_result_for_reporting(performance, count, mode="validate")
+
+        if self.best_validation_score is None \
+                or (self.best_validation_score > score and self.configuration.minimize_validation_score) \
+                or (self.best_validation_score < score and not self.configuration.minimize_validation_score):
+            self.best_validation_score = score
+            self.best_epoch = self.current_iteration
+
+        return score
 
     def process_result_for_reporting(self, performance, count, mode):
         average_performance = performance / count

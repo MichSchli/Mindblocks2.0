@@ -68,3 +68,9 @@ class MultilayerPerceptronValue(ExecutionComponentValueModel):
 
     def transform(self, vectors, mode):
         return self.mlp_helper.transform(vectors, mode)
+
+    def get_transform_shape(self):
+        return self.dims
+
+    def get_dropout_rate(self):
+        return self.dropout_rate

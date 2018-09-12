@@ -8,6 +8,7 @@ from Mindblocks.controller.block_loader.variable_loader import VariableLoader
 from Mindblocks.controller.component_type_loader.component_type_loader import ComponentTypeLoader
 from Mindblocks.controller.graph_converter.graph_converter import GraphConverter
 from Mindblocks.controller.ml_helper.ml_helper_factory import MlHelperFactory
+from Mindblocks.controller.parameter_searcher.parameter_searcher import ParameterSearcher
 from Mindblocks.helpers.files.FilepathHandler import FilepathHandler
 from Mindblocks.helpers.logging.logger_factory import LoggerFactory
 from Mindblocks.helpers.logging.logger_manager import LoggerManager
@@ -78,6 +79,8 @@ class BasicInterface:
                                                  self.tensorflow_session_repository,
                                                  self.logger_manager)
 
+        self.parameter_searcher = ParameterSearcher(self.variable_repository, self.ml_helper_factory, self.logger_manager)
+
     def set_variable(self, name, value, mode=None):
         self.variable_repository.set_variable_value(name, value, mode=mode)
 
@@ -114,6 +117,28 @@ class BasicInterface:
 
     def add_console_logger(self, config):
         self.logger_manager.add_console_logger(config)
+
+    def count_search_options(self, greedy=True):
+        return self.parameter_searcher.count_search_options(greedy=greedy)
+
+    def search(self, greedy=True, minimize_valid_score=True):
+        graph_specs = GraphSpecifications()
+        graph_specs.marked = True
+        graph = self.graph_repository.get(graph_specs)[0]
+        if greedy:
+            search_results = self.parameter_searcher.greedy_search(graph, minimize_valid_score)
+        else:
+            search_results = self.parameter_searcher.grid_search(graph, minimize_valid_score)
+
+        return search_results
+
+    def apply_search_configuration(self, search_configuration, minimize_valid_score=True):
+        graph_specs = GraphSpecifications()
+        graph_specs.marked = True
+        graph = self.graph_repository.get(graph_specs)[0]
+        self.variable_repository.apply_search_configuration(search_configuration)
+        self.ml_helper = self.ml_helper_factory.build_ml_helper_from_graph(graph, minimize_valid_score=minimize_valid_score)
+        self.ml_helper.initialize_model()
 
     def get_execution_component(self, name):
         spec = self.execution_component_repository.get_specifications()

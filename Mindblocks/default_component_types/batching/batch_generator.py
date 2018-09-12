@@ -72,3 +72,6 @@ class BatchGeneratorValue(ExecutionComponentValueModel):
 
     def has_unyielded_batches(self):
         return self.batches is None or self.pointer < len(self.batches)
+
+    def get_batch_size(self):
+        return self.batch_size

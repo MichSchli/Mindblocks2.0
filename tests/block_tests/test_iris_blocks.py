@@ -310,7 +310,7 @@ class TestIrisBlocks(unittest.TestCase):
         ml_helper.train()
         performance = ml_helper.evaluate()
 
-        self.assertGreater(0.5, performance)
+        self.assertGreater(0.7, performance)
 
     def testFullTrainingHighOutputDropoutsFails(self):
         filename = "iris_tests/full_iris_with_edge_dropouts.xml"

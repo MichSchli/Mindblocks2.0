@@ -65,10 +65,10 @@ class TestVariableRepository(unittest.TestCase):
 
         element_retrieved = self.variable_repository.get(specs)[0]
 
-        self.assertEqual(45, element_retrieved.get_value(mode=None))
-        self.assertEqual(45, element_retrieved.get_value(mode="train"))
-        self.assertEqual(45, element_retrieved.get_value(mode="validate"))
-        self.assertEqual(45, element_retrieved.get_value(mode="test"))
+        self.assertEqual("45", element_retrieved.get_value(mode=None))
+        self.assertEqual("45", element_retrieved.get_value(mode="train"))
+        self.assertEqual("45", element_retrieved.get_value(mode="validate"))
+        self.assertEqual("45", element_retrieved.get_value(mode="test"))
 
     def testGetValueSpecificMode(self):
         specs = VariableSpecifications()
@@ -82,21 +82,21 @@ class TestVariableRepository(unittest.TestCase):
 
         self.assertEqual(None, element_retrieved.get_value(mode=None))
         self.assertEqual(None, element_retrieved.get_value(mode="train"))
-        self.assertEqual(45, element_retrieved.get_value(mode="validate"))
-        self.assertEqual(547, element_retrieved.get_value(mode="test"))
+        self.assertEqual("45", element_retrieved.get_value(mode="validate"))
+        self.assertEqual("547", element_retrieved.get_value(mode="test"))
 
     def testGetValueSpecificModeWithDefault(self):
         specs = VariableSpecifications()
         specs.name = "testElement"
 
         element_1 = self.variable_repository.create(specs)
-        element_1.set_value(233, mode=None)
-        element_1.set_value(45, mode="validate")
-        element_1.set_value(547, mode="test")
+        element_1.set_value("233", mode=None)
+        element_1.set_value("45", mode="validate")
+        element_1.set_value("547", mode="test")
 
         element_retrieved = self.variable_repository.get(specs)[0]
 
-        self.assertEqual(233, element_retrieved.get_value(mode=None))
-        self.assertEqual(233, element_retrieved.get_value(mode="train"))
-        self.assertEqual(45, element_retrieved.get_value(mode="validate"))
-        self.assertEqual(547, element_retrieved.get_value(mode="test"))
+        self.assertEqual("233", element_retrieved.get_value(mode=None))
+        self.assertEqual("233", element_retrieved.get_value(mode="train"))
+        self.assertEqual("45", element_retrieved.get_value(mode="validate"))
+        self.assertEqual("547", element_retrieved.get_value(mode="test"))

@@ -125,8 +125,8 @@ class LstmCellValue(ExecutionComponentValueModel):
     def count_parameters(self):
         parameters = 0
 
-        input_dim = self.input_dimension
-        output_dim = self.dimension
+        input_dim = int(self.input_dimension)
+        output_dim = int(self.dimension)
 
         for layer in range(self.layers):
             if layer > 0:

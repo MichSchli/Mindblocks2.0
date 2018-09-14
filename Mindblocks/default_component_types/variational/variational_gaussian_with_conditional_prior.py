@@ -25,12 +25,15 @@ class VariationalGaussianConditionalPrior(ComponentTypeModel):
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         if mode != "train":
             mu, sigma = tf.split(input_dictionary["prior_input"].get_value(), 2, axis=-1)
+            sigma = tf.nn.softplus(sigma)
             value.set_prior(mu, sigma)
             output = value.get_prior().sample()
             output_models["output"].assign(output)
         else:
             mu, sigma = tf.split(input_dictionary["input"].get_value(), 2, axis=-1)
             prior_mu, prior_sigma = tf.split(input_dictionary["prior_input"].get_value(), 2, axis=-1)
+            sigma = tf.nn.softplus(sigma)
+            prior_sigma = tf.nn.softplus(prior_sigma)
             value.set_posterior(mu, sigma)
             value.set_prior(prior_mu, prior_sigma)
             encoder = value.get_posterior().sample()

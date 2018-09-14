@@ -85,6 +85,8 @@ class SequenceBatchValueModel:
             tf_type = tf.int32
         elif self.type == "float":
             tf_type = tf.float32
+        elif self.type == "string":
+            tf_type = tf.string
         return tf_type
 
     def get_numpy_type(self):
@@ -93,6 +95,8 @@ class SequenceBatchValueModel:
             np_type = np.int32
         elif self.type == "float":
             np_type = np.float32
+        elif self.type == "string":
+            np_type = np.str
         return np_type
 
     def is_value_type(self, test_type):

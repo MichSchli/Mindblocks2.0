@@ -29,6 +29,7 @@ class VariationalGaussian(ComponentTypeModel):
             output_models["output"].assign(output)
         else:
             mu, sigma = tf.split(input_dictionary["input"].get_value(), 2, axis=-1)
+            sigma = tf.nn.softplus(sigma)
             value.set_posterior(mu, sigma)
             encoder = value.get_posterior().sample()
             output_models["output"].assign(encoder)

@@ -8,6 +8,8 @@ tensorflow = "*"
 setuptools = "*"
 wheel = "*"
 tensorflow-probability = "*"
+"h5py" = "*"
+tensorflow-hub = "*"
 
 [dev-packages]
 

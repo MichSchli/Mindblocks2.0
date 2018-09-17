@@ -20,6 +20,9 @@ class VariationalGaussian(ComponentTypeModel):
         if "kl_scaling" in value_dictionary:
             value.set_kl_scaling(float(value_dictionary["kl_scaling"][0][0]))
 
+        if "kl_annealing" in value_dictionary:
+            value.set_kl_annealing(float(value_dictionary["kl_annealing"][0][0]))
+
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
@@ -83,6 +86,9 @@ class VariationalGaussianValue(ExecutionComponentValueModel):
 
     def get_posterior(self):
         return self.posterior
+
+    def set_kl_annealing(self, increase_per_iteration):
+        self.increase_per_iteration = increase_per_iteration
 
     def initialize_tensorflow_variables(self, tensorflow_session_model):
         kl_scaling = tf.minimum(1.0, self.kl_scaling + self.increase_per_iteration * tf.cast(tensorflow_session_model.get_tensorflow_iteration(), dtype=tf.float32))

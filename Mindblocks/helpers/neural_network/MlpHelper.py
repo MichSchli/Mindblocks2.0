@@ -34,7 +34,7 @@ class MlpHelper:
             if self.use_bias:
                 self.biases[i] = tf.Variable(bias_initializer, name=self.variable_prefix + "_b" + str(i))
 
-    def transform(self, vectors, mode):
+    def transform(self, vectors, mode, activate_output=False):
         keep_prob = 1.0 - self.dropout_rate
         for i in range(len(self.dims) - 1):
             vectors = tf.matmul(vectors, self.weights[i])
@@ -46,6 +46,11 @@ class MlpHelper:
                     vectors = tf.nn.dropout(vectors, keep_prob=keep_prob)
 
                 vectors = tf.nn.relu(vectors)
+
+        if activate_output:
+            if self.dropout_rate > 0 and mode == "train":
+                vectors = tf.nn.dropout(vectors, keep_prob=keep_prob)
+            vectors = tf.nn.relu(vectors)
 
         return vectors
 

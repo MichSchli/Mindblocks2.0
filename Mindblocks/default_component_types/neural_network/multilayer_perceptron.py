@@ -21,6 +21,10 @@ class MultilayerPerceptron(ComponentTypeModel):
 
         v = MultilayerPerceptronValue([int(d) for d in value_dictionary["dimensions"][0][0].split(",")],
                                          dropout_rate=dropout_rate)
+
+        if "activate_output" in value_dictionary:
+            v.activate_output(value_dictionary["activate_output"][0][0] == "True")
+
         v.language = language
         return v
 
@@ -56,10 +60,12 @@ class MultilayerPerceptronValue(ExecutionComponentValueModel):
     weights = None
     biases = None
     dropout_rate = None
+    should_activate_output = None
 
     def __init__(self, dims, dropout_rate=0.0):
         self.dims = dims
         self.dropout_rate = dropout_rate
+        self.should_activate_output = False
 
         self.mlp_helper = MlpHelper(dims, variable_prefix=self.get_name(), dropout_rate=dropout_rate)
 
@@ -67,10 +73,13 @@ class MultilayerPerceptronValue(ExecutionComponentValueModel):
         return self.mlp_helper.count_parameters()
 
     def transform(self, vectors, mode):
-        return self.mlp_helper.transform(vectors, mode)
+        return self.mlp_helper.transform(vectors, mode, activate_output=self.should_activate_output)
 
     def get_transform_shape(self):
         return self.dims
 
     def get_dropout_rate(self):
         return self.dropout_rate
+
+    def activate_output(self, b):
+        self.should_activate_output = b

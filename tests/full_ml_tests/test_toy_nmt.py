@@ -507,7 +507,7 @@ class TestToyNmt(unittest.TestCase):
         interface.load_file(block_filepath)
         interface.set_variable("data_folder", data_filepath)
         interface.set_variable("embedding_folder", embedding_filepath)
-        interface.set_variable("lstm_layers", "3")
+        interface.set_variable("lstm_layers", "2")
         interface.initialize()
 
         f = open(data_filepath+"tgt.txt")

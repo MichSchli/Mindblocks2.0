@@ -89,6 +89,9 @@ class VectorIndexValue(ExecutionComponentValueModel):
     def initialize_vectors(self):
         self.vectors = np.random.uniform(-0.1, 0.1, size=(self.length, self.width)).astype(np.float32)
 
+        if self.should_output_tensorflow():
+            self.format_output_to_tensorflow()
+
     def set_number_of_vectors(self, number_of_vectors):
         self.length = number_of_vectors
 
@@ -132,9 +135,6 @@ class VectorIndexValue(ExecutionComponentValueModel):
         self.add_to_index(token, self.next_item_pointer)
         return self.next_item_pointer
 
-    def add_vector(self, vector, index):
-        self.vectors[index] = vector
-
     """
     Tensorflow formatting:
     """
@@ -150,14 +150,6 @@ class VectorIndexValue(ExecutionComponentValueModel):
             self.trainable = value
         else:
             self.trainable = value == "True"
-
-    """
-    Loading:
-    """
-
-    def load(self):
-        if self.should_output_tensorflow():
-            self.format_output_to_tensorflow()
 
     """
     Get values:

@@ -1,2 +1,2 @@
-model_checkpoint_path: "/Users/micschli/Documents/Projects/Mindblocks/Mindblocks2.0/test_data/stored_models/toy_nmt/luong/tfparams.ckpt"
-all_model_checkpoint_paths: "/Users/micschli/Documents/Projects/Mindblocks/Mindblocks2.0/test_data/stored_models/toy_nmt/luong/tfparams.ckpt"
+model_checkpoint_path: "/home/michael/Projects/Mindblocks2.0/test_data/stored_models/toy_nmt/luong/tfparams.ckpt"
+all_model_checkpoint_paths: "/home/michael/Projects/Mindblocks2.0/test_data/stored_models/toy_nmt/luong/tfparams.ckpt"

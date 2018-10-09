@@ -36,6 +36,7 @@ class ListNegativeSampler(ComponentTypeModel):
             negative_indexes = [i for i in range(len(batch)) if batch[i][value.gold_column] != "True"]
 
             random.shuffle(negative_indexes)
+            random.shuffle(positive_indexes)
 
             negative_indexes = negative_indexes[:value.sample_rate]
 

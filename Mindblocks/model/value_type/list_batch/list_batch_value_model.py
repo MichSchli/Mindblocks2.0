@@ -17,6 +17,7 @@ class ListBatchValueModel:
         if language == "python":
             self.lengths = [len(s) for s in sequence_batch]
             self.batch_size = len(sequence_batch)
+            self.maximum_length = max(self.lengths)
         else:
             pass
 
@@ -30,6 +31,7 @@ class ListBatchValueModel:
             self.batch_size = tf.shape(length_batch)[0]
         else:
             self.batch_size = len(length_batch)
+            self.maximum_length = max(self.lengths)
 
     def get_tensorflow_output_tensors(self):
         return [self.item, self.lengths]

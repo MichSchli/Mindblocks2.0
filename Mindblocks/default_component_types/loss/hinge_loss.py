@@ -25,13 +25,16 @@ class HingeLoss(ComponentTypeModel):
             max_length = tf.reduce_max(lengths)
             mask = tf.sequence_mask(lengths,
                                     maxlen=max_length,
-                                    dtype=tf.float32)
+                                    dtype=tf.bool)
             loss = loss[:, :max_length]
-            loss *= mask
+
+            replacement = tf.zeros_like(loss)
+            loss = tf.where(mask, loss, replacement)
 
             sum = tf.reduce_sum(loss, axis=-1)
             # TODO: Hack to deal with zero length sequences should be smarter:
             loss = sum / (tf.cast(lengths, tf.float32) + 1e-8)
+
         else:
             loss = tf.reduce_mean(loss, axis=-1)
         output_value_models["output"].assign(loss)

@@ -33,6 +33,7 @@ class MultilayerPerceptron(ComponentTypeModel):
         in_shape = tf.shape(in_value)
 
         to_mlp_value = tf.reshape(in_value, [-1, in_shape[-1]])
+
         post_value = value.transform(to_mlp_value, mode)
 
         if value.dims[-1] == 1:

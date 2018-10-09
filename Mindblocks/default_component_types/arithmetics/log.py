@@ -21,6 +21,18 @@ class Log(ComponentTypeModel):
         elif value.language == "tensorflow":
             v = input_dictionary["input"].get_value()
             v = tf.log(v)
+
+            if input_dictionary["input"].is_value_type("list"):
+                lengths = input_dictionary["input"].lengths
+                max_length = tf.reduce_max(lengths)
+                mask = tf.sequence_mask(lengths,
+                                        maxlen=max_length,
+                                        dtype=tf.bool)
+                v = v[:, :max_length]
+
+                replacement = tf.zeros_like(v)
+                v = tf.where(mask, v, replacement)
+
             input_dictionary["input"].assign(v, language="tensorflow")
         return {"output": input_dictionary["input"]}
 

@@ -8,6 +8,7 @@ class ListBatchTypeModel:
     cached_len_placeholder = None
 
     def __init__(self, data_type, inner_shape, batch_size, max_length):
+        max_length = None
         self.data_type = data_type
         self.inner_shape = inner_shape[:]
         self.batch_size = batch_size

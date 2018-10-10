@@ -20,6 +20,9 @@ class ConllReader(ComponentTypeModel):
         if "stop_token" in value_dictionary:
             value.set_stop_token(value_dictionary["stop_token"][0][0])
 
+        if "read_column" in value_dictionary:
+            value.set_read_column(int(value_dictionary["read_column"][0][0]))
+
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
@@ -28,7 +31,7 @@ class ConllReader(ComponentTypeModel):
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"output": SequenceBatchTypeModel("string", [value.count_columns()], len(value.read()), max([len(v) for v in value.read()])),
+        return {"output": SequenceBatchTypeModel("string", [value.count_columns()] if not value.reads_single_column() else [], len(value.read()), max([len(v) for v in value.read()])),
                 "count": TensorTypeModel("int", [])}
 
     def has_batches(self, value, previous_values, mode):
@@ -44,6 +47,8 @@ class ConllReaderValue(ExecutionComponentValueModel):
     start_token = None
     stop_token = None
 
+    read_column = None
+
     def __init__(self, filepath, column_info):
         self.filepath = filepath
         self.column_info = column_info
@@ -56,11 +61,17 @@ class ConllReaderValue(ExecutionComponentValueModel):
         self.stop_token = token
 
     def get_start_token_part(self):
+        if self.reads_single_column():
+            return self.start_token
+
         parts = ["_" for _ in range(self.count_columns())]
         parts[1] = self.start_token
         return parts
 
     def get_stop_token_part(self):
+        if self.reads_single_column():
+            return self.stop_token
+
         parts = ["_" for _ in range(self.count_columns())]
         parts[1] = self.stop_token
         return parts
@@ -74,6 +85,12 @@ class ConllReaderValue(ExecutionComponentValueModel):
     def count_columns(self):
         return len(self.column_info)
 
+    def set_read_column(self, column_id):
+        self.read_column = column_id
+
+    def reads_single_column(self):
+        return self.read_column is not None
+
     def read(self):
         lines = [[]] if self.start_token is None else [[self.get_start_token_part()]]
         f = open(self.filepath, 'r')
@@ -83,9 +100,12 @@ class ConllReaderValue(ExecutionComponentValueModel):
             if line:
                 line_parts = line.split('\t')
 
-                for i, column_type in enumerate(self.column_info):
-                    if column_type == "int":
-                        line_parts[i] = int(line_parts[i])
+                if self.reads_single_column():
+                    line_parts = line_parts[self.read_column]
+                else:
+                    for i, column_type in enumerate(self.column_info):
+                        if column_type == "int":
+                            line_parts[i] = int(line_parts[i])
 
                 lines[-1].append(line_parts)
             else:

@@ -51,9 +51,19 @@ class SequenceBatchValueModel:
         self.sequences = sequence_batch
         self.sequence_lengths = length_batch
 
-    def apply_dropouts(self, dropout_rate):
+    def apply_dropouts(self, dropout_rate, dropout_dim=None):
         keep_prob = 1 - float(dropout_rate)
-        self.sequences = tf.nn.dropout(self.sequences, keep_prob=keep_prob)
+
+        noise_shape = None
+        if dropout_dim is not None:
+            in_shape = tf.shape(self.sequences)
+            kept_shape_dims = in_shape[:dropout_dim+1]
+            dropped_out_dims = in_shape[dropout_dim+1:]
+
+            noise_shape = tf.concat([kept_shape_dims, tf.ones_like(dropped_out_dims)], axis=-1)
+
+        self.sequences = tf.nn.dropout(self.sequences, keep_prob=keep_prob, noise_shape=noise_shape)
+        return self
 
     def get_value(self):
         return self.sequences

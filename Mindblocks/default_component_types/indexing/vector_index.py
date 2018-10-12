@@ -166,3 +166,13 @@ class VectorIndexValue(ExecutionComponentValueModel):
 
     def get_length(self):
         return self.length
+
+    """
+    Utils:
+    """
+
+    def count_parameters(self):
+        if self.trainable and self.trainable != "feed":
+            return self.length * self.width
+        else:
+            return 0

@@ -1,5 +1,3 @@
-from tensorflow_probability.python.mcmc.slice_sampler_utils import tfd
-
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
@@ -60,7 +58,7 @@ class VariationalGaussian(ComponentTypeModel):
 
     def compute_regularization(self, component, mode="train"):
         value = component.get_value_model()
-        divergence = tfd.kl_divergence(value.get_posterior(), value.get_prior())
+        divergence = tfp.distributions.kl_divergence(value.get_posterior(), value.get_prior())
         divergence = tf.Print(divergence, [value.kl_scaling], message="kl scale", summarize=100)
         divergence = tf.Print(divergence, [value.kl_scaling * tf.reduce_mean(divergence)], message="total kl", summarize=100)
         return value.kl_scaling * tf.reduce_mean(divergence)

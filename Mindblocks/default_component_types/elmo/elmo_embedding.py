@@ -39,4 +39,5 @@ class ElmoEmbedding(ComponentTypeModel):
 
 class ElmoEmbeddingValue(ExecutionComponentValueModel):
 
-    pass
+    def count_parameters(self):
+        return 4

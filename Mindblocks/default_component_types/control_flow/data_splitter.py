@@ -25,8 +25,9 @@ class DataSplitter(ComponentTypeModel):
     def build_value_type_model(self, input_types, value, mode):
         left = input_types["input"].copy()
         right = input_types["input"].copy()
-        left.set_inner_dim(value.pivot+1)
-        right.set_inner_dim(right.dimensions[-1]-value.pivot-1)
+        left.set_dimension(-1, value.pivot+1)
+        right.set_dimension(-1, right.dimensions[-1]-value.pivot-1)
+
         return {"left": left,
                 "right": right}
 

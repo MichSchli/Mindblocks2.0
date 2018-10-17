@@ -70,6 +70,8 @@ class ExecutionComponentModel(AbstractModel, AbstractExecutionModel):
             if self.execution_type.is_used(k, mode):
                 in_types[k] = in_socket.pull_type_model(mode)
 
+        print(in_types)
+
         self.output_type_models = self.execution_type.build_value_type_model(in_types, self.value_model, mode)
 
         for k,v in self.output_type_models.items():

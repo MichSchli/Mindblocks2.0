@@ -2,6 +2,7 @@ import random
 
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
@@ -28,7 +29,9 @@ class BatchGenerator(ComponentTypeModel):
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"batch": TensorTypeModel("int", [value.batch_size])}
+        index_tensor_type = SoftTensorTypeModel([value.batch_size],
+                                                 string_type="int")
+        return {"batch": index_tensor_type}
 
     def has_batches(self, value, previous_values, mode):
         return value.has_unyielded_batches()

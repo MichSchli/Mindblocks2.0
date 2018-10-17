@@ -11,7 +11,7 @@ class SoftTensorTypeModel:
         self.dimensions = dimensions
 
         if soft_by_dimensions is not None:
-            self.dimensions = soft_by_dimensions
+            self.soft_by_dimensions = soft_by_dimensions
         else:
             self.soft_by_dimensions = [False for _ in self.dimensions]
 
@@ -28,3 +28,16 @@ class SoftTensorTypeModel:
         return SoftTensorTypeModel(self.dimensions,
                                    soft_by_dimensions=self.soft_by_dimensions,
                                    string_type=self.string_type)
+
+    def set_dimension(self, index, value, is_soft=False):
+        self.dimensions[index] = value
+        self.soft_by_dimensions[index] = is_soft
+
+    def set_data_type(self, string_type):
+        self.string_type = string_type
+
+    def cast(self, string_type):
+        cast_copy = self.copy()
+        cast_copy.string_type = string_type
+
+        return cast_copy

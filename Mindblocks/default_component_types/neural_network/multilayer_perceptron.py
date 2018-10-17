@@ -50,6 +50,7 @@ class MultilayerPerceptron(ComponentTypeModel):
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
+        print(input_types)
         output_type = input_types["input"].copy()
         output_type.set_inner_dim(value.dims[-1])
         return {"output": output_type}

@@ -29,7 +29,9 @@ class Batcher(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value, mode):
         data_type = input_types["data"].copy()
-        data_type.subsample(None)
+
+        data_type.set_dimension(0, None)
+
         return {"output": data_type}
 
     def has_batches(self, value, previous_values, mode):

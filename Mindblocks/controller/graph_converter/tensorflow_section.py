@@ -31,7 +31,15 @@ class TensorflowSection(ExecutionComponentModel):
         return [m[1] for m in self.matched_in_sockets]
 
     def compile(self, mode):
-        self.outputs = [tf_out_socket.pull(mode).get_tensorflow_output_tensors() for tf_out_socket, _ in self.matched_out_sockets]
+        required_tf_outputs = []
+
+        for tf_out_socket, _ in self.matched_out_sockets:
+            type = tf_out_socket.pull_type_model(mode)
+            tf_value = tf_out_socket.pull(mode)
+
+            required_tf_outputs.append(type.format_tensorflow_value_for_output(tf_value))
+
+        self.outputs = required_tf_outputs
 
     def get_placeholder(self, in_socket, mode):
         value_type = in_socket.pull_type_model(mode)
@@ -50,12 +58,13 @@ class TensorflowSection(ExecutionComponentModel):
 
     def execute(self, mode):
         feed_dict = self.create_feed_dict(mode)
+
         tf_outputs = self.session_model.run(self.outputs, feed_dict)
 
         for i in range(len(self.matched_out_sockets)):
             output_type = self.matched_out_sockets[i][0].pull_type_model(mode)
-            formatted_output = output_type.format_from_tensorflow_output(tf_outputs[i])
-            self.matched_out_sockets[i][1].set_cached_value(formatted_output)
+            python_output = output_type.create_from_tensorflow_output(tf_outputs[i])
+            self.matched_out_sockets[i][1].set_cached_value(python_output)
 
     def create_feed_dict(self, mode):
         feed_dict = {}
@@ -64,9 +73,10 @@ class TensorflowSection(ExecutionComponentModel):
                 continue
 
             value = in_socket.pull(mode)
-            placeholders = in_socket.pull_type_model(mode).get_cached_placeholders()
+            type_model = in_socket.pull_type_model(mode)
+            placeholders = type_model.get_cached_placeholders()
 
-            feed_values = value.format_for_tensorflow_input()
+            feed_values = type_model.format_for_tensorflow_input(value)
             for k,v in zip(placeholders, feed_values):
                 feed_dict[k] = v
 

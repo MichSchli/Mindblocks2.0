@@ -1,8 +1,9 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import SequenceBatchTypeModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import tensorflow_hub as tf_hub
+
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+
 
 class ElmoEmbedding(ComponentTypeModel):
 
@@ -31,8 +32,10 @@ class ElmoEmbedding(ComponentTypeModel):
         dim = 1024
         input_seq = input_types["input"]
 
-        output_seq = SequenceBatchTypeModel("float", [dim], input_seq.get_batch_size(), None)
-        output_sent = TensorTypeModel("float", [input_seq.get_batch_size(), dim])
+        output_seq = SoftTensorTypeModel([input_seq.get_dimension(0), None, dim],
+                                         string_type="float",
+                                         soft_by_dimensions=[False, True, False])
+        output_sent = SoftTensorTypeModel([input_seq.get_dimension(0), dim], string_type="float")
 
         return {"word_embeddings": output_seq, "sentence_embedding": output_sent}
 

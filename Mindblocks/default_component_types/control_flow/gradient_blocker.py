@@ -15,8 +15,10 @@ class GradientBlocker(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         input = input_dictionary["input"].get_value()
+        lengths = input_dictionary["input"].get_lengths()
         input = tf.stop_gradient(input)
-        output_models["output"].assign(input)
+
+        output_models["output"].assign(input, lengths)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):

@@ -17,8 +17,10 @@ class DataSplitter(ComponentTypeModel):
         inp = input_dictionary["input"].get_value()
         inp = np.array(inp)
 
-        output_value_models["left"].assign(inp[:,:value.pivot+1])
-        output_value_models["right"].assign(inp[:,value.pivot+1:])
+        lengths = input_dictionary["input"].get_lengths()
+
+        output_value_models["left"].assign(inp[:,:value.pivot+1], length_list=lengths)
+        output_value_models["right"].assign(inp[:,value.pivot+1:], length_list=lengths)
 
         return output_value_models
 
@@ -27,6 +29,7 @@ class DataSplitter(ComponentTypeModel):
         right = input_types["input"].copy()
         left.set_dimension(-1, value.pivot+1)
         right.set_dimension(-1, right.dimensions[-1]-value.pivot-1)
+
 
         return {"left": left,
                 "right": right}

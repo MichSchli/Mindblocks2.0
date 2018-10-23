@@ -5,7 +5,8 @@ import numpy as np
 
 from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
 import tensorflow as tf
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class FileEmbeddings(ComponentTypeModel):
@@ -40,7 +41,7 @@ class FileEmbeddings(ComponentTypeModel):
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
 
         output_models["index"].assign(value.get_index())
-        output_models["vectors"].assign(value.get_vectors())
+        output_models["vectors"].assign(value.get_vectors(), length_list=None)
 
         return output_models
 
@@ -50,12 +51,12 @@ class FileEmbeddings(ComponentTypeModel):
             value.load()
             self.log("Loaded " + str(value.length) + " vectors.", "embeddings", "load")
 
-        output_value_models["vectors"].assign(value.get_vectors())
+        output_value_models["vectors"].assign(value.get_vectors(), length_list=None)
 
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        vector_model = TensorTypeModel("float", [None, value.get_width()])
+        vector_model = SoftTensorTypeModel([None, value.get_width()], string_type="float")
         return {"index": IndexTypeModel(),
                 "vectors": vector_model}
 

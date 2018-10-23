@@ -118,12 +118,12 @@
                 <source socket="output">indexer</source>
                 <target socket="labels">cross_ent</target>
         </edge>
-        <component name="adam_upd" type="AdamUpdater" language="tensorflow">
+        <component name="upd" type="SGDUpdater" language="tensorflow">
             <mark socket="update">update</mark>
         </component>
         <edge>
                 <source socket="output">cross_ent</source>
-                <target socket="loss">adam_upd</target>
+                <target socket="loss">upd</target>
         </edge>
     </canvas>
 </block>

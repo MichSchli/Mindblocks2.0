@@ -26,20 +26,20 @@ class KeyValueAttentionComponent(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         if not value.initialized:
-            key_dim = input_dictionary["key"].get_inner_dim()
-            value_dim = input_dictionary["sequence"].get_inner_dim()
+            key_dim = input_dictionary["key"].get_dimension(-1)
+            value_dim = input_dictionary["sequence"].get_dimension(-1)
             value.initialize_transforms(key_dim, value_dim)
 
-        lengths = input_dictionary["sequence"].get_sequence_lengths()
+        lengths = input_dictionary["sequence"].get_lengths()[1]
 
-        input_dimension = input_dictionary["sequence"].get_inner_dim()
+        input_dimension = input_dictionary["sequence"].get_dimension(-1)
         attention_result = self.attend(input_dictionary["key"].get_value(),
                                        input_dictionary["sequence"].get_value(),
                                        lengths,
                                        value,
                                        input_dimension,
                                        mode)
-        output_value_models["output"].assign(attention_result, language="tensorflow")
+        output_value_models["output"].assign(attention_result, length_list=None)
 
         return output_value_models
 
@@ -87,7 +87,7 @@ class KeyValueAttentionComponent(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["key"].copy()
-        output_type.set_inner_dim(value.output_dimension)
+        output_type.set_dimension(-1, value.output_dimension)
 
         return {"output": output_type}
 

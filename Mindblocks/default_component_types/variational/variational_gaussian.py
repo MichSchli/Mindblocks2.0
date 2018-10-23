@@ -2,7 +2,6 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
 
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import tensorflow_probability as tfp
 
 class VariationalGaussian(ComponentTypeModel):

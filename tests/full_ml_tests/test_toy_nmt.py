@@ -701,7 +701,7 @@ class TestToyNmt(unittest.TestCase):
             pred_sent = " ".join(predictions[i])
             self.assertEqual(s, pred_sent)
 
-    def testSeqtoSeqWithLuongMulAttention(self):
+    def testSeqtoSeqWithLuongMulAttentionElmo(self):
         filename = "full_ml_tests/toy_nmt/toy_nmt_luong_mul_attention_elmo.xml"
 
         block_filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)

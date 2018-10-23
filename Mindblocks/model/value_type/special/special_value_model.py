@@ -10,3 +10,6 @@ class SpecialValueModel:
 
     def get_tensorflow_output_tensors(self):
         return [self.item]
+
+    def format_for_program_output(self):
+        return self.item

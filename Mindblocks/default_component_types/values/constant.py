@@ -1,8 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.old.tensor_type import TensorType
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import numpy as np
 
 
@@ -17,7 +15,7 @@ class Constant(ComponentTypeModel):
                              value_dictionary["type"][0][0])
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        output_value_models["output"].assign(value.value)
+        output_value_models["output"].assign(value.value, length_list=None)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):

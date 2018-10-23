@@ -19,6 +19,8 @@ class AbstractTensorflowPlaceholderModel:
             tf_type = tf.float32
         elif self.type == "bool":
             tf_type = tf.bool
+        elif self.type == "string":
+            tf_type = tf.string
 
         return tf_type
 

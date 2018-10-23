@@ -2,7 +2,6 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 import tensorflow as tf
 
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
 class HingeLoss(ComponentTypeModel):

@@ -1,9 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.old.sequence_batch_type import SequenceBatchType
-from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import SequenceBatchTypeModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
-
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 class ConllReader(ComponentTypeModel):
 
@@ -26,13 +23,22 @@ class ConllReader(ComponentTypeModel):
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        output_models["output"].assign(value.read())
-        output_models["count"].assign(value.count())
+        output_models["output"].initial_assign(value.read())
+        output_models["count"].initial_assign(value.count())
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"output": SequenceBatchTypeModel("string", [value.count_columns()] if not value.reads_single_column() else [], len(value.read()), max([len(v) for v in value.read()])),
-                "count": TensorTypeModel("int", [])}
+        innermost_dim = [value.count_columns()] if not value.reads_single_column() else []
+        num_examples = len(value.read())
+
+        output_dims = [num_examples, None] + innermost_dim
+        soft_dims = [False, True] + [False] if innermost_dim else []
+
+        output_type_model = SoftTensorTypeModel(output_dims, soft_by_dimensions=soft_dims, string_type="string")
+        count_model = SoftTensorTypeModel([], string_type="int")
+
+        return {"output": output_type_model,
+                "count": count_model}
 
     def has_batches(self, value, previous_values, mode):
         has_batch = value.has_batch

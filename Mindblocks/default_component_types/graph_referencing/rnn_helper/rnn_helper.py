@@ -1,8 +1,9 @@
 from tensorflow.python.ops import tensor_array_ops
 
 from Mindblocks.default_component_types.graph_referencing.rnn_helper.rnn_model import RnnModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import tensorflow as tf
+
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class RnnHelper:
@@ -48,18 +49,14 @@ class RnnHelper:
                 in_socket = rnn_model.inner_graph.get_in_socket(parts[0], parts[1])
                 value = in_socket.replaced_type.initialize_value_model()
 
-                if input_dictionary[component_input].is_value_type("sequence"):
-                    input_seqs = input_dictionary[component_input].get_sequences()
-                    input_lens = input_dictionary[component_input].get_sequence_lengths()
+                input_value = input_dictionary[component_input].get_value()
+                input_lens = input_dictionary[component_input].get_lengths()
 
-                    tf_inp_seqs = tf.contrib.seq2seq.tile_batch(input_seqs, rnn_model.tiling_factor)
-                    tf_inp_lens = tf.contrib.seq2seq.tile_batch(input_lens, rnn_model.tiling_factor)
+                tf_inp = tf.contrib.seq2seq.tile_batch(input_value, rnn_model.tiling_factor)
 
-                    value.assign_with_lengths(tf_inp_seqs, tf_inp_lens, language="tensorflow")
-                else:
-                    input_value = input_dictionary[component_input].get_value()
-                    tf_inp = tf.contrib.seq2seq.tile_batch(input_value, rnn_model.tiling_factor)
-                    value.assign(tf_inp, language="tensorflow")
+                tf_inp_lens = [tf.contrib.seq2seq.tile_batch(l, rnn_model.tiling_factor) if l is not None else None for l in input_lens]
+
+                value.assign(tf_inp, length_list=tf_inp_lens)
 
                 rnn_model.inner_graph.enforce_value(parts[0], parts[1], value)
             elif feed_type != "loop":
@@ -93,7 +90,7 @@ class RnnHelper:
                 in_socket = rnn_model.inner_graph.get_in_socket(parts[0], parts[1])
                 dims = in_socket.replaced_type.get_dimensions()
                 dims[0] = batch_size * rnn_model.tiling_factor if batch_size is not None else None
-                tf_type = tf.int32 if in_socket.replaced_type.type == "int" else tf.float32
+                tf_type = tf.int32 if in_socket.replaced_type.get_data_type() == "int" else tf.float32
                 tf_value = tf.zeros(dims, dtype=tf_type, name="zero_initializer_"+str(counter))
                 initializers.append(tf_value)
                 recurrency_sockets.append(in_socket)
@@ -148,7 +145,6 @@ class RnnHelper:
                 graph_input_type = source_input_type.get_single_token_type()
             elif feed_type == "per_batch" or feed_type == "initializer":
                 graph_input_type = source_input_type.copy()
-                graph_input_type.set_outer_dim(batch_size)
             else:
                 graph_input_type = source_input_type
 
@@ -162,12 +158,11 @@ class RnnHelper:
 
                 dims = [batch_size] + [int(v) for v in init_info[0].split(",")] if len(init_info[0]) > 0 else [
                     batch_size]
-                tensor_type = TensorTypeModel(init_type, dims)
+                tensor_type = SoftTensorTypeModel(dims, string_type=init_type)
                 rnn_model.inner_graph.enforce_type(parts[0], parts[1], tensor_type)
             elif init is not None and init.startswith("socket:"):
                 parts = graph_input.split(":")
                 init_info = init.split(":")[1]
                 source_input_type = input_type_dictionary[init_info]
                 input_type = source_input_type.copy()
-                input_type.set_outer_dim(batch_size)
                 rnn_model.inner_graph.enforce_type(parts[0], parts[1], input_type)

@@ -1,7 +1,5 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.old.sequence_batch_type import SequenceBatchType
-from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import SequenceBatchTypeModel
 
 
 class DeIndexer(ComponentTypeModel):
@@ -16,15 +14,17 @@ class DeIndexer(ComponentTypeModel):
         return de_indexer_value
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        transformed_input = value.apply_index(input_dictionary["input"].get_sequence(),
+        transformed_input = value.apply_index(input_dictionary["input"].get_value(),
                                               input_dictionary["index"].get_index())
 
-        output_models["output"].assign(transformed_input)
+        output_models["output"].assign(transformed_input, length_list=input_dictionary["input"].get_lengths())
 
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"output": SequenceBatchTypeModel("string", [], input_types["input"].get_batch_size(), input_types["input"].get_maximum_sequence_length())}
+        output_type = input_types["input"].copy()
+        output_type.set_data_type("string")
+        return {"output": output_type}
 
 
 class DeIndexerValue(ExecutionComponentValueModel):

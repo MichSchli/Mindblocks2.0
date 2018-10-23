@@ -1,8 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.old.tensor_type import TensorType
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
 class CsvReader(ComponentTypeModel):
@@ -16,12 +14,12 @@ class CsvReader(ComponentTypeModel):
                               value_dictionary["columns"][0][0].split(","))
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        output_value_models["output"].assign(value.read())
-        output_value_models["count"].assign(value.count())
+        output_value_models["output"].initial_assign(value.read())
+        output_value_models["count"].initial_assign(value.count())
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        output_tensor_type = SoftTensorTypeModel([None, value.count_columns],
+        output_tensor_type = SoftTensorTypeModel([None, value.count_columns()],
                                                  string_type="string")
 
         count_tensor_type = SoftTensorTypeModel([],

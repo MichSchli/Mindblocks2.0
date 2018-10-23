@@ -136,6 +136,7 @@ class MlHelper:
             for b in batch_result:
                 performance += b
                 count += 1
+
         score = self.process_result_for_reporting(performance, count, mode="validate")
 
         if self.best_validation_score is None \

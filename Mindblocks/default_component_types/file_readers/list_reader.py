@@ -1,9 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.list_batch.list_batch_type_model import ListBatchTypeModel
-from Mindblocks.model.value_type.old.sequence_batch_type import SequenceBatchType
-from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import SequenceBatchTypeModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
 class ListReader(ComponentTypeModel):

@@ -4,10 +4,11 @@ from tensorflow.python.ops import tensor_array_ops, array_ops
 from Mindblocks.default_component_types.graph_referencing.rnn_helper.rnn_helper import RnnHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.sequence_batch.sequence_batch_type_model import SequenceBatchTypeModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import tensorflow as tf
 from tensorflow.python.ops import math_ops
+
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+
 
 class BeamSearchDecoderComponent(ComponentTypeModel):
 
@@ -51,7 +52,7 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         decoded_shape = tf.shape(decoded_sequences)
         decoded_sequences = tf.reshape(decoded_sequences, [decoded_shape[0], -1])
 
-        output_models["predictions"].assign_with_lengths(decoded_sequences, lengths)
+        output_models["predictions"].assign(decoded_sequences, length_list=[None, lengths])
 
         for k,v in aux_out.items():
             if output_models[k].is_value_type("sequence"):
@@ -73,8 +74,10 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         #value.assign_input_types(input_types)
         output_types = value.compute_types(mode)
 
-        # TODO this is nonsence
-        output_types["predictions"] = SequenceBatchTypeModel("int", [], None, value.maximum_iterations)
+        output_types["predictions"] = SoftTensorTypeModel([None, value.maximum_iterations],
+                                                          string_type="int",
+                                                          soft_by_dimensions=[False, True])
+        #output_types["predictions"] = SequenceBatchTypeModel("int", [], None, value.maximum_iterations)
 
         return output_types
 

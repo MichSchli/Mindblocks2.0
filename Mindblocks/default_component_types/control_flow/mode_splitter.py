@@ -14,7 +14,8 @@ class ModeSplitter(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         result = input_dictionary[mode].get_value()
-        output_value_models["output"].assign(result)
+        lengths = input_dictionary[mode].get_lengths()
+        output_value_models["output"].assign(result, lengths)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):

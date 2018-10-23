@@ -20,7 +20,9 @@ class ExecutionGraphModel(AbstractExecutionModel):
 
     def execute(self, discard_value_models=True):
         self.clear_all_caches()
-        return [v.get_value() if discard_value_models else v for v in self.head_component.pull(self.run_mode)]
+        out_values = [v for v in self.head_component.pull(self.run_mode)]
+
+        return [v.format_for_program_output() if discard_value_models else v for v in out_values]
 
     def clear_all_caches(self):
         self.head_component.clear_caches()

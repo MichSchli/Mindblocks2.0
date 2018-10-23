@@ -7,8 +7,6 @@ import tensorflow as tf
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import numpy as np
 
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
-
 
 class AttentionComponent(ComponentTypeModel):
 
@@ -92,10 +90,10 @@ class AttentionComponent(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["key"].copy()
-        output_type.set_inner_dim(value.output_dimension)
+        output_type.set_dimension(-1, value.output_dimension)
 
         attention_weight_type = input_types["sequence"].copy()
-        attention_weight_type.set_inner_dim(1)
+        attention_weight_type.set_dimension(-1, 1)
 
         return {"output": output_type, "attention_weights": attention_weight_type}
 

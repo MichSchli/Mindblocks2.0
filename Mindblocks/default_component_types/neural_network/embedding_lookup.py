@@ -17,29 +17,15 @@ class EmbeddingLookup(ComponentTypeModel):
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         vectors = input_dictionary["vectors"].get_value()
 
-        if input_dictionary["indexes"].is_value_type("tensor"):
-            idx = input_dictionary["indexes"].get_value()
-            lookup = tf.nn.embedding_lookup(vectors,
-                                        idx)
+        idx = input_dictionary["indexes"].get_value()
+        idx_len = input_dictionary["indexes"].get_lengths()
 
-            output_models["output"].assign(lookup)
-        elif input_dictionary["indexes"].is_value_type("sequence"):
-            idx = input_dictionary["indexes"].get_sequence()
-            lookup = tf.nn.embedding_lookup(vectors,
-                                            idx)
+        vec_len = input_dictionary["vectors"].get_lengths()
+        out_len = idx_len + vec_len[1:]
 
-            lengths = input_dictionary["indexes"].get_sequence_lengths()
+        lookup = tf.nn.embedding_lookup(vectors, idx)
 
-            output_models["output"].assign_with_lengths(lookup, lengths)
-        elif input_dictionary["indexes"].is_value_type("list"):
-            idx = input_dictionary["indexes"].get_items()
-            lookup = tf.nn.embedding_lookup(vectors,
-                                            idx)
-
-            lengths = input_dictionary["indexes"].get_lengths()
-
-            output_models["output"].assign_with_lengths(lookup, lengths)
-
+        output_models["output"].assign(lookup, length_list=out_len)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -48,7 +34,7 @@ class EmbeddingLookup(ComponentTypeModel):
 
         new_type = index_type.copy()
         new_type.set_data_type(vector_type.get_data_type())
-        new_type.extend_dims(vector_type.get_inner_dim())
+        new_type.add_dimension(-1, vector_type.get_dimension(-1))
 
         return {"output": new_type}
 

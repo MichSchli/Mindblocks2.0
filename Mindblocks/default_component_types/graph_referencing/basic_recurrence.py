@@ -1,5 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_value_model import SoftTensorValueModel
 
 
 class BasicRecurrenceComponent(ComponentTypeModel):
@@ -32,7 +33,7 @@ class BasicRecurrenceComponent(ComponentTypeModel):
         outputs = value.assign_and_run(input_dictionary)
 
         for k,v in outputs.items():
-            output_models[k].assign(v)
+            output_models[k].assign(v, length_list=None)
 
         return output_models
 
@@ -79,7 +80,10 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
             source_input_type = input_dictionary[component_input]
 
             if feed_type == "loop":
-                graph_input_type = source_input_type.get_single_token_type()
+                dims = list(range(len(source_input_type.get_dimensions())))
+                del dims[1]
+
+                graph_input_type = source_input_type.get_subtype(dims)
             else:
                 graph_input_type = source_input_type
 
@@ -101,8 +105,9 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
 
         # LOOP
         output_sequences = [[] for _ in range(required_output_length)]
-        for i in range(sequence_feeds[0].get_batch_size()):
-            seq_len = sequence_feeds[0].get_sequence_lengths()[i]
+
+        for i in range(sequence_feeds[0].get_dimensions()[0]):
+            seq_len = sequence_feeds[0].get_lengths()[1][i]
 
             for o in output_sequences:
                 o.append([None]*seq_len)
@@ -114,8 +119,14 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
 
             for token_index in range(seq_len):
                 for feed, socket_dec in zip(sequence_feeds, sequence_sockets):
-                    current_batch_feed = feed.get_token(i, token_index)
-                    self.graph.enforce_value(socket_dec[0], socket_dec[1], current_batch_feed)
+                    token = feed.get_value()[i][token_index]
+                    tensor_value_model = SoftTensorValueModel(feed.get_dimensions()[2:],
+                                                              feed.get_data_type(),
+                                                              feed.get_dimensions()[2:],
+                                                              [None for _ in feed.get_dimensions()[2:]])
+                    tensor_value_model.assign(token, length_list=None)
+
+                    self.graph.enforce_value(socket_dec[0], socket_dec[1], tensor_value_model)
 
                 results = self.graph.execute(discard_value_models=False)
                 to_output = results[:self.count_recurrences()]
@@ -147,11 +158,9 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
             component_output, _, feed_type = output
 
             if feed_type == "loop":
-                out_type = result.to_sequence_type()
-            else:
-                out_type = result
+                result.add_dimension(1, None, is_soft=True)
 
-            out_type_dict[component_output] = out_type
+            out_type_dict[component_output] = result
 
         return out_type_dict
 

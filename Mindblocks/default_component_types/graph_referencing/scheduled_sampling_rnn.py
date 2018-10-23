@@ -3,7 +3,6 @@ from tensorflow.python.ops import tensor_array_ops
 from Mindblocks.default_component_types.graph_referencing.rnn_helper.rnn_helper import RnnHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 import tensorflow as tf
 from tensorflow.python.ops import math_ops
 
@@ -36,10 +35,7 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
         outputs, lengths = value.assign_and_run(input_dictionary, mode)
 
         for k,v in outputs.items():
-            if output_models[k].is_value_type("sequence"):
-                output_models[k].assign_with_lengths(v, lengths)
-            else:
-                output_models[k].assign(v, language="tensorflow")
+            output_models[k].assign(v, length_list = lengths)
 
         return output_models
 
@@ -156,9 +152,9 @@ class ScheduledSamplingRnnComponentValue(ExecutionComponentValueModel):
         rnn_helper = RnnHelper()
         rnn_helper.assign_static_inputs(self.rnn_model, input_dictionary)
 
-        maximum_iterations = tf.shape(input_dictionary["teacher_inputs"].get_sequences())[1]
+        maximum_iterations = tf.shape(input_dictionary["teacher_inputs"].get_value())[1]
 
-        self.teacher_values = tf.transpose(input_dictionary["teacher_inputs"].get_sequences(), perm=[1,0])
+        self.teacher_values = tf.transpose(input_dictionary["teacher_inputs"].get_value(), perm=[1,0])
 
         # TODO: Code for feeding input sequence missing;
         #for component_input, graph_input, feed_type in self.in_links:

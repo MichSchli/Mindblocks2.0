@@ -2,7 +2,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
 
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class BiRnn(ComponentTypeModel):
@@ -25,8 +25,8 @@ class BiRnn(ComponentTypeModel):
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        sequences = input_dictionary["input"].get_sequences()
-        lengths = input_dictionary["input"].get_sequence_lengths()
+        sequences = input_dictionary["input"].get_value()
+        lengths = input_dictionary["input"].get_lengths()[1]
 
         layer_final_states = []
 
@@ -52,20 +52,20 @@ class BiRnn(ComponentTypeModel):
 
         layer_final_states = tf.stack(layer_final_states, 1)
 
-        output_value_models["output"].assign_with_lengths(out_sequences, lengths, language="tensorflow")
-        output_value_models["final_state"].assign(final_states)
-        output_value_models["layer_final_states"].assign(layer_final_states)
+        output_value_models["output"].assign(out_sequences, length_list=[None, lengths, None])
+        output_value_models["final_state"].assign(final_states, length_list=None)
+        output_value_models["layer_final_states"].assign(layer_final_states, length_list=None)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
         new_type = input_types["input"].copy()
-        value.input_dimension = new_type.get_inner_dim()
-        new_type.set_inner_dim(value.get_final_cell_size())
+        value.input_dimension = new_type.get_dimension(-1)
 
-        final_state_type = new_type.get_single_token_type()
-        final_state_type.extend_outer_dim(input_types["input"].get_batch_size())
+        output_hidden_dim = value.get_final_cell_size()
+        new_type.set_dimension(-1, output_hidden_dim)
 
-        layer_final_state_type = TensorTypeModel("float", [new_type.get_batch_size(), value.layers, final_state_type.get_inner_dim()])
+        final_state_type = SoftTensorTypeModel([new_type.get_dimension(0), output_hidden_dim], string_type="float")
+        layer_final_state_type = SoftTensorTypeModel([new_type.get_dimension(0), value.layers, output_hidden_dim], string_type="float")
         return {"output": new_type,
                 "final_state": final_state_type,
                 "layer_final_states": layer_final_state_type}

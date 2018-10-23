@@ -53,9 +53,9 @@ class TestIrisBlocks(unittest.TestCase):
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
         result = run_graphs[0].execute()
 
-        self.assertEqual('0', result[0][0][0])
-        self.assertEqual('1', result[0][50][0])
-        self.assertEqual('2', result[0][100][0])
+        self.assertEqual(0, result[0][0])
+        self.assertEqual(1, result[0][50])
+        self.assertEqual(2, result[0][100])
 
     def testBatchesForTraining(self):
         filename = "iris_tests/batch_iris.xml"
@@ -117,7 +117,7 @@ class TestIrisBlocks(unittest.TestCase):
         run_graphs = self.setup_holder.graph_converter.to_executable(runs)
         self.setup_holder.initialization_helper.initialize(run_graphs)
         run_graphs[0].init_batches()
-        performance = run_graphs[0].execute()[0].sum()
+        performance = sum(run_graphs[0].execute()[0])
 
         self.assertGreaterEqual(10.0, performance)
         self.assertLessEqual(0.0, performance)

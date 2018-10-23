@@ -1,8 +1,6 @@
 from Mindblocks.model.value_type.sequence_batch import sequence_batch_type_model
-from Mindblocks.model.value_type.tensor.tensor_value_model import TensorValueModel
 
-
-class TensorTypeModel:
+class OldTensorTypeModel:
 
     type = None
     dimensions = None

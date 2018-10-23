@@ -17,17 +17,23 @@ class Mean(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         mean = tf.reduce_mean(input_dictionary["input"].get_value(), axis=value.axis)
-        output_value_models["output"].assign(mean, language="tensorflow")
+
+        old_lengths = input_dictionary["input"].get_lengths()
+        previous_dim_idxs = list(range(len(old_lengths)))
+        del previous_dim_idxs[value.axis]
+
+        new_lengths = [old_lengths[x] for x in previous_dim_idxs]
+
+        output_value_models["output"].assign(mean, length_list=new_lengths)
 
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        if input_types["input"].is_value_type("sequence") and value.axis == 1:
-            output_type = input_types["input"].get_single_token_type()
-            output_type.extend_outer_dim(input_types["input"].get_batch_size())
-        else:
-            output_type = input_types["input"].copy()
-            output_type.set_inner_dim(1)
+        previous_dim_idxs = list(range(len(input_types["input"].get_dimensions())))
+        del previous_dim_idxs[value.axis]
+
+        output_type = input_types["input"].get_subtype(previous_dim_idxs)
+
         return {"output": output_type}
 
 class MeanValue(ExecutionComponentValueModel):

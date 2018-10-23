@@ -5,7 +5,6 @@ import numpy as np
 
 from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
 import tensorflow as tf
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
 class VectorIndex(ComponentTypeModel):

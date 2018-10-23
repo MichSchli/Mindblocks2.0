@@ -109,7 +109,7 @@ class RnnModel:
         in_socket = self.list_of_in_sockets[n]
         type = in_socket.replaced_type
         value_model = type.initialize_value_model()
-        value_model.assign(value, language="tensorflow")
+        value_model.assign(value, length_list=None)
         in_socket.replace_value(value_model)
 
     def get_inner_graph_output_types(self, mode):
@@ -119,9 +119,9 @@ class RnnModel:
             component_output, _, feed_type = output
 
             if feed_type.startswith("loop"):
-                out_type = result.to_sequence_type()
-            else:
-                out_type = result
+                result.add_dimension(1, None, is_soft=True)
+
+            out_type = result
 
             out_type_dict[component_output] = out_type
         return out_type_dict

@@ -7,7 +7,10 @@ class SpecialTypeModel:
     def initialize_value_model(self):
         return SpecialValueModel()
 
-    def format_from_tensorflow_output(self, output_tensors):
+    def create_from_tensorflow_output(self, output_tensors):
         value_model = self.initialize_value_model()
         value_model.assign(output_tensors[0])
         return value_model
+
+    def format_tensorflow_value_for_output(self, tensorflow_value):
+        return [tensorflow_value.item]

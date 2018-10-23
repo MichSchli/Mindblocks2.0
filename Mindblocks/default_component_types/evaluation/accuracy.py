@@ -2,7 +2,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 import numpy as np
 
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class Accuracy(ComponentTypeModel):
@@ -18,15 +18,16 @@ class Accuracy(ComponentTypeModel):
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         predictions = input_dictionary["predictions"].get_value()
         labels = input_dictionary["labels"].get_value().astype(np.int32).flatten()
+        lengths = input_dictionary["labels"].get_lengths()
 
         accuracy = (np.abs(predictions - labels) < value.tolerance)
 
-        output_value_models["output"].assign(accuracy)
+        output_value_models["output"].assign(accuracy, length_list=lengths)
 
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"output": TensorTypeModel("float", [None])}
+        return {"output": SoftTensorTypeModel([None], string_type="float")}
 
 
 class AccuracyValue(ExecutionComponentValueModel):

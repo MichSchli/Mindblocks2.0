@@ -15,37 +15,39 @@ class Concat(ComponentTypeModel):
         return ConcatValue(language)
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
+        left_value = input_dictionary["left"].get_value()
+        right_value = input_dictionary["right"].get_value()
+
         if value.language == "tensorflow":
-            left_value = input_dictionary["left"].get_value()
-            right_value = input_dictionary["right"].get_value()
-
-            for _ in range(value.should_expand_left):
+            if input_dictionary["left"].is_scalar():
                 left_value = tf.expand_dims(left_value, -1)
-
-            for _ in range(value.should_expand_right):
+            if input_dictionary["right"].is_scalar():
                 right_value = tf.expand_dims(right_value, -1)
 
-            if value.cover_list == "right":
-                expand_to_cover = tf.shape(left_value)[1]
-                right_value = tf.expand_dims(right_value, 1)
-                nd = tf.concat([[1, expand_to_cover], tf.ones_like(tf.shape(right_value)[2:])], axis=-1)
-                right_value = tf.tile(right_value, nd)
-
             result = tf.concat([left_value, right_value], axis=-1, name=execution_component.get_name())
-        elif value.new_array:
-            result = np.array([input_dictionary["left"].get_value(), input_dictionary["right"].get_value()])
         else:
-            result = np.concatenate((input_dictionary["left"].get_value(), input_dictionary["right"].get_value()))
+            if input_dictionary["left"].is_scalar():
+                left_value = [left_value]
+            if input_dictionary["right"].is_scalar():
+                right_value = [right_value]
 
-        output_value_models["output"].assign(result, value.language)
-        if value.out_type == "list":
-            output_value_models["output"].lengths = input_dictionary["left"].get_lengths()
+            result = np.concatenate((left_value, right_value))
+
+        lengths = input_dictionary["left"].get_lengths()
+
+        if len(lengths) == 0:
+            lengths = [None]
+        else:
+            lengths[-1] = None
+
+        output_value_models["output"].assign(result, length_list=lengths)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
         left_type = input_types["left"]
         right_type = input_types["right"]
 
+        """
         if left_type.is_value_type("list") and \
                 right_type.is_value_type("list"):
             left_dims = input_types["left"].get_inner_dim()
@@ -81,26 +83,19 @@ class Concat(ComponentTypeModel):
 
         if len(left_dims) == 0 and len(right_dims) == 0:
             value.new_array = True
+        """
 
         output = input_types["left"].copy()
 
-        if len(left_dims) > 0 and len(right_dims) > 0:
-            output.set_inner_dim(left_dims[-1] + right_dims[-1])
+        left_dim = 1 if input_types["left"].is_scalar() else  input_types["left"].get_dimension(-1)
+        right_dim = 1 if input_types["right"].is_scalar() else  input_types["right"].get_dimension(-1)
+
+        output.set_dimension(-1, left_dim + right_dim)
 
         return {"output": output}
 
 
 class ConcatValue(ExecutionComponentValueModel):
 
-    new_array = False
-    cover_list = None
-    should_expand_left = 0
-    should_expand_right = 0
-
-    out_type = None
-
     def __init__(self, language):
         self.language = language
-
-    def set_cover_list(self, inp):
-        self.cover_list = inp

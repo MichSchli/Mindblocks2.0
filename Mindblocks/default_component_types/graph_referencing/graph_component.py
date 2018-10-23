@@ -26,7 +26,7 @@ class GraphComponent(ComponentTypeModel):
         outputs = value.run_graph()
 
         for k,v in outputs.items():
-            output_models[k].assign(v)
+            output_models[k].assign(v, length_list=None)
 
         return output_models
 

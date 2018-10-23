@@ -1,10 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-from Mindblocks.model.value_type.tensor.tensor_value_model import TensorValueModel
-
-
-class SequenceBatchValueModel:
+class OldSequenceBatchValueModel:
 
     type = None
     item_shape = None

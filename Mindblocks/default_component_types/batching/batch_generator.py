@@ -3,7 +3,6 @@ import random
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
 
 
 class BatchGenerator(ComponentTypeModel):
@@ -25,7 +24,7 @@ class BatchGenerator(ComponentTypeModel):
         if value.needs_count():
             value.register_count(input_dictionary["count"].get_value(), mode)
 
-        output_value_models["batch"].assign(value.get_next_batch())
+        output_value_models["batch"].assign(value.get_next_batch(), length_list=None)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):

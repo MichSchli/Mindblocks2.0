@@ -38,6 +38,7 @@ class ExecutionComponentModel(AbstractModel, AbstractExecutionModel):
 
     def execute(self, mode):
         input_dictionary = {k : in_socket.pull(mode) for k,in_socket in self.in_sockets.items()}
+
         output_value_models = {k : type_model.initialize_value_model() for k,type_model in self.output_type_models.items()}
 
         output_dictionary = self.execution_type.execute(self, input_dictionary, self.value_model, output_value_models, mode)
@@ -47,6 +48,7 @@ class ExecutionComponentModel(AbstractModel, AbstractExecutionModel):
 
     def initialize(self, mode, tensorflow_session_model):
         input_dictionary = {k: in_socket.initialize(mode, tensorflow_session_model) for k, in_socket in self.in_sockets.items()}
+
         output_value_models = {k: type_model.initialize_value_model() for k, type_model in
                                self.output_type_models.items()}
 
@@ -69,8 +71,6 @@ class ExecutionComponentModel(AbstractModel, AbstractExecutionModel):
         for k, in_socket in self.in_sockets.items():
             if self.execution_type.is_used(k, mode):
                 in_types[k] = in_socket.pull_type_model(mode)
-
-        print(in_types)
 
         self.output_type_models = self.execution_type.build_value_type_model(in_types, self.value_model, mode)
 

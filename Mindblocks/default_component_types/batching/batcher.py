@@ -19,12 +19,18 @@ class Batcher(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         data = np.array(input_dictionary["data"].get_value())
+        lengths = input_dictionary["data"].get_lengths()
         indexes = input_dictionary["indexes"].get_value()
+
+        batch_lengths = [None]*len(lengths)
+        for i in range(len(lengths)):
+            if lengths[i] is not None:
+                batch_lengths[i] = lengths[i][indexes]
 
         batch = data[indexes]
         self.log("Batch: " + str(batch), "batching", "batches")
 
-        output_value_models["output"].assign(batch)
+        output_value_models["output"].assign(batch, length_list=batch_lengths, chop_dimensions=True)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):

@@ -1,8 +1,7 @@
-from Mindblocks.model.value_type.sequence_batch.sequence_batch_value_model import SequenceBatchValueModel
 from Mindblocks.model.value_type.tensor import tensor_type_model
 import tensorflow as tf
 
-class SequenceBatchTypeModel:
+class OldSequenceBatchTypeModel:
 
     type = None
     item_shape = None

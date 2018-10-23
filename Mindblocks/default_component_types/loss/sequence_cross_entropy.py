@@ -2,7 +2,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 import tensorflow as tf
 
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class SequenceCrossEntropy(ComponentTypeModel):
@@ -21,8 +21,8 @@ class SequenceCrossEntropy(ComponentTypeModel):
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        mask = tf.sequence_mask(input_dictionary["labels"].get_sequence_lengths(),
-                                maxlen=input_dictionary["labels"].get_maximum_sequence_length(),
+        mask = tf.sequence_mask(input_dictionary["labels"].get_lengths()[1],
+                                maxlen=input_dictionary["labels"].get_max_lengths()[1],
                                 dtype=tf.float32)
 
         cross_entropy = tf.contrib.seq2seq.sequence_loss(
@@ -36,11 +36,11 @@ class SequenceCrossEntropy(ComponentTypeModel):
         if not value.average_across_timesteps:
             cross_entropy = tf.reduce_sum(cross_entropy, axis=-1)
 
-        output_value_models["output"].assign(cross_entropy)
+        output_value_models["output"].assign(cross_entropy, length_list=None)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"output": TensorTypeModel("float", [])}
+        return {"output": SoftTensorTypeModel([None], string_type="float")}
 
     def make_inferences(self, execution_value, tf_run_variables):
         pass

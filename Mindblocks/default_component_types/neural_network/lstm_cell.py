@@ -2,7 +2,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
 
-from Mindblocks.model.value_type.tensor.tensor_type_model import TensorTypeModel
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class LstmCell(ComponentTypeModel):
@@ -26,18 +26,18 @@ class LstmCell(ComponentTypeModel):
         return value
 
     def build_value_type_model(self, in_types, execution_value, mode):
-        batch_size = in_types["previous_c"].get_batch_size()
-        execution_value.input_dimension = in_types["input_x"].get_inner_dim()
+        batch_size = in_types["previous_c"].get_dimension(0)
+        execution_value.input_dimension = in_types["input_x"].get_dimension(-1)
 
-        new_h_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
-        new_c_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
+        new_h_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
+        new_c_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
 
         if execution_value.layers == 1:
-            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
-            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.get_final_cell_size()])
+            new_h_layers_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
+            new_c_layers_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
         else:
-            new_h_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size()])
-            new_c_layers_type = TensorTypeModel("float", [batch_size, execution_value.layers, execution_value.get_final_cell_size()])
+            new_h_layers_type = SoftTensorTypeModel([batch_size, execution_value.layers, execution_value.get_final_cell_size()], string_type="float")
+            new_c_layers_type = SoftTensorTypeModel([batch_size, execution_value.layers, execution_value.get_final_cell_size()], string_type="float")
 
         return {"output_c": new_c_type,
                 "output_h": new_h_type,
@@ -88,11 +88,11 @@ class LstmCell(ComponentTypeModel):
             new_cs = tf.stack(new_cs, axis=1)
             new_hs = tf.stack(new_hs, axis=1)
 
-        output_value_models["output_c"].assign(final_cs)
-        output_value_models["output_h"].assign(final_hs)
+        output_value_models["output_c"].assign(final_cs, length_list=None)
+        output_value_models["output_h"].assign(final_hs, length_list=None)
 
-        output_value_models["layer_output_cs"].assign(new_cs)
-        output_value_models["layer_output_hs"].assign(new_hs)
+        output_value_models["layer_output_cs"].assign(new_cs, length_list=None)
+        output_value_models["layer_output_hs"].assign(new_hs, length_list=None)
 
         return output_value_models
 

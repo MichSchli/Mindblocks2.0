@@ -42,17 +42,16 @@ class MultilayerPerceptron(ComponentTypeModel):
             out_shape = tf.concat([in_shape[:-1], [value.dims[-1]]], axis=-1)
         post_value = tf.reshape(post_value, out_shape)
 
-        if input_dictionary["input"].is_value_type("list"):
-            lengths = input_dictionary["input"].lengths
-            output_value_models["output"].assign_with_lengths(post_value, lengths, language=value.language)
-        else:
-            output_value_models["output"].assign(post_value, language=value.language)
+        print(post_value)
+
+        lengths = input_dictionary["input"].get_lengths()
+        output_value_models["output"].assign(post_value, length_list=lengths)
+
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        print(input_types)
         output_type = input_types["input"].copy()
-        output_type.set_inner_dim(value.dims[-1])
+        output_type.set_dimension(-1, value.dims[-1])
         return {"output": output_type}
 
 

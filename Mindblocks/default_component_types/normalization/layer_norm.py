@@ -28,7 +28,7 @@ class LayerNorm(ComponentTypeModel):
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        inner_dim = input_types["input"].get_inner_dim()
+        inner_dim = input_types["input"].get_dimension(0)
         value.set_inner_dim(inner_dim)
         return {"output": input_types["input"].copy()}
 

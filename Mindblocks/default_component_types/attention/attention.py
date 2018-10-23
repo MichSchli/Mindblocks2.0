@@ -29,13 +29,13 @@ class AttentionComponent(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         if not value.initialized:
-            key_dim = input_dictionary["key"].get_inner_dim()
-            value_dim = input_dictionary["sequence"].get_inner_dim()
+            key_dim = input_dictionary["key"].get_dimension(-1)
+            value_dim = input_dictionary["sequence"].get_dimension(-1)
             value.initialize_transforms(key_dim, value_dim)
 
-        lengths = input_dictionary["sequence"].get_sequence_lengths()
+        lengths = input_dictionary["sequence"].get_lengths()[1]
 
-        input_dimension = input_dictionary["sequence"].get_inner_dim()
+        input_dimension = input_dictionary["sequence"].get_dimension(-1)
         attention_result, attention_weights = self.attend(input_dictionary["key"].get_value(),
                                        input_dictionary["sequence"].get_value(),
                                        lengths,
@@ -43,8 +43,11 @@ class AttentionComponent(ComponentTypeModel):
                                        input_dimension,
                                        mode)
 
-        output_value_models["output"].assign(attention_result, language="tensorflow")
-        output_value_models["attention_weights"].assign_with_lengths(attention_weights, lengths)
+        print("attn")
+        print(attention_result)
+
+        output_value_models["output"].assign(attention_result, length_list=None)
+        output_value_models["attention_weights"].assign(attention_weights, length_list=[None, lengths, None])
 
         return output_value_models
 

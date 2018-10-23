@@ -17,7 +17,7 @@ class ElmoEmbedding(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         elmo = tf_hub.Module("https://tfhub.dev/google/elmo/2", trainable=True)
-        lengths = input_dictionary["input"].get_sequence_lengths()
+        lengths = input_dictionary["input"].get_lengths()[1]
         inputs = {"tokens": input_dictionary["input"].get_sequences(),
                   "sequence_len": lengths}
 

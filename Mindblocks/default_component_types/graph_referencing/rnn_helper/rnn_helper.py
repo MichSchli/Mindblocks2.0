@@ -92,6 +92,7 @@ class RnnHelper:
                 dims[0] = batch_size * rnn_model.tiling_factor if batch_size is not None else None
                 tf_type = tf.int32 if in_socket.replaced_type.get_data_type() == "int" else tf.float32
                 tf_value = tf.zeros(dims, dtype=tf_type, name="zero_initializer_"+str(counter))
+
                 initializers.append(tf_value)
                 recurrency_sockets.append(in_socket)
             elif init is not None and init.startswith("socket"):
@@ -101,11 +102,17 @@ class RnnHelper:
 
                 init_value = linked_socket.get_value()
 
+                print(init_value)
+
                 if rnn_model.tiling_factor > 1:
                     init_value = tf.contrib.seq2seq.tile_batch(init_value, rnn_model.tiling_factor)
 
                 initializers.append(init_value)
                 recurrency_sockets.append(in_socket)
+                print(init_value)
+
+        print(initializers)
+        print("INITS")
 
         return recurrency_sockets, initializers
 

@@ -43,11 +43,8 @@ class AttentionComponent(ComponentTypeModel):
                                        input_dimension,
                                        mode)
 
-        print("attn")
-        print(attention_result)
-
         output_value_models["output"].assign(attention_result, length_list=None)
-        output_value_models["attention_weights"].assign(attention_weights, length_list=[None, lengths, None])
+        output_value_models["attention_weights"].assign(attention_weights, length_list=[None, lengths])
 
         return output_value_models
 
@@ -96,7 +93,8 @@ class AttentionComponent(ComponentTypeModel):
         output_type.set_dimension(-1, value.output_dimension)
 
         attention_weight_type = input_types["sequence"].copy()
-        attention_weight_type.set_dimension(-1, 1)
+        attention_weight_type.delete_dimension(-1)
+        attention_weight_type.set_name(value.get_name() + ":attention_weights")
 
         return {"output": output_type, "attention_weights": attention_weight_type}
 

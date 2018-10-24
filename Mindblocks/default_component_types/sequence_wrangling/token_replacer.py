@@ -14,21 +14,23 @@ class TokenReplacerSequence(ComponentTypeModel):
         return TokenReplacerValue(value_dictionary["token"][0][0])
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        sequences = input_dictionary["target"].get_sequence()
-        replacements = input_dictionary["replacement"].get_sequence()
+        sequences = input_dictionary["target"].get_value()
+        replacements = input_dictionary["replacement"].get_value()
 
-        out = [None]*len(sequences)
+        lengths = input_dictionary["target"].get_lengths()[1]
 
-        for i in range(len(sequences)):
-            out[i] = [None]*len(sequences[i])
-            for j in range(len(sequences[i])):
+        out = [None]*sequences.shape[0]
+
+        for i in range(sequences.shape[0]):
+            out[i] = [None]*lengths[i]
+            for j in range(lengths[i]):
                 if sequences[i][j] != value.target_token:
                     out[i][j] = sequences[i][j]
                 else:
                     self.log("Replaced \"" + sequences[i][j] + "\" with \"" + replacements[i][j] + "\" at index " + str(j) + " in sentence \"" + " ".join(sequences[i]) + "\"", "formatting", "token_replacement")
                     out[i][j] = replacements[i][j]
 
-        output_value_models["output"].assign(out)
+        output_value_models["output"].initial_assign(out)
 
         return output_value_models
 

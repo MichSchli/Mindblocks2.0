@@ -88,6 +88,9 @@ class SoftTensorValueModel:
                 self.soft_length_tensors[dim_idx] = numpy_representation
 
     def assign(self, tensor, length_list, chop_dimensions=False):
+        #Stupid sanity check:
+        tensor.shape
+
         self.tensor = tensor
 
         if length_list is None:

@@ -1,6 +1,7 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+import numpy as np
 
 
 class SentenceReader(ComponentTypeModel):
@@ -21,7 +22,7 @@ class SentenceReader(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         output_models["output"].initial_assign(value.read())
-        output_models["count"].assign(value.count(), length_list=None)
+        output_models["count"].assign(np.array(value.count()), length_list=None)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):

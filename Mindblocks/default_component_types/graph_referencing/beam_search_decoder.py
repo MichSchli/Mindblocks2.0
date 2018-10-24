@@ -55,10 +55,11 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         output_models["predictions"].assign(decoded_sequences, length_list=[None, lengths])
 
         for k,v in aux_out.items():
-            if output_models[k].is_value_type("sequence"):
-                output_models[k].assign_with_lengths(v, lengths)
-            else:
-                output_models[k].assign(v, language="tensorflow")
+            print("ASSIGN")
+            print(v)
+            output_models[k].assign(v, length_list=[None, lengths, None])
+
+        print(output_models)
 
         return output_models
 
@@ -78,6 +79,12 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
                                                           string_type="int",
                                                           soft_by_dimensions=[False, True])
         #output_types["predictions"] = SequenceBatchTypeModel("int", [], None, value.maximum_iterations)
+
+        print("===")
+
+        for k,v in output_types.items():
+            print(k)
+            print(v.get_dimensions())
 
         return output_types
 

@@ -126,6 +126,9 @@ class RnnHelper:
             socket = rnn_model.inner_graph.get_out_socket(parts[0], parts[1])
             out_type = socket.pull_type_model(mode)
             dims = out_type.get_dimensions()
+            print("DIMSDIMSDIMS")
+            print(socket.execution_component.get_name())
+            print(dims)
             tf_value = tensor_array_ops.TensorArray(
                 dtype=tf_type,
                 size=0 if maximum_iterations is None else maximum_iterations,
@@ -147,7 +150,13 @@ class RnnHelper:
             elif feed_type == "per_batch" or feed_type == "initializer":
                 graph_input_type = source_input_type.copy()
             else:
-                graph_input_type = source_input_type
+                graph_input_type = source_input_type.copy()
+
+            batch_inp_size = graph_input_type.get_dimension(0)
+            if batch_inp_size is not None:
+                batch_inp_size *= rnn_model.tiling_factor
+
+                graph_input_type.set_dimension(0, batch_inp_size)
 
             rnn_model.inner_graph.enforce_type(parts[0], parts[1], graph_input_type)
 

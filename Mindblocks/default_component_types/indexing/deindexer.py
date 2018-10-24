@@ -15,9 +15,10 @@ class DeIndexer(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         transformed_input = value.apply_index(input_dictionary["input"].get_value(),
+                                              input_dictionary["input"].get_lengths(),
                                               input_dictionary["index"].get_index())
 
-        output_models["output"].assign(transformed_input, length_list=input_dictionary["input"].get_lengths())
+        output_models["output"].initial_assign(transformed_input)
 
         return output_models
 
@@ -32,12 +33,13 @@ class DeIndexerValue(ExecutionComponentValueModel):
     def __init__(self, input_type):
         self.input_type = input_type
 
-    def apply_index(self, input_value, index):
+    def apply_index(self, input_value, lengths, index):
         new_output = []
         if self.input_type == "sequence":
-            for i in range(len(input_value)):
+            for i in range(input_value.shape[0]):
                 new_output.append([])
-                for j in range(len(input_value[i])):
+                length = lengths[1][i]
+                for j in range(length):
                     to_index = input_value[i][j]
 
                     new_output[i].append(index["backward"][to_index])

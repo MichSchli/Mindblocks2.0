@@ -10,6 +10,9 @@ class SoftTensorTfOutputManager:
         self.dimensions = dimensions
         self.soft_by_dimensions = soft_by_dimensions
 
+        print("MAKING OUTPUT MAN")
+        print(self.dimensions)
+        print(self.soft_by_dimensions)
 
     def format_for_output(self, value):
         tf_output = [value.tensor]
@@ -31,3 +34,8 @@ class SoftTensorTfOutputManager:
                 pointer += 1
 
         value.assign(tensorflow_output[0], length_list=assign_lengths)
+
+        print("output assign")
+        print(tensorflow_output)
+        print(value.get_value())
+        print(value.get_lengths())

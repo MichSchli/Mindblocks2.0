@@ -12,6 +12,8 @@ class SoftTensorTypeModel:
     placeholder_manager = None
     tf_output_manager = None
 
+    name = None
+
     def __init__(self, dimensions, soft_by_dimensions=None, string_type="float"):
         self.dimensions = dimensions[:]
 
@@ -55,6 +57,8 @@ class SoftTensorTypeModel:
 
     def create_from_tensorflow_output(self, tensorflow_output):
         if self.tf_output_manager is None:
+            print(self)
+            print(self.string_type)
             self.tf_output_manager = SoftTensorTfOutputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
 
         value = self.initialize_value_model()
@@ -63,6 +67,8 @@ class SoftTensorTypeModel:
 
     def format_tensorflow_value_for_output(self, tensorflow_value):
         if self.tf_output_manager is None:
+            print(self)
+            print(self.string_type)
             self.tf_output_manager = SoftTensorTfOutputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
 
         return self.tf_output_manager.format_for_output(tensorflow_value)
@@ -108,6 +114,7 @@ class SoftTensorTypeModel:
 
     def delete_dimension(self, index):
         del self.dimensions[index]
+        del self.soft_by_dimensions[index]
 
     def is_scalar(self):
         return len(self.dimensions) == 0
@@ -127,3 +134,9 @@ class SoftTensorTypeModel:
             self.cached_casts[string_type] = cast_copy
 
         return self.cached_casts[string_type]
+
+    def get_name(self):
+        return self.name
+
+    def set_name(self, name):
+        self.name = name

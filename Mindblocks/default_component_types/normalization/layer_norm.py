@@ -15,9 +15,7 @@ class LayerNorm(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, execution_value, output_models, mode):
         value = input_dictionary["input"].get_value()
-
-        print("LAYER NORM BREAKS LENGTHS")
-        exit()
+        lengths = input_dictionary["input"].get_lengths()
 
         per_batch_mus = tf.reduce_mean(value, axis=-1)
         shifted_value = value - tf.expand_dims(per_batch_mus, -1)
@@ -27,7 +25,7 @@ class LayerNorm(ComponentTypeModel):
 
         output_value = scaled_value * execution_value.get_scaling() + execution_value.get_bias()
 
-        output_models["output"].assign(output_value)
+        output_models["output"].assign(output_value, length_list=lengths)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):

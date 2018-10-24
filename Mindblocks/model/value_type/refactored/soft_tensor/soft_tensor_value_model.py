@@ -71,6 +71,9 @@ class SoftTensorValueModel:
                 shape_initializer[idx] = min(mlen, shape_initializer[idx])
 
         numpy_representation = np.zeros(shape_initializer, dtype=self.get_numpy_type())
+        if self.get_data_type() == "string":
+            numpy_representation.fill("")
+
         self.recursive_assign(python_representation, numpy_representation, ())
         self.tensor = numpy_representation
 

@@ -3,6 +3,7 @@ import random
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+import numpy as np
 
 
 class BatchGenerator(ComponentTypeModel):
@@ -28,13 +29,16 @@ class BatchGenerator(ComponentTypeModel):
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
+        all_lengths = input_dictionary["reference_sequences"].get_lengths()
         if value.should_initialize(mode):
-            value.register_lengths(input_dictionary["reference_sequences"].get_sequence_lengths(), mode)
+            value.register_lengths(all_lengths[1], mode)
 
         if value.should_shuffle_now(mode):
             value.shuffle(mode)
 
-        output_value_models["batch"].assign(value.get_next_batch(mode))
+        next_batch = value.get_next_batch(mode)
+        output_value_models["batch"].assign(next_batch, length_list=None)
+
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -77,15 +81,15 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
         self.log("Creating batches with mode " + mode + "...", "batching", "status")
         if not self.should_reorder:
             self.batches[mode] = []
-            for i in range(0, len(lengths), self.batch_size):
-                batch = list(range(i, min(i+self.batch_size, len(lengths))))
+            for i in range(0, lengths.shape[0], self.batch_size):
+                batch = list(range(i, min(i+self.batch_size, lengths.shape[0])))
                 self.batches[mode].append(batch)
 
             self.log("Created " + str(len(self.batches[mode])) + " batches.", "batching", "status")
 
             return
 
-        indexes = list(range(len(lengths)))
+        indexes = list(range(lengths.shape[0]))
 
         if self.should_shuffle and mode == "train":
             random.shuffle(indexes)
@@ -100,11 +104,13 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
             for i in range(len(indexes_by_size)):
                 current_length = lengths_by_size[i]
                 if len(self.batches[mode][-1]) == self.batch_size or (len(self.batches[mode][-1]) > 0 and current_length > length_tracker):
+                    self.batches[mode][-1] = np.array(self.batches[mode][-1])
                     self.log("Created batch with " + str(len(self.batches[mode][-1])) + " sequences of length " + str(length_tracker) + ".", "batching", "update")
                     self.batches[mode].append([])
 
                 self.batches[mode][-1].append(indexes_by_size[i])
                 length_tracker = current_length
+
 
         self.log("Created " + str(len(self.batches[mode])) + " batches.", "batching", "status")
         self.pointer = 0

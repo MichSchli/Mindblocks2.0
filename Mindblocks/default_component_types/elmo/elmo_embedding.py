@@ -17,14 +17,15 @@ class ElmoEmbedding(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         elmo = tf_hub.Module("https://tfhub.dev/google/elmo/2", trainable=True)
-        lengths = input_dictionary["input"].get_lengths()[1]
-        inputs = {"tokens": input_dictionary["input"].get_sequences(),
+        all_lengths = input_dictionary["input"].get_lengths()
+        lengths = all_lengths[1]
+        inputs = {"tokens": input_dictionary["input"].get_value(),
                   "sequence_len": lengths}
 
         embeddings = elmo(inputs=inputs, signature="tokens", as_dict=True)
 
-        output_models["word_embeddings"].assign_with_lengths(embeddings["elmo"], lengths, language="tensorflow")
-        output_models["sentence_embedding"].assign(embeddings["default"], language="tensorflow")
+        output_models["word_embeddings"].assign(embeddings["elmo"], length_list=all_lengths)
+        output_models["sentence_embedding"].assign(embeddings["default"], length_list=None)
 
         return output_models
 

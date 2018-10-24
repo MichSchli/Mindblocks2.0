@@ -32,7 +32,7 @@ class IndexIntoSequence(ComponentTypeModel):
         output_type = input_types["indexes"].copy()
 
         output_type.set_data_type(input_types["sequence"].get_data_type())
-        output_type.extend_dims(input_types["sequence"].get_inner_dim())
+        output_type.add_dimension(-1, input_types["sequence"].get_inner_dim())
 
         return {"output": output_type}
 

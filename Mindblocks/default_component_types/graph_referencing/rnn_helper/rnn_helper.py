@@ -102,17 +102,11 @@ class RnnHelper:
 
                 init_value = linked_socket.get_value()
 
-                print(init_value)
-
                 if rnn_model.tiling_factor > 1:
                     init_value = tf.contrib.seq2seq.tile_batch(init_value, rnn_model.tiling_factor)
 
                 initializers.append(init_value)
                 recurrency_sockets.append(in_socket)
-                print(init_value)
-
-        print(initializers)
-        print("INITS")
 
         return recurrency_sockets, initializers
 

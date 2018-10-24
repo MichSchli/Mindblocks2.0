@@ -198,9 +198,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
 
         # Select recurrent states from the appropriate beam
         range_ = tf.expand_dims(math_ops.range(self.rnn_model.batch_size) * self.beam_width, 1)
-        print("RDIM")
-        print(range_)
-        print(self.rnn_model.batch_size)
         gather_indices = tf.reshape(parent_beam_ids + range_, [-1])
         gather_indices = tf.reshape(gather_indices, [-1])
 
@@ -216,15 +213,11 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         new_lengths = tf.gather(new_lengths, indices=gather_indices)
 
         # Distribute recurrent values according to beams:
-        print(gather_indices)
-        print(results)
         for i in range(n_rec):
             if i != self.beam_index:
                 results[i] = tf.gather(results[i], indices=gather_indices)
             else:
                 results[i] = tf.reshape(next_word_ids, [-1])
-
-        print(results)
 
         # Write outputs:
         for i in range(n_rec, n_rec + n_out):
@@ -249,9 +242,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         results += [new_lengths]
         results += [new_finished]
         results += [counter + 1]
-
-        print(args)
-        print(results)
 
         return tuple(results)
 
@@ -288,9 +278,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         self.rnn_model.add_length_var()
         self.rnn_model.add_finished_var()
         self.rnn_model.add_counter_loop_var()
-
-        print("LOOPY")
-        print(self.rnn_model.loop_vars)
 
         loop = tf.while_loop(
             self.cond,

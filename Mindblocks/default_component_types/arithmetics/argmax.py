@@ -18,26 +18,8 @@ class Argmax(ComponentTypeModel):
         if value.language == "tensorflow":
             val = input_dictionary["input"].get_value()
 
-            all_lengths = input_dictionary["input"].get_lengths()
-
-            for idx, length in enumerate(all_lengths):
-                if length is not None:
-                    print(length)
-                    max_length = tf.shape(val)[idx]
-                    print("ABC")
-                    print(max_length)
-                    mask = tf.sequence_mask(length,
-                                            maxlen=max_length,
-                                            dtype=tf.bool)
-
-                    print(idx)
-                    print(len(all_lengths))
-
-                    for _ in range(idx + 1, len(all_lengths)):
-                        print("EXPANDING")
-                        mask = tf.expand_dims(mask, -1)
-
-                    val = tf.where(mask, val, tf.ones_like(val) * tf.float32.min)
+            outside_replacement = tf.ones_like(val) * tf.float32.min
+            val = input_dictionary["input"].replace_elements_outside_lengths(outside_replacement)
 
             argmax = tf.argmax(val, axis=-1, output_type=tf.int32)
         else:
@@ -52,8 +34,6 @@ class Argmax(ComponentTypeModel):
         output_type = input_types["input"].copy()
         output_type.delete_dimension(-1)
         output_type.set_name(value.get_name() + ":output")
-        print("ATTN DIM")
-        print(output_type.get_dimensions())
         return {"output": output_type}
 
 class ArgmaxValue(ExecutionComponentValueModel):

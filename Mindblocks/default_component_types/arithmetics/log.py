@@ -1,3 +1,4 @@
+from Mindblocks.helpers.soft_tensors.soft_tensor_helper import SoftTensorHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
@@ -20,21 +21,17 @@ class Log(ComponentTypeModel):
             exit()
         elif value.language == "tensorflow":
             v = input_dictionary["input"].get_value()
+
             v = tf.log(v)
+            all_lengths = input_dictionary["input"]
+            replacement = tf.zeros_like(v)
 
-            if input_dictionary["input"].is_value_type("list"):
-                lengths = input_dictionary["input"].lengths
-                max_length = tf.reduce_max(lengths)
-                mask = tf.sequence_mask(lengths,
-                                        maxlen=max_length,
-                                        dtype=tf.bool)
-                v = v[:, :max_length]
+            sth = SoftTensorHelper()
+            replaced_v = sth.replace_elements_outside_lengths(v, all_lengths, replacement)
 
-                replacement = tf.zeros_like(v)
-                v = tf.where(mask, v, replacement)
+            output_models["output"].assign(replaced_v, length_list=all_lengths)
 
-            input_dictionary["input"].assign(v, language="tensorflow")
-        return {"output": input_dictionary["input"]}
+        return output_models
 
     def build_value_type_model(self, input_types, value, mode):
         return {"output": input_types["input"].copy()}

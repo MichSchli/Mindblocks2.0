@@ -15,7 +15,7 @@ class Constant(ComponentTypeModel):
                              value_dictionary["type"][0][0])
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        output_value_models["output"].assign(value.value, length_list=None)
+        output_value_models["output"].assign(np.array(value.value), length_list=None)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):

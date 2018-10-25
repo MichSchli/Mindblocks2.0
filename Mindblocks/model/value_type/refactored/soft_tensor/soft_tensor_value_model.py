@@ -170,3 +170,16 @@ class SoftTensorValueModel:
         sth = SoftTensorHelper()
 
         return sth.format_to_python_list(self.tensor, self.soft_length_tensors)
+
+    """
+    Helpers:
+    """
+
+    def replace_elements_outside_lengths(self, outside_replacement):
+        val = self.get_value()
+        all_lengths = self.get_lengths()
+
+        sth = SoftTensorHelper()
+        replaced_val = sth.replace_elements_outside_lengths(val, all_lengths, outside_replacement)
+
+        return replaced_val

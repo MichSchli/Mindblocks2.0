@@ -74,7 +74,7 @@ class IndexerValue(ExecutionComponentValueModel):
                                input_lengths,
                                apply_fn,
                                new_type=np.int32,
-                               stop_dim=-2 if self.input_column is not None else -1)
+                               transform_dim=-2 if self.input_column is not None else -1)
 
         return result
 

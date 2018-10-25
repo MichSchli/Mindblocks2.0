@@ -83,7 +83,7 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
             self.batches[mode] = []
             for i in range(0, lengths.shape[0], self.batch_size):
                 batch = list(range(i, min(i+self.batch_size, lengths.shape[0])))
-                self.batches[mode].append(batch)
+                self.batches[mode].append(np.array(batch))
 
             self.log("Created " + str(len(self.batches[mode])) + " batches.", "batching", "status")
 
@@ -111,6 +111,9 @@ class SequenceBatchGeneratorValue(ExecutionComponentValueModel):
                 self.batches[mode][-1].append(indexes_by_size[i])
                 length_tracker = current_length
 
+        self.batches[mode][-1] = np.array(self.batches[mode][-1])
+        self.log("Created batch with " + str(len(self.batches[mode][-1])) + " sequences of length " + str(
+            length_tracker) + ".", "batching", "update")
 
         self.log("Created " + str(len(self.batches[mode])) + " batches.", "batching", "status")
         self.pointer = 0

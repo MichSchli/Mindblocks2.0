@@ -1,2 +1,0 @@
-model_checkpoint_path: "/home/michael/Projects/Mindblocks2.0/test_data/stored_models/iris/iris.model/tfparams.ckpt"
-all_model_checkpoint_paths: "/home/michael/Projects/Mindblocks2.0/test_data/stored_models/iris/iris.model/tfparams.ckpt"

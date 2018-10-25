@@ -4,7 +4,9 @@ class XmlHelper:
               "&apos;": "\'",
               "&lt;": "<",
               "&gt;": ">",
-              "&amp;": "&"}
+              "&amp;": "&",
+              "\\n": "\n",
+              "\\t": "\t"}
 
     def get_header(self, name, fields={}, indentation=0):
         string = "<"+name

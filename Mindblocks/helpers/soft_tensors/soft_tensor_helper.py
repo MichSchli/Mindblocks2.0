@@ -124,8 +124,14 @@ class SoftTensorHelper:
                                         maxlen=max_length,
                                         dtype=tf.bool)
 
-                for _ in range(idx + 1, len(length_tensor_list)):
+                for dim in range(idx + 1, len(length_tensor_list)):
                     mask = tf.expand_dims(mask, -1)
+
+                target_dims = tf.ones(idx+1, dtype=tf.int32)
+                target_dims = tf.concat((target_dims, tf.shape(input_tensor)[idx+1:]), axis=-1)
+
+                mask = tf.tile(mask, target_dims)
+
 
                 input_tensor = tf.where(mask, input_tensor, replacement_tensor)
         return input_tensor

@@ -39,6 +39,10 @@ class FileEmbeddings(ComponentTypeModel):
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
+        if not value.loaded:
+            self.log("Loading file embeddings...", "embeddings", "load")
+            value.load()
+            self.log("Loaded " + str(value.length) + " vectors.", "embeddings", "load")
 
         output_models["index"].assign(value.get_index())
         output_models["vectors"].assign(value.get_vectors(), length_list=None)

@@ -18,7 +18,10 @@ class Mean(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         all_lengths = input_dictionary["input"].get_lengths()
-        axis_lengths = all_lengths[value.axis]
+        axis_lengths = tf.cast(all_lengths[value.axis], tf.float32)
+
+        for _ in range(value.axis + 1, len(all_lengths)):
+            axis_lengths = tf.expand_dims(axis_lengths, -1)
 
         val = input_dictionary["input"].get_value()
         replacement = tf.zeros_like(val)

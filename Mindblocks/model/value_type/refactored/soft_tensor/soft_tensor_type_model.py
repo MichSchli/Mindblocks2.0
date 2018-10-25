@@ -57,8 +57,6 @@ class SoftTensorTypeModel:
 
     def create_from_tensorflow_output(self, tensorflow_output):
         if self.tf_output_manager is None:
-            print(self)
-            print(self.string_type)
             self.tf_output_manager = SoftTensorTfOutputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
 
         value = self.initialize_value_model()
@@ -67,8 +65,6 @@ class SoftTensorTypeModel:
 
     def format_tensorflow_value_for_output(self, tensorflow_value):
         if self.tf_output_manager is None:
-            print(self)
-            print(self.string_type)
             self.tf_output_manager = SoftTensorTfOutputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
 
         return self.tf_output_manager.format_for_output(tensorflow_value)
@@ -100,6 +96,9 @@ class SoftTensorTypeModel:
 
     def get_dimensions(self):
         return self.dimensions
+
+    def get_soft_by_dimensions(self):
+        return self.soft_by_dimensions
 
     def add_dimension(self, index, dimension, is_soft=False):
         if index >= 0:

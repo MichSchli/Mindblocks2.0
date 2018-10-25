@@ -38,6 +38,10 @@ class Batcher(ComponentTypeModel):
 
         data_type.set_dimension(0, None)
 
+        for idx, is_soft in enumerate(data_type.get_soft_by_dimensions()):
+            if is_soft:
+                data_type.set_dimension(idx, None)
+
         return {"output": data_type}
 
     def has_batches(self, value, previous_values, mode):

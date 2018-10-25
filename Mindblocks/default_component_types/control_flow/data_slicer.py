@@ -34,11 +34,11 @@ class DataSlicer(ComponentTypeModel):
         output_type = input_types["input"].copy()
         for i, dim_correction in enumerate(value.get_dim_corrections()):
             if dim_correction == "unknown":
-                output_type.set_dim(i, None)
+                output_type.set_dimension(i, None)
             elif dim_correction == "singleton":
-                output_type.remove_dim(i)
+                output_type.delete_dimension(i)
             elif dim_correction is not None:
-                output_type.set_dim(i, dim_correction)
+                output_type.set_dimension(i, dim_correction)
 
         return {"output": output_type}
 
@@ -60,12 +60,14 @@ class DataSlicerValue(ExecutionComponentValueModel):
                     parts[0] = int(parts[0]) if parts[0] else 0
                     parts[1] = int(parts[1]) if parts[1] else -1
 
+                    print(parts)
+
                     python_slices.append(slice(parts[0], 1, parts[1]))
 
-                    if parts[0] == 0 and parts[1] == -1:
-                        self.dim_corrections.append(None)
-                    else:
+                    if parts[0] < 0 or parts[1] < 0:
                         self.dim_corrections.append("unknown")
+                    else:
+                        self.dim_corrections.append(parts[1] - parts[0])
 
 
             self.slices = python_slices

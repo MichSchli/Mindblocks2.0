@@ -87,8 +87,11 @@ class Concat(ComponentTypeModel):
 
         output = input_types["left"].copy()
 
-        left_dim = 1 if input_types["left"].is_scalar() else  input_types["left"].get_dimension(-1)
-        right_dim = 1 if input_types["right"].is_scalar() else  input_types["right"].get_dimension(-1)
+        print(input_types["left"].get_dimensions())
+        print(input_types["right"].get_dimensions())
+
+        left_dim = 1 if input_types["left"].is_scalar() else input_types["left"].get_dimension(-1)
+        right_dim = 1 if input_types["right"].is_scalar() else input_types["right"].get_dimension(-1)
 
         output.set_dimension(-1, left_dim + right_dim)
 

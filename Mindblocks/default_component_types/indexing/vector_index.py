@@ -6,6 +6,8 @@ import numpy as np
 from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
 import tensorflow as tf
 
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+
 
 class VectorIndex(ComponentTypeModel):
     name = "VectorIndex"
@@ -28,20 +30,20 @@ class VectorIndex(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
 
-        output_models["index"].assign(value.get_index())
-        output_models["vectors"].assign(value.get_vectors())
+        output_models["index"].assign(value.get_index(), length_list=None)
+        output_models["vectors"].assign(value.get_vectors(), length_list=None)
 
         return output_models
 
     def initialize(self, input_dictionary, value, output_value_models, tensorflow_session_model):
         if value.get_vectors() is None:
             value.initialize_vectors()
-        output_value_models["vectors"].assign(value.get_vectors())
+        output_value_models["vectors"].assign(value.get_vectors(), length_list=None)
 
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        vector_model = TensorTypeModel("float", [None, value.get_width()])
+        vector_model = SoftTensorTypeModel([None, value.get_width()], string_type="float")
         return {"index": IndexTypeModel(),
                 "vectors": vector_model}
 

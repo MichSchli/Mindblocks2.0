@@ -4,6 +4,9 @@ import tensorflow as tf
 
 import tensorflow_probability as tfp
 
+from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+
+
 class VariationalGaussianConditionalPrior(ComponentTypeModel):
 
     name = "VariationalGaussianConditionalPrior"
@@ -28,7 +31,7 @@ class VariationalGaussianConditionalPrior(ComponentTypeModel):
             sigma = tf.nn.softplus(sigma)
             value.set_prior(mu, sigma)
             output = value.get_prior().sample()
-            output_models["output"].assign(output)
+            output_models["output"].assign(output, length_list=None)
         else:
             mu, sigma = tf.split(input_dictionary["input"].get_value(), 2, axis=-1)
             prior_mu, prior_sigma = tf.split(input_dictionary["prior_input"].get_value(), 2, axis=-1)
@@ -37,14 +40,15 @@ class VariationalGaussianConditionalPrior(ComponentTypeModel):
             value.set_posterior(mu, sigma)
             value.set_prior(prior_mu, prior_sigma)
             encoder = value.get_posterior().sample()
-            output_models["output"].assign(encoder)
+            output_models["output"].assign(encoder, length_list=None)
 
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        inner_dim = input_types["prior_input"].get_inner_dim() / 2
+        inner_dim = input_types["prior_input"].get_dimension(-1) / 2
+        batch_size = input_types["prior_input"].get_dimension(0)
         value.set_dim(inner_dim)
-        output_type = TensorTypeModel("float", [None, value.dim])
+        output_type = SoftTensorTypeModel([batch_size, value.dim], string_type="float")
 
         return {"output": output_type}
 

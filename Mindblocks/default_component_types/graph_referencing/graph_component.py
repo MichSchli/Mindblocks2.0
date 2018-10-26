@@ -1,6 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-
+import numpy as np
 
 class GraphComponent(ComponentTypeModel):
 
@@ -26,7 +26,7 @@ class GraphComponent(ComponentTypeModel):
         outputs = value.run_graph()
 
         for k,v in outputs.items():
-            output_models[k].assign(v, length_list=None)
+            output_models[k].assign(np.array(v), length_list=None)
 
         return output_models
 

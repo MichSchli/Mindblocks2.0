@@ -27,8 +27,8 @@
 
         <component name="relation_reader" type="ListReader">
             <file_path>$data_folder/$mode_folder/all_relations.txt</file_path>
-            <columns>string,string,string,string</columns>
-            <separator>\t</separator>
+            <separators>\n\n|\n|\t</separators>
+            <soft_dimensions>1</soft_dimensions>
         </component>
 
         <component name="batch_generator" type="BatchGenerator">
@@ -158,14 +158,22 @@
                 <target socket="vectors">relation_embedding_lookup</target>
         </edge>
 
+        <component name="score_dim_expander" type="AddDimensions" language="tensorflow">
+            <dim_changes>-1:1</dim_changes>
+        </component>
+        <edge cast="float">
+                <source socket="output">score_slicer</source>
+                <target socket="input">score_dim_expander</target>
+        </edge>
+
         <component name="rel_concat" type="Concat" language="tensorflow">
         </component>
         <edge>
                 <source socket="output">relation_embedding_lookup</source>
                 <target socket="left">rel_concat</target>
         </edge>
-        <edge cast="float">
-                <source socket="output">score_slicer</source>
+        <edge>
+                <source socket="output">score_dim_expander</source>
                 <target socket="right">rel_concat</target>
         </edge>
 
@@ -209,6 +217,14 @@
                 <target socket="input">encoder</target>
         </edge>
 
+        <component name="encoder_dim_expander" type="AddDimensions" language="tensorflow">
+            <dim_changes>1:1</dim_changes>
+        </component>
+        <edge>
+                <source socket="final_state">encoder</source>
+                <target socket="input">encoder_dim_expander</target>
+        </edge>
+
         <component name="end_concat" type="Concat" language="tensorflow">
         </component>
         <edge>
@@ -216,7 +232,7 @@
                 <target socket="left">end_concat</target>
         </edge>
         <edge>
-                <source socket="final_state">encoder</source>
+                <source socket="output">encoder_dim_expander</source>
                 <target socket="right">end_concat</target>
         </edge>
 

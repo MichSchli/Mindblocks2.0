@@ -17,11 +17,11 @@ class ListNegativeSampler(ComponentTypeModel):
         if "is_gold_column" in value_dictionary:
             value.set_gold_column(int(value_dictionary["is_gold_column"][0][0]))
 
-        if "sample_rate" in value_dictionary:
-            value.set_sample_rate(int(value_dictionary["sample_rate"][0][0]))
+        if "pos_sample_rate" in value_dictionary:
+            value.set_pos_sample_rate(int(value_dictionary["pos_sample_rate"][0][0]))
 
-        if "use_all_golds" in value_dictionary:
-            value.should_use_all_golds(value_dictionary["use_all_golds"][0][0] == "True")
+        if "neg_sample_rate" in value_dictionary:
+            value.set_neg_sample_rate(int(value_dictionary["neg_sample_rate"][0][0]))
 
         return value
 
@@ -53,6 +53,9 @@ class ListNegativeSampler(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value, mode):
         o = input_types["list"].copy()
+
+        sample_size = value.pos_sample_rate + value.neg_sample_rate
+
         return {"output": o}
 
 
@@ -60,14 +63,14 @@ class ListNegativeSamplerValue(ExecutionComponentValueModel):
 
     def __init__(self):
         self.gold_column = -1
-        self.sample_rate = 1
-        self.use_all_golds = True
+        self.pos_sample_rate = 1
+        self.neg_sample_rate = 1
 
     def set_gold_column(self, idx):
         self.gold_column = idx
 
-    def set_sample_rate(self, rate):
-        self.sample_rate = rate
+    def set_neg_sample_rate(self, rate):
+        self.neg_sample_rate = rate
 
-    def should_use_all_golds(self, b):
-        self.use_all_golds = b
+    def set_pos_sample_rate(self, rate):
+        self.neg_sample_rate = rate

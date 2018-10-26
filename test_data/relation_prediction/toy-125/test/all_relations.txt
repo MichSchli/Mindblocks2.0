@@ -179,6 +179,7 @@ alice	0.8	founded.1	founded.1.inverse	False
 alice	0.8	meet.1	meet.2.inverse	False
 
 
+
 dennis	0.5	founder.of.2	founder.of.1	True
 dennis	0.5	founded.1	founded.2.inverse	True
 dennis	0.5	sell.1	sell.2.inverse	True
@@ -803,6 +804,7 @@ alice	0.6	meet.2	meet.in.inverse	False
 alice	0.6	founded.1	founded.in.inverse	False
 alice	0.6	meet.2	meet.2.inverse	False
 alice	0.6	founded.1	founded.1.inverse	False
+
 
 
 fay	1.0	born.in.1	born.in.2	True

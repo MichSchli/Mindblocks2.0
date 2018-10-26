@@ -33,8 +33,8 @@ class IndexIntoList(ComponentTypeModel):
     def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["indexes"].copy()
 
-        output_type.set_data_type(input_types["list"].data_type)
-        output_type.extend_dims(input_types["list"].get_inner_dim())
+        output_type.set_data_type(input_types["list"].get_data_type())
+        output_type.add_dimension(-1, input_types["list"].get_dimension(-1))
 
         return {"output": output_type}
 

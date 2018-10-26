@@ -15,30 +15,36 @@ class DataSlicer(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         inp_val = input_dictionary["input"]
-        if inp_val.is_value_type("list"):
+        if value.language == "python":
             val = inp_val.get_value()
-            #TODO: This is completely wrong
+            print(val[3])
+            lengths = inp_val.get_lengths()[:]
 
-            out = []
-            for i in range(len(val)):
-                out.append([None]*len(val[i]))
-                for j in range(len(val[i])):
-                    out[i][j] = val[i][j][value.slices[2]]
 
-            output_value_models["output"].assign_with_lengths(out, inp_val.get_lengths(), language="python")
+            val = val[value.slices]
+
+            deleted_dims = 0
+            for i, dim_correction in enumerate(value.get_dim_corrections()):
+                if dim_correction == "singleton":
+                    del lengths[i - deleted_dims]
+                    deleted_dims + 1
+
+            output_value_models["output"].assign(val, length_list = lengths)
         else:
             exit()
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["input"].copy()
+        deleted_dims = 0
         for i, dim_correction in enumerate(value.get_dim_corrections()):
             if dim_correction == "unknown":
-                output_type.set_dimension(i, None)
+                output_type.set_dimension(i - deleted_dims, None)
             elif dim_correction == "singleton":
-                output_type.delete_dimension(i)
+                output_type.delete_dimension(i - deleted_dims)
+                deleted_dims + 1
             elif dim_correction is not None:
-                output_type.set_dimension(i, dim_correction)
+                output_type.set_dimension(i - deleted_dims, dim_correction)
 
         return {"output": output_type}
 
@@ -57,17 +63,18 @@ class DataSlicerValue(ExecutionComponentValueModel):
                     self.dim_corrections.append("singleton")
                 else:
                     parts = [p.strip() for p in slice_part.split(":")]
-                    parts[0] = int(parts[0]) if parts[0] else 0
-                    parts[1] = int(parts[1]) if parts[1] else -1
+                    parts[0] = int(parts[0]) if parts[0] else None
+                    parts[1] = int(parts[1]) if parts[1] else None
 
-                    print(parts)
+                    python_slices.append(slice(parts[0], parts[1], 1))
 
-                    python_slices.append(slice(parts[0], 1, parts[1]))
+                    firstdim_idx = parts[0] if parts[0] else 0
+                    lastdim_idx = parts[1] if parts[1] else -1
 
-                    if parts[0] < 0 or parts[1] < 0:
+                    if lastdim_idx < 0:
                         self.dim_corrections.append("unknown")
                     else:
-                        self.dim_corrections.append(parts[1] - parts[0])
+                        self.dim_corrections.append(lastdim_idx - firstdim_idx)
 
 
             self.slices = python_slices

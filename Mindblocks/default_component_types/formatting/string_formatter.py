@@ -1,6 +1,7 @@
+from Mindblocks.helpers.soft_tensors.soft_tensor_helper import SoftTensorHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-
+import numpy as np
 
 class StringFormatter(ComponentTypeModel):
 
@@ -13,20 +14,31 @@ class StringFormatter(ComponentTypeModel):
         return StringFormatterValue(value_dictionary["action"][0][0])
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        out = []
-
+        sth = SoftTensorHelper()
         first_val = list(input_dictionary.values())[0].get_value()
-        for i in range(len(first_val)):
-            out.append([None] * len(first_val[i]))
-            for j in range(len(first_val[i])):
-                out[i][j] = value.action[:]
+        first_lengths = list(input_dictionary.values())[0].get_lengths()
 
-        for k,v in input_dictionary.items():
-            for i in range(len(v.get_value())):
-                for j in range(len(v.get_value()[i])):
-                    out[i][j] = out[i][j].replace("["+k+"]", str(v.get_value()[i][j]))
+        initialize_fn = lambda x: value.action[:]
+        result = sth.transform(first_val,
+                               first_lengths,
+                               initialize_fn,
+                               new_type=np.object,
+                               transform_dim=-1)
 
-        output_models["output"].assign_with_lengths(out, list(input_dictionary.values())[0].get_lengths(), language="python")
+
+
+        for k, v in input_dictionary.items():
+            second_tensor = v.get_value()
+
+            transform_fn = lambda x, y: x.replace("[" + k + "]", y)
+            result = sth.transform_combine(result,
+                                           second_tensor,
+                                           first_lengths,
+                                           transform_fn,
+                                           new_type=np.object,
+                                           transform_dim=-1)
+
+        output_models["output"].assign(result, length_list=first_lengths)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):

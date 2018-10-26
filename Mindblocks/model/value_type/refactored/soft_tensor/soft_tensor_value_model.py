@@ -14,13 +14,18 @@ class SoftTensorValueModel:
     soft_length_tensors = None
 
     tensor = None
-    length_list = None
 
-    def __init__(self, dimensions, string_type, max_lengths, soft_by_dimension):
+    language = None
+
+    def __init__(self, dimensions, string_type, max_lengths, soft_by_dimension, language):
         self.dimensions = dimensions
         self.string_type = string_type
         self.max_lengths = max_lengths
         self.soft_by_dimension = soft_by_dimension
+        self.language = language
+
+    def get_language(self):
+        return self.language
 
     def get_data_type(self):
         return self.string_type
@@ -61,7 +66,7 @@ class SoftTensorValueModel:
             return len(python_representation)
         else:
             inner_max_lengths = [self.recursive_max_length_retrieval(x, needed_depth-1) for x in python_representation]
-            return max(inner_max_lengths)
+            return max(inner_max_lengths) if len(inner_max_lengths) > 0 else 0
 
     def initial_assign(self, python_representation):
         shape_initializer = [None] * len(self.max_lengths)
@@ -88,8 +93,26 @@ class SoftTensorValueModel:
                 self.soft_length_tensors[dim_idx] = numpy_representation
 
     def assign(self, tensor, length_list, chop_dimensions=False):
-        #Stupid sanity check:
-        tensor.shape
+        # Sanity check:
+
+        if self.get_language() == "python":
+            n_tensor_dims = len(tensor.shape)
+        else:
+            n_tensor_dims = len(tensor.get_shape().as_list())
+        n_required_dims = len(self.get_dimensions())
+
+        if n_tensor_dims != n_required_dims:
+            print("TENSOR DIMS OFF: ")
+            print(n_tensor_dims)
+            print(n_required_dims)
+            exit()
+        if length_list is not None:
+            n_length_dims = len(length_list)
+            if n_length_dims != n_required_dims:
+                print("LENGTH DIMS OFF: ")
+                print(n_length_dims)
+                print(n_required_dims)
+                exit()
 
         self.tensor = tensor
 
@@ -114,23 +137,38 @@ class SoftTensorValueModel:
         return self.tensor
 
     def get_lengths(self):
+        if self.soft_length_tensors is None:
+            return [None] * len(self.dimensions)
+
         return self.soft_length_tensors
 
     def get_max_lengths(self):
         return self.max_lengths
 
     def cast(self, new_type):
+        sth = SoftTensorHelper()
         if new_type == "float":
-            new_value_model = SoftTensorValueModel(self.dimensions, "float", self.max_lengths, self.soft_by_dimension)
-            new_value_model.assign(np.array(self.tensor).astype(np.float32), length_list=self.soft_length_tensors)
+            apply_fn = lambda x: float(x)
+            result = sth.transform(self.tensor,
+                                   self.soft_length_tensors,
+                                   apply_fn,
+                                   new_type=np.float32,
+                                   transform_dim=-1)
         if new_type == "int":
-            new_value_model = SoftTensorValueModel(self.dimensions, "int", self.max_lengths, self.soft_by_dimension)
-            new_value_model.assign(np.array(self.tensor).astype(np.int32), length_list=self.soft_length_tensors)
+            apply_fn = lambda x: int(x)
+            result = sth.transform(self.tensor,
+                                   self.soft_length_tensors,
+                                   apply_fn,
+                                   new_type=np.int32,
+                                   transform_dim=-1)
+
+        new_value_model = SoftTensorValueModel(self.dimensions, new_type, self.max_lengths, self.soft_by_dimension, language=self.language)
+        new_value_model.assign(result, length_list=self.soft_length_tensors)
 
         return new_value_model
 
     def get_tensorflow_output_tensors(self):
-        return [self.tensor, self.length_list]
+        return [self.tensor, self.soft_length_tensors]
 
     def apply_dropouts(self, dropout_rate, dropout_dim=None):
         keep_prob = 1 - float(dropout_rate)

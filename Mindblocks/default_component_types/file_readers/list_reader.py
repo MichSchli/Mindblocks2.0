@@ -79,7 +79,10 @@ class ListReaderValue(ExecutionComponentValueModel):
         this_separator = separator_list[0]
         next_separators = separator_list[1:]
 
-        parts = text.split(this_separator)
+        if text == "":
+            parts = []
+        else:
+            parts = text.split(this_separator)
 
         if len(next_separators) == 0:
             return parts
@@ -104,7 +107,8 @@ class ListReaderValue(ExecutionComponentValueModel):
             largest = [0] * remaining_levels
 
             for j in range(remaining_levels):
-                largest[j] = max([inner[j] for inner in inner_dim_list])
+                level_list = [inner[j] for inner in inner_dim_list]
+                largest[j] = max(level_list) if len(level_list) > 0 else 0
 
             return this_level_dim + largest
 

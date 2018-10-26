@@ -52,6 +52,58 @@ class SoftTensorHelper:
 
         return new_tensor
 
+    def recursive_transform_combine(self, first_tensor, second_tensor, output_tensor, current_prefix, length_tensor_list, stop_dim, transform_fn):
+        """
+        Recursively traverses the tensor to apply the transformation.
+
+        :param first_tensor:
+        :param second_tensor:
+        :param output_tensor:
+        :param current_prefix:
+        :param length_tensor_list:
+        :param stop_dim:
+        :param transform_fn:
+        :return:
+        """
+        local_first_representation = self.extract_local_subtensor(first_tensor, current_prefix)
+        local_second_representation = self.extract_local_subtensor(second_tensor, current_prefix)
+
+        if len(current_prefix) == stop_dim or len(current_prefix) - len(first_tensor.shape) -1 == stop_dim:
+            output_tensor[current_prefix] = transform_fn(local_first_representation, local_second_representation)
+        else:
+            local_length = length_tensor_list[len(current_prefix)]
+            if local_length is not None:
+                for idx in current_prefix:
+                    local_length = local_length[idx]
+            else:
+                local_length = local_first_representation.shape[0]
+
+            for inner_elem_idx in range(local_length):
+                self.recursive_transform_combine(first_tensor, second_tensor, output_tensor, current_prefix + (inner_elem_idx,), length_tensor_list, stop_dim, transform_fn)
+
+    def transform_combine(self, first_tensor, second_tensor, length_tensor_list, transform, new_type=np.float32, transform_dim=-1):
+        """
+        Applies a transformation in the form of a lambda term to every pair of elements from two soft tensors.
+
+        :param first_tensor: The full first input tensor in the form of a numpy array.
+        :param second_tensor: The full second input tensor in the form of a numpy array.
+        :param length_tensor_list: The list of length tensors associated with the input tensor.
+        :param transform: The lambda transform to apply.
+        :param new_type: The numpy type of the elements after transformation. Defaults to float.
+        :param transform_dim: The dimension along which to apply the transformation.
+        :return: A transformed tensor with the same soft dimensions as the input tensor.
+        """
+
+        if transform_dim == -1:
+            new_dims = first_tensor.shape
+        else:
+            new_dims = first_tensor.shape[:transform_dim + 1]
+        new_tensor = np.zeros(new_dims, dtype=new_type)
+
+        self.recursive_transform_combine(first_tensor, second_tensor, new_tensor, (), length_tensor_list, transform_dim, transform)
+
+        return new_tensor
+
     def recursive_python_list_build(self, input_tensor, length_tensor_list, recursion_prefix):
         """
         Recursively builds a python list-of-lists representation for a soft tensor.

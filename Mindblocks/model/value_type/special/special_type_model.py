@@ -6,7 +6,7 @@ class SpecialTypeModel:
 
     name = None
 
-    def initialize_value_model(self):
+    def initialize_value_model(self, language=None):
         return SpecialValueModel()
 
     def create_from_tensorflow_output(self, output_tensors):

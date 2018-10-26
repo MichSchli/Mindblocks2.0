@@ -1,6 +1,7 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_value_model import SoftTensorValueModel
+import numpy as np
 
 
 class BasicRecurrenceComponent(ComponentTypeModel):
@@ -33,7 +34,7 @@ class BasicRecurrenceComponent(ComponentTypeModel):
         outputs = value.assign_and_run(input_dictionary)
 
         for k,v in outputs.items():
-            output_models[k].assign(v, length_list=None)
+            output_models[k].assign(np.array(v), length_list=None)
 
         return output_models
 

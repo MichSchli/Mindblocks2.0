@@ -40,7 +40,7 @@ class Batcher(ComponentTypeModel):
 
         for idx, is_soft in enumerate(data_type.get_soft_by_dimensions()):
             if is_soft:
-                data_type.set_dimension(idx, None)
+                data_type.set_dimension
 
         return {"output": data_type}
 

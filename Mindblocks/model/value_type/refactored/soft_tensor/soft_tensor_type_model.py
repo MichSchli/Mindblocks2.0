@@ -23,22 +23,22 @@ class SoftTensorTypeModel:
             self.soft_by_dimensions = [False for _ in self.dimensions]
 
         self.set_data_type(string_type)
-
         self.cached_casts = {}
 
-    def initialize_value_model(self):
+    def initialize_value_model(self, language):
         tensor_max_lengths = [None for _ in self.soft_by_dimensions]
 
         return SoftTensorValueModel(self.dimensions,
                                     self.string_type,
                                     tensor_max_lengths,
-                                    self.soft_by_dimensions)
+                                    self.soft_by_dimensions,
+                                    language)
 
     def get_tensorflow_placeholder(self):
         if self.placeholder_manager is None:
             self.placeholder_manager = SoftTensorTfInputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
 
-        placeholder_value = self.initialize_value_model()
+        placeholder_value = self.initialize_value_model(language="tensorflow")
         self.placeholder_manager.assign_placeholders(placeholder_value)
 
         return placeholder_value
@@ -59,7 +59,7 @@ class SoftTensorTypeModel:
         if self.tf_output_manager is None:
             self.tf_output_manager = SoftTensorTfOutputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
 
-        value = self.initialize_value_model()
+        value = self.initialize_value_model(language="python")
         self.tf_output_manager.assign_tensorflow_output(value, tensorflow_output)
         return value
 
@@ -96,6 +96,21 @@ class SoftTensorTypeModel:
 
     def get_dimensions(self):
         return self.dimensions
+
+    def dimension_to_str(self, idx):
+        dim = self.get_dimensions()[idx]
+        is_soft = self.get_soft_by_dimensions()[idx]
+
+        soft_suffix =  "(s)" if is_soft else ""
+
+        if dim is not None:
+            return str(dim) + soft_suffix
+        else:
+            return "U" + soft_suffix
+
+    def get_dimension_string(self):
+        dimensions_to_str = [self.dimension_to_str(i) for i in range(len(self.get_dimensions()))]
+        return ",".join(dimensions_to_str)
 
     def get_soft_by_dimensions(self):
         return self.soft_by_dimensions

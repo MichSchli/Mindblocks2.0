@@ -210,6 +210,14 @@
                 <target socket="input">encoder</target>
         </edge>
 
+        <component name="encoder_dim_expander" type="AddDimensions" language="tensorflow">
+            <dim_changes>1:1</dim_changes>
+        </component>
+        <edge>
+                <source socket="final_state">encoder</source>
+                <target socket="input">encoder_dim_expander</target>
+        </edge>
+
         <component name="end_concat" type="Concat" language="tensorflow">
             <mark socket="output">prediction</mark>
         </component>
@@ -218,7 +226,7 @@
                 <target socket="left">end_concat</target>
         </edge>
         <edge>
-                <source socket="final_state">encoder</source>
+                <source socket="output">encoder_dim_expander</source>
                 <target socket="right">end_concat</target>
         </edge>
     </canvas>

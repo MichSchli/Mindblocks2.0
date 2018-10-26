@@ -42,16 +42,24 @@ class MultilayerPerceptron(ComponentTypeModel):
             out_shape = tf.concat([in_shape[:-1], [value.dims[-1]]], axis=-1)
         post_value = tf.reshape(post_value, out_shape)
 
-        print(post_value)
+        lengths = input_dictionary["input"].get_lengths()[:]
+        if value.dims[-1] == 1:
+            lengths = lengths[:-1]
 
-        lengths = input_dictionary["input"].get_lengths()
         output_value_models["output"].assign(post_value, length_list=lengths)
 
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["input"].copy()
-        output_type.set_dimension(-1, value.dims[-1])
+        print("MLP DIMS")
+        print(value.dims)
+        if value.dims[-1] == 1:
+            output_type.delete_dimension(-1)
+        else:
+            output_type.set_dimension(-1, value.dims[-1])
+
+        print(output_type.get_dimensions())
         return {"output": output_type}
 
 

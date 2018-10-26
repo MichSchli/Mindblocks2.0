@@ -20,7 +20,7 @@ class Mean(ComponentTypeModel):
         all_lengths = input_dictionary["input"].get_lengths()
         axis_lengths = tf.cast(all_lengths[value.axis], tf.float32)
 
-        for _ in range(value.axis + 1, len(all_lengths)):
+        for _ in range(value.axis +1 , len(all_lengths)):
             axis_lengths = tf.expand_dims(axis_lengths, -1)
 
         val = input_dictionary["input"].get_value()
@@ -30,6 +30,7 @@ class Mean(ComponentTypeModel):
         zeroed_out = sth.replace_elements_outside_lengths(val, all_lengths, replacement)
 
         summed_dim = tf.reduce_sum(zeroed_out, axis=value.axis)
+
         mean_dim = summed_dim / axis_lengths
 
         old_lengths = input_dictionary["input"].get_lengths()

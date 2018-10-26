@@ -42,7 +42,8 @@ class BatchGenerator(ComponentTypeModel):
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        return {"batch": SoftTensorTypeModel([value.batch_size], string_type="int")}
+        return {"batch": SoftTensorTypeModel([value.batch_size],
+                                             string_type="int")}
 
     def has_batches(self, value, previous_values, mode):
         return value.has_unyielded_batches(mode)

@@ -19,9 +19,6 @@ class IndexIntoSequence(ComponentTypeModel):
 
         index_lengths = input_dictionary["indexes"].get_lengths()
 
-        print(indexes)
-        print(index_lengths)
-
         index_specific_lengths = index_lengths[1]
 
         out = [None]*indexes.shape[0]
@@ -33,8 +30,6 @@ class IndexIntoSequence(ComponentTypeModel):
 
         output_value_models["output"].initial_assign(out)
 
-        print(output_value_models["output"].get_dimensions())
-
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -42,10 +37,6 @@ class IndexIntoSequence(ComponentTypeModel):
 
         output_type.set_data_type(input_types["sequence"].get_data_type())
         output_type.set_dimension(-1, input_types["sequence"].get_dimension(-1))
-
-        print(input_types["indexes"].get_dimensions())
-        print(input_types["sequence"].get_dimensions())
-        print(output_type.get_dimensions())
 
         return {"output": output_type}
 

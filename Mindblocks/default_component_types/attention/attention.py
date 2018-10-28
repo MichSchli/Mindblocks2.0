@@ -76,7 +76,7 @@ class AttentionComponent(ComponentTypeModel):
             output = value.output_transform.transform(output, mode=mode)
             output = tf.nn.tanh(output)
 
-        return output, tf.squeeze(attention_weights)
+        return output, tf.squeeze(attention_weights, axis=[2, 3])
 
     def mask_attention_logits(self, attention_logits, lengths, score_mask_value):
         seq_mask = tf.sequence_mask(

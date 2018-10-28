@@ -34,8 +34,9 @@ class ScheduledSamplingRnnComponent(ComponentTypeModel):
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         outputs, lengths = value.assign_and_run(input_dictionary, mode)
 
+        # TODO: Locked into vector output
         for k,v in outputs.items():
-            output_models[k].assign(v, length_list = lengths)
+            output_models[k].assign(v, length_list=[None,lengths,None])
 
         return output_models
 

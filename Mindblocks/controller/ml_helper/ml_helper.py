@@ -71,7 +71,8 @@ class MlHelper:
         predictions = []
 
         while self.prediction_function.has_batches("test"):
-            predictions.extend(self.prediction_function.execute()[0])
+            p = self.prediction_function.execute()[0]
+            predictions.extend(p)
 
         return predictions
 

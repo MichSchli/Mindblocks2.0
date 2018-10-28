@@ -24,7 +24,7 @@ class ElmoEmbedding(ComponentTypeModel):
 
         embeddings = elmo(inputs=inputs, signature="tokens", as_dict=True)
 
-        output_models["word_embeddings"].assign(embeddings["elmo"], length_list=all_lengths)
+        output_models["word_embeddings"].assign(embeddings["elmo"], length_list=all_lengths + [None])
         output_models["sentence_embedding"].assign(embeddings["default"], length_list=None)
 
         return output_models

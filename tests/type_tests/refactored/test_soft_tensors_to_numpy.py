@@ -7,7 +7,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testScalarToNumpy(self):
         tensor_type = SoftTensorTypeModel([])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign(5)
 
@@ -17,7 +17,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testListToNumpy(self):
         tensor_type = SoftTensorTypeModel([None])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([5,5, 2,3])
 
@@ -28,7 +28,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testArrayToNumpy(self):
         tensor_type = SoftTensorTypeModel([2,2])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([[5,5],[2,3]])
 
@@ -39,7 +39,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testArrayToNumpyInt(self):
         tensor_type = SoftTensorTypeModel([2,2], string_type="int")
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([[5,5],[2,3]])
 
@@ -50,7 +50,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testArrayToNumpyString(self):
         tensor_type = SoftTensorTypeModel([2,2], string_type="string")
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([["foo", "bar"],["baz", "tes"]])
 
@@ -61,7 +61,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testSoftArrayToNumpy(self):
         tensor_type = SoftTensorTypeModel([3,4], soft_by_dimensions=[False, True])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([[5,5],[2], [1,2,3,4]])
 
@@ -76,7 +76,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testSoftArrayToNumpyInt(self):
         tensor_type = SoftTensorTypeModel([3,4], string_type="int", soft_by_dimensions=[False, True])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([[5,5],[2], [1,2,3,4]])
 
@@ -91,7 +91,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testSoftArrayToNumpyInitialDimUnknown(self):
         tensor_type = SoftTensorTypeModel([None,None], soft_by_dimensions=[False, True])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([[5,5],[2], [1,2,3,4]])
 
@@ -106,7 +106,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testSoftArrayToNumpyInitialDimPartiallyKnown(self):
         tensor_type = SoftTensorTypeModel([None,4], soft_by_dimensions=[False, True])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([[5,5],[2], [1,2,3,4]])
 
@@ -121,7 +121,7 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
 
     def testSoftArrayToNumpyInitialDimTooLarge(self):
         tensor_type = SoftTensorTypeModel([None,10], soft_by_dimensions=[False, True])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         tensor_value.initial_assign([[5,5],[2], [1,2,3,4]])
 

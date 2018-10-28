@@ -2,7 +2,7 @@ from Mindblocks.model.component_type.component_type_model import ComponentTypeMo
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 import numpy as np
-
+import tensorflow as tf
 
 class Constant(ComponentTypeModel):
 
@@ -11,11 +11,17 @@ class Constant(ComponentTypeModel):
     languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return ConstantValue(value_dictionary["value"][0][0],
+        val = ConstantValue(value_dictionary["value"][0][0],
                              value_dictionary["type"][0][0])
+        val.language = language
+        return val
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        output_value_models["output"].assign(np.array(value.value), length_list=None)
+        const = np.array(value.value)
+        if value.language == "tensorflow":
+            const = tf.constant(const, dtype=value.get_tf_type())
+
+        output_value_models["output"].assign(const, length_list=None)
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -50,3 +56,11 @@ class ConstantValue(ExecutionComponentValueModel):
         elif value_type == "int":
             self.value = int(value)
             self.value_type = value_type
+
+    def get_tf_type(self):
+        if self.value_type == "float":
+            return tf.float32
+        elif self.value_type == "int":
+            return tf.int32
+        elif self.value_type == "string":
+            return tf.string

@@ -124,7 +124,8 @@ class BasicRecurrenceComponentValue(ExecutionComponentValueModel):
                     tensor_value_model = SoftTensorValueModel(feed.get_dimensions()[2:],
                                                               feed.get_data_type(),
                                                               feed.get_dimensions()[2:],
-                                                              [None for _ in feed.get_dimensions()[2:]])
+                                                              [None for _ in feed.get_dimensions()[2:]],
+                                                              language="python")
                     tensor_value_model.assign(token, length_list=None)
 
                     self.graph.enforce_value(socket_dec[0], socket_dec[1], tensor_value_model)

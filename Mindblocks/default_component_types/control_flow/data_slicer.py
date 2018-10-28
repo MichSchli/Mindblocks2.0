@@ -17,9 +17,7 @@ class DataSlicer(ComponentTypeModel):
         inp_val = input_dictionary["input"]
         if value.language == "python":
             val = inp_val.get_value()
-            print(val[3])
             lengths = inp_val.get_lengths()[:]
-
 
             val = val[value.slices]
 

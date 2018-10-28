@@ -47,7 +47,7 @@ class RnnHelper:
             if feed_type == "per_batch" and rnn_model.tiling_factor > 1:
                 parts = graph_input.split(":")
                 in_socket = rnn_model.inner_graph.get_in_socket(parts[0], parts[1])
-                value = in_socket.replaced_type.initialize_value_model()
+                value = in_socket.replaced_type.initialize_value_model("tensorflow")
 
                 input_value = input_dictionary[component_input].get_value()
                 input_lens = input_dictionary[component_input].get_lengths()

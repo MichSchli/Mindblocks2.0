@@ -1,6 +1,6 @@
 Starting training at iteration 0
-Validation at epoch 0: 0.3333333333333333
-Validation at epoch 20: 0.8333333333333334
+Validation at epoch 0: 0.30666666666666664
+Validation at epoch 20: 0.82
 Validation at epoch 40: 0.9733333333333334
-Validation at epoch 60: 0.9733333333333334
-Validation at epoch 80: 0.9733333333333334
+Validation at epoch 60: 0.98
+Validation at epoch 80: 0.98

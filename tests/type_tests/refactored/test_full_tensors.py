@@ -7,7 +7,7 @@ class TestTypeUsage(unittest.TestCase):
 
     def testCreateValuePreservesDimensions(self):
         tensor_type = SoftTensorTypeModel([5,7])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         dimensions = tensor_value.get_dimensions()
         lengths_by_dimension = tensor_value.get_lengths()
@@ -19,7 +19,7 @@ class TestTypeUsage(unittest.TestCase):
 
     def testCreateValuePreservesDimensionsWithPlaceholder(self):
         tensor_type = SoftTensorTypeModel([5,None,3])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         dimensions = tensor_value.get_dimensions()
         lengths_by_dimension = tensor_value.get_lengths()
@@ -31,7 +31,7 @@ class TestTypeUsage(unittest.TestCase):
 
     def testCreateValuePreservesDimensionsScalar(self):
         tensor_type = SoftTensorTypeModel([])
-        tensor_value = tensor_type.initialize_value_model()
+        tensor_value = tensor_type.initialize_value_model(language="python")
 
         dimensions = tensor_value.get_dimensions()
         lengths_by_dimension = tensor_value.get_lengths()

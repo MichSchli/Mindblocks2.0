@@ -50,12 +50,11 @@
                 <target socket="indexes">sentence_batcher</target>
         </edge>
 
-        <component name="relation_batcher" type="Batcher">
-            <lazy>True</lazy>
+        <component name="relation_batcher" type="Subsampler">
         </component>
         <edge>
                 <source socket="output">relation_reader</source>
-                <target socket="data">relation_batcher</target>
+                <target socket="tensor">relation_batcher</target>
         </edge>
         <edge>
                 <source socket="batch">batch_generator</source>
@@ -274,16 +273,32 @@
                 <target socket="input">argmax</target>
         </edge>
 
-        <component name="rel_chooser" type="IndexIntoList" language="python">
-            <mark socket="output">prediction</mark>
+        <component name="final_index_dim_expander" type="AddDimensions" language="tensorflow">
+            <dim_changes>1:1</dim_changes>
         </component>
         <edge>
-            <source socket="output">argmax</source>
+                <source socket="output">argmax</source>
+                <target socket="input">final_index_dim_expander</target>
+        </edge>
+
+        <component name="rel_chooser" type="Subsampler" language="python">
+        </component>
+        <edge>
+            <source socket="output">final_index_dim_expander</source>
             <target socket="indexes">rel_chooser</target>
         </edge>
         <edge>
             <source socket="output">string_formatter</source>
-            <target socket="list">rel_chooser</target>
+            <target socket="tensor">rel_chooser</target>
+        </edge>
+
+        <component name="output_squeeze" type="SqueezeDimensions" language="python">
+            <mark socket="output">prediction</mark>
+            <dims>-1</dims>
+        </component>
+        <edge>
+                <source socket="output">rel_chooser</source>
+                <target socket="input">output_squeeze</target>
         </edge>
     </canvas>
 </block>

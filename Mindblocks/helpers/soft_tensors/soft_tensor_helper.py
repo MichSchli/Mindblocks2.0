@@ -184,6 +184,5 @@ class SoftTensorHelper:
 
                 mask = tf.tile(mask, target_dims)
 
-
                 input_tensor = tf.where(mask, input_tensor, replacement_tensor)
         return input_tensor

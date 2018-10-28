@@ -32,7 +32,7 @@ class LstmCell(ComponentTypeModel):
         new_h_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
         new_c_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
 
-        if execution_value.layers == 1:
+        if False:
             new_h_layers_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
             new_c_layers_type = SoftTensorTypeModel([batch_size, execution_value.get_final_cell_size()], string_type="float")
         else:

@@ -108,7 +108,7 @@ class RnnModel:
     def set_nths_input(self, n, value):
         in_socket = self.list_of_in_sockets[n]
         type = in_socket.replaced_type
-        value_model = type.initialize_value_model()
+        value_model = type.initialize_value_model(language="tensorflow")
         value_model.assign(value, length_list=None)
         in_socket.replace_value(value_model)
 

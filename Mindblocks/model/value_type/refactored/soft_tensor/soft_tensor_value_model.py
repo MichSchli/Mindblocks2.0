@@ -154,12 +154,28 @@ class SoftTensorValueModel:
                                    apply_fn,
                                    new_type=np.float32,
                                    transform_dim=-1)
-        if new_type == "int":
+
+        elif new_type == "int":
             apply_fn = lambda x: int(x)
             result = sth.transform(self.tensor,
                                    self.soft_length_tensors,
                                    apply_fn,
                                    new_type=np.int32,
+                                   transform_dim=-1)
+
+        elif new_type == "string":
+            apply_fn = lambda x: str(x)
+            result = sth.transform(self.tensor,
+                                   self.soft_length_tensors,
+                                   apply_fn,
+                                   new_type=np.object,
+                                   transform_dim=-1)
+        elif new_type == "bool":
+            apply_fn = lambda x: x == "True"
+            result = sth.transform(self.tensor,
+                                   self.soft_length_tensors,
+                                   apply_fn,
+                                   new_type=np.bool,
                                    transform_dim=-1)
 
         new_value_model = SoftTensorValueModel(self.dimensions, new_type, self.max_lengths, self.soft_by_dimension, language=self.language)

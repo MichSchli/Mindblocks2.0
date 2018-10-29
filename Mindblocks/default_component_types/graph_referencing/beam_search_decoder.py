@@ -54,12 +54,9 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
 
         output_models["predictions"].assign(decoded_sequences, length_list=[None, lengths])
 
+        # TODO: Hardcoded output shape
         for k,v in aux_out.items():
-            print("ASSIGN")
-            print(v)
-            output_models[k].assign(v, length_list=[None, lengths, None])
-
-        print(output_models)
+            output_models[k].assign(v, length_list=[None, lengths])
 
         return output_models
 
@@ -72,19 +69,11 @@ class BeamSearchDecoderComponent(ComponentTypeModel):
         rnn_helper.tile_batches(value.rnn_model, value.beam_width)
         rnn_helper.handle_input_types(value.rnn_model, input_types)
 
-        #value.assign_input_types(input_types)
         output_types = value.compute_types(mode)
 
         output_types["predictions"] = SoftTensorTypeModel([None, value.maximum_iterations],
                                                           string_type="int",
                                                           soft_by_dimensions=[False, True])
-        #output_types["predictions"] = SequenceBatchTypeModel("int", [], None, value.maximum_iterations)
-
-        print("===")
-
-        for k,v in output_types.items():
-            print(k)
-            print(v.get_dimensions())
 
         return output_types
 
@@ -331,7 +320,7 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         pred_stack = pred_stack[:max_length]
         decoded_sequences = tf.gather_nd(pred_stack, lookup)
 
-        decode_shape = tf.concat([[-1, self.rnn_model.batch_size * self.n_to_output], tf.shape(tf.squeeze(decoded_sequences))[3:]], axis=-1)
+        decode_shape = tf.concat([[-1, self.rnn_model.batch_size * self.n_to_output], tf.shape(decoded_sequences)[3:]], axis=-1)
         transpose_shape = tf.concat([[1,0], tf.range(2, tf.shape(decode_shape)[0])], axis=-1)
         decoded_sequences = tf.transpose(
             tf.reshape(decoded_sequences, decode_shape), transpose_shape)

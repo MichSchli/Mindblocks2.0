@@ -89,6 +89,8 @@ class Concat(ComponentTypeModel):
             if value.retrieve_lengths[i] == "right":
                 lengths[i] = right_lengths[i]
 
+        print(result)
+
         output_value_models["output"].assign(result, length_list=lengths)
         return output_value_models
 
@@ -98,6 +100,9 @@ class Concat(ComponentTypeModel):
 
         left_dimensions = left_type.get_dimensions()
         right_dimensions = right_type.get_dimensions()
+
+        print(left_dimensions)
+        print(right_dimensions)
 
         left_soft = left_type.get_soft_by_dimensions()
         right_soft = right_type.get_soft_by_dimensions()

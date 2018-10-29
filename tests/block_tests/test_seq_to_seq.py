@@ -29,37 +29,6 @@ class TestSeqToSeqBlocks(unittest.TestCase):
         self.assertEqual(5.17, output[0])
         self.assertEqual(2.98, output[1])
 
-    def testRepeatRnn(self):
-        filename = "seq_to_seq_tests/repeat_rnn.xml"
-
-        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
-        self.setup_holder.block_loader.load(filepath)
-
-
-        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
-            "conll_reader_tests")
-        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
-
-        component_spec = CreationComponentSpecifications()
-        component_spec.name = "cell"
-        target_c = self.setup_holder.component_repository.get(component_spec)[0]
-
-        target_socket = target_c.get_out_socket("output_sequences")
-
-        runs = [[target_socket]]
-        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
-
-        self.assertEqual(1, len(run_graphs))
-        output = run_graphs[0].execute()[0]
-
-        should_be = [[[0,0], [0,1], [1,2], [2,3], [3,4]],
-                     [[0,5], [5,1], [1,0], [0,4]]]
-
-        for i in range(len(should_be)):
-            for j in range(len(should_be[i])):
-                for k in range(len(should_be[i][j])):
-                    self.assertEqual(should_be[i][j][k], output[i][j][k])
-
     def testBasicLanguageModel(self):
         filename = "seq_to_seq_tests/basic_language_model.xml"
 

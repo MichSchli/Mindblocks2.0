@@ -61,20 +61,38 @@
                 <target socket="indexes">relation_batcher</target>
         </edge>
 
-        <component name="negative_sampler" type="ListNegativeSampler">
-            <is_gold_column>4</is_gold_column>
-            <sample_rate>5</sample_rate>
-            <use_all_golds>True</use_all_golds>
+        <component name="ns_slicer" type="DataSlicer" language="python">
+            <slice>:,:,4</slice>
         </component>
         <edge>
+                <source socket="output">relation_batcher</source>
+                <target socket="input">ns_slicer</target>
+        </edge>
+
+        <component name="negative_sampler" type="NegativeSampleGenerator">
+            <positive_sample_rate>1</positive_sample_rate>
+            <negative_sample_rate>5</negative_sample_rate>
+        </component>
+        <edge cast="bool">
+            <source socket="output">ns_slicer</source>
+            <target socket="tensor">negative_sampler</target>
+        </edge>
+
+        <component name="ns_chooser" type="Subsampler" language="python">
+        </component>
+        <edge>
+            <source socket="output">negative_sampler</source>
+            <target socket="indexes">ns_chooser</target>
+        </edge>
+        <edge>
             <source socket="output">relation_batcher</source>
-            <target socket="list">negative_sampler</target>
+            <target socket="tensor">ns_chooser</target>
         </edge>
 
         <component name="ns_split" type="ModeSplitter" language="python">
         </component>
         <edge>
-                <source socket="output">negative_sampler</source>
+                <source socket="output">ns_chooser</source>
                 <target socket="train">ns_split</target>
         </edge>
         <edge>

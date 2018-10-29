@@ -23,7 +23,7 @@ class Log(ComponentTypeModel):
             v = input_dictionary["input"].get_value()
 
             v = tf.log(v)
-            all_lengths = input_dictionary["input"]
+            all_lengths = input_dictionary["input"].get_lengths()
             replacement = tf.zeros_like(v)
 
             sth = SoftTensorHelper()

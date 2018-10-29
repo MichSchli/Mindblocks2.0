@@ -186,3 +186,18 @@ class SoftTensorHelper:
 
                 input_tensor = tf.where(mask, input_tensor, replacement_tensor)
         return input_tensor
+
+    def python_replace_elements_outside_lengths(self, input_tensor, length_tensor_list, replacement_tensor):
+        """
+        Fill the margins of a soft tensor with a specified value (requires python):
+
+        :param input_tensor: The tensor prior to filling in the form of a tensorflow tensor.
+        :param length_tensor_list: The list of length tensors associated with the input tensor.
+        :param replacement_tensor: A pre-specified tensor used for replacement.
+        :return: A modified version of the input tensor with the margins tiled according to the replacement value.
+        """
+
+        r = replacement_tensor.copy()
+        self.recursive_transform(input_tensor, r, (), length_tensor_list, -1, lambda x: x)
+
+        return r

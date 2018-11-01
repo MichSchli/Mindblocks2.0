@@ -73,15 +73,16 @@ class Subsampler(ComponentTypeModel):
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        index_dims = input_types["indexes"].get_dimensions()
         target_dims = input_types["tensor"].get_dimensions()
+        index_dims = input_types["indexes"].get_dimensions()
+
         dims_to_preserve = index_dims[:-1]
 
         target_dim_string = input_types["tensor"].get_dimension_string()
         index_dim_string = input_types["indexes"].get_dimension_string()
 
-        index_soft = input_types["indexes"].get_soft_by_dimensions()
         target_soft = input_types["tensor"].get_soft_by_dimensions()
+        index_soft = input_types["indexes"].get_soft_by_dimensions()
 
         # Verify preserved dimensions match:
         for i in range(len(dims_to_preserve)):
@@ -110,7 +111,7 @@ class Subsampler(ComponentTypeModel):
         output_type = SoftTensorTypeModel(out_dimensions,
                                           soft_by_dimensions=out_softness,
                                           string_type=out_data_type)
-
+        print(out_dimensions)
         return {"output": output_type}
 
 

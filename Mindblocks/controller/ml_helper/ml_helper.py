@@ -94,6 +94,12 @@ class MlHelper:
         else:
             iteration_range = range(self.current_iteration, self.current_iteration + iterations)
 
+        if self.should_validate():
+            validation_performance = self.do_validate()
+            message, context, field = "Validation before training: " + str(
+                validation_performance), "validation", "performance"
+            self.log(message, context, field)
+
         self.first_batch = True
         for i in iteration_range:
             self.log("Starting iteration " + str(i), "training", "iteration")
@@ -101,7 +107,7 @@ class MlHelper:
             self.tensorflow_session_model.update_iteration(i)
             self.do_train_iteration()
 
-            if self.should_validate() and i % self.configuration.validate_every_n == 0:
+            if i != 0 and self.should_validate() and i % self.configuration.validate_every_n == 0:
                 validation_performance = self.do_validate()
                 message, context, field = "Validation at epoch " + str(i) + ": " + str(
                     validation_performance), "validation", "performance"

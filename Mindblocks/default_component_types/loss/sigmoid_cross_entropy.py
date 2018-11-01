@@ -26,7 +26,7 @@ class SigmoidCrossEntropy(ComponentTypeModel):
 
         sth = SoftTensorHelper()
         replacement_tensor = tf.zeros_like(cross_entropy)
-        cross_entropy = sth.replace_elements_outside_lengths(cross_entropy, lengths[:-1], replacement_tensor)
+        cross_entropy = sth.replace_elements_outside_lengths(cross_entropy, lengths, replacement_tensor)
 
         for i in range(1, len(lengths)):
             if lengths[i] is not None:

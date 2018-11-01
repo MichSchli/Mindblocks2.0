@@ -114,9 +114,6 @@ class RnnModel:
 
     def get_inner_graph_output_types(self, mode):
         results = self.inner_graph.initialize_type_models()
-        print("=======")
-        print(results)
-        print(self.out_links)
 
         out_type_dict = {}
         n_rec = len(self.recurrences)
@@ -131,9 +128,6 @@ class RnnModel:
             out_type = result
 
             out_type_dict[component_output] = out_type
-
-            print(component_output)
-            print(out_type.get_dimensions())
 
         return out_type_dict
 

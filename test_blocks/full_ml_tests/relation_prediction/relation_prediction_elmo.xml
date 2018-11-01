@@ -1,10 +1,10 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>200</default_value>
+            <default_value>50</default_value>
         </variable>
         <variable name="validate_every_n">
-            <default_value>1</default_value>
+            <default_value>5</default_value>
         </variable>
 
         <variable name="data_folder">
@@ -49,32 +49,49 @@
                 <target socket="indexes">sentence_batcher</target>
         </edge>
 
-        <component name="relation_batcher" type="Batcher">
-            <lazy>True</lazy>
+        <component name="relation_batcher" type="Subsampler">
         </component>
         <edge>
                 <source socket="output">relation_reader</source>
-                <target socket="data">relation_batcher</target>
+                <target socket="tensor">relation_batcher</target>
         </edge>
         <edge>
                 <source socket="batch">batch_generator</source>
                 <target socket="indexes">relation_batcher</target>
         </edge>
 
-        <component name="negative_sampler" type="ListNegativeSampler">
-            <is_gold_column>4</is_gold_column>
-            <sample_rate>5</sample_rate>
-            <use_all_golds>True</use_all_golds>
+        <component name="ns_slicer" type="DataSlicer" language="python">
+            <slice>:,:,4</slice>
         </component>
         <edge>
+                <source socket="output">relation_batcher</source>
+                <target socket="input">ns_slicer</target>
+        </edge>
+
+        <component name="negative_sampler" type="NegativeSampleGenerator">
+            <positive_sample_rate>1</positive_sample_rate>
+            <negative_sample_rate>5</negative_sample_rate>
+        </component>
+        <edge cast="bool">
+            <source socket="output">ns_slicer</source>
+            <target socket="tensor">negative_sampler</target>
+        </edge>
+
+        <component name="ns_chooser" type="Subsampler" language="python">
+        </component>
+        <edge>
+            <source socket="output">negative_sampler</source>
+            <target socket="indexes">ns_chooser</target>
+        </edge>
+        <edge>
             <source socket="output">relation_batcher</source>
-            <target socket="list">negative_sampler</target>
+            <target socket="tensor">ns_chooser</target>
         </edge>
 
         <component name="ns_split" type="ModeSplitter" language="python">
         </component>
         <edge>
-                <source socket="output">negative_sampler</source>
+                <source socket="output">ns_chooser</source>
                 <target socket="train">ns_split</target>
         </edge>
         <edge>
@@ -171,12 +188,12 @@
                 <source socket="output">relation_embedding_lookup</source>
                 <target socket="left">rel_concat</target>
         </edge>
-        <edge cast="float">
+        <edge>
                 <source socket="output">score_dim_expander</source>
                 <target socket="right">rel_concat</target>
         </edge>
 
-        <component name="elmo" type="ElmoEmbedding">
+       <component name="elmo" type="ElmoEmbedding">
         </component>
         <edge>
                 <source socket="output">sentence_batcher</source>
@@ -211,16 +228,16 @@
                 <target socket="input">mlp</target>
         </edge>
 
-        <component name="hinge_loss" type="HingeLoss" language="tensorflow">
+        <component name="cross_ent" type="HingeLoss" language="tensorflow">
             <mark socket="output">loss</mark>
         </component>
         <edge>
                 <source socket="output">mlp</source>
-                <target socket="logits">hinge_loss</target>
+                <target socket="logits">cross_ent</target>
         </edge>
         <edge cast="bool">
                 <source socket="output">label_slicer</source>
-                <target socket="labels">hinge_loss</target>
+                <target socket="labels">cross_ent</target>
         </edge>
 
         <component name="upd" type="AdamUpdater" language="tensorflow">
@@ -229,7 +246,7 @@
             <mark socket="update">update</mark>
         </component>
         <edge>
-                <source socket="output">hinge_loss</source>
+                <source socket="output">cross_ent</source>
                 <target socket="loss">upd</target>
         </edge>
 
@@ -240,16 +257,32 @@
                 <target socket="input">argmax</target>
         </edge>
 
-        <component name="rel_chooser" type="IndexIntoList" language="python">
-            <mark socket="output">prediction</mark>
+        <component name="final_index_dim_expander" type="AddDimensions" language="tensorflow">
+            <dim_changes>1:1</dim_changes>
         </component>
         <edge>
-            <source socket="output">argmax</source>
+                <source socket="output">argmax</source>
+                <target socket="input">final_index_dim_expander</target>
+        </edge>
+
+        <component name="rel_chooser" type="Subsampler" language="python">
+        </component>
+        <edge>
+            <source socket="output">final_index_dim_expander</source>
             <target socket="indexes">rel_chooser</target>
         </edge>
         <edge>
             <source socket="output">string_formatter</source>
-            <target socket="list">rel_chooser</target>
+            <target socket="tensor">rel_chooser</target>
+        </edge>
+
+        <component name="output_squeeze" type="SqueezeDimensions" language="python">
+            <mark socket="output">prediction</mark>
+            <dims>-1</dims>
+        </component>
+        <edge>
+                <source socket="output">rel_chooser</source>
+                <target socket="input">output_squeeze</target>
         </edge>
     </canvas>
 </block>

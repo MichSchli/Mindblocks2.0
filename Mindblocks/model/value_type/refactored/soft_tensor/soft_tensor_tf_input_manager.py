@@ -14,8 +14,14 @@ class SoftTensorTfInputManager(AbstractTensorflowPlaceholderModel):
         self.name = "tmpplc"
 
     def __initialize_placeholders__(self):
+        feed_dims = self.dimensions
+
+        for idx, dim_is_soft in enumerate(self.soft_by_dimensions):
+            if dim_is_soft:
+                feed_dims[idx] = None
+
         placeholder = tf.placeholder(self.get_tensorflow_type(),
-                                     self.dimensions,
+                                     feed_dims,
                                      name=self.name)
 
         placeholders = [placeholder]

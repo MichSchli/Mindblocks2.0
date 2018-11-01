@@ -45,7 +45,7 @@ class SoftTensorValueModel:
             local_python_representation = local_python_representation[idx]
 
         if len(current_prefix) == len(self.max_lengths):
-            numpy_representation[current_prefix] = local_python_representation
+            numpy_representation[tuple(current_prefix)] = local_python_representation
         else:
             for inner_elem_idx in range(len(local_python_representation)):
                 self.recursive_assign(python_representation, numpy_representation, current_prefix + (inner_elem_idx, ))
@@ -56,7 +56,7 @@ class SoftTensorValueModel:
             local_python_representation = local_python_representation[idx]
 
         if len(current_prefix) == len(numpy_representation.shape):
-            numpy_representation[current_prefix] = len(local_python_representation)
+            numpy_representation[tuple(current_prefix)] = len(local_python_representation)
         else:
             for inner_elem_idx in range(len(local_python_representation)):
                 self.recursive_length_list_retrieval(python_representation, numpy_representation, current_prefix + (inner_elem_idx, ))
@@ -83,6 +83,7 @@ class SoftTensorValueModel:
         self.tensor = numpy_representation
 
         self.soft_length_tensors = [None] * len(self.max_lengths)
+
         self.max_lengths = shape_initializer
 
         for dim_idx, dim_is_soft in enumerate(self.soft_by_dimension):
@@ -130,7 +131,7 @@ class SoftTensorValueModel:
 
                     slc[idx] = slice(0, max_length)
 
-            self.tensor = self.tensor[slc]
+            self.tensor = self.tensor[tuple(slc)]
 
 
     def get_value(self):

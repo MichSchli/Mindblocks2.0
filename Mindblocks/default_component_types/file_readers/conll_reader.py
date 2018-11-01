@@ -32,7 +32,7 @@ class ConllReader(ComponentTypeModel):
         num_examples = len(value.read())
 
         output_dims = [num_examples, None] + innermost_dim
-        soft_dims = [False, True] + [False] if innermost_dim else []
+        soft_dims = [False, True] + ([False] if innermost_dim else [])
 
         output_type_model = SoftTensorTypeModel(output_dims, soft_by_dimensions=soft_dims, string_type="string")
         count_model = SoftTensorTypeModel([], string_type="int")

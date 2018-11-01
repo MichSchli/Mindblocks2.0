@@ -29,7 +29,7 @@ class BatchGenerator(ComponentTypeModel):
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        index_tensor_type = SoftTensorTypeModel([value.batch_size],
+        index_tensor_type = SoftTensorTypeModel([None],
                                                  string_type="int")
         return {"batch": index_tensor_type}
 

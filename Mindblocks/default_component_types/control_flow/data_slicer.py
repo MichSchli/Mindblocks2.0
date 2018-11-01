@@ -19,13 +19,15 @@ class DataSlicer(ComponentTypeModel):
             val = inp_val.get_value()
             lengths = inp_val.get_lengths()[:]
 
-            val = val[value.slices]
+            val = val[tuple(value.slices)]
 
             deleted_dims = 0
             for i, dim_correction in enumerate(value.get_dim_corrections()):
                 if dim_correction == "singleton":
                     del lengths[i - deleted_dims]
-                    deleted_dims + 1
+                    deleted_dims += 1
+                elif i > 0:
+                    lengths[i - deleted_dims] = lengths[i - deleted_dims][tuple(value.slices[:i])]
 
             output_value_models["output"].assign(val, length_list = lengths)
         else:
@@ -40,7 +42,9 @@ class DataSlicer(ComponentTypeModel):
                 output_type.set_dimension(i - deleted_dims, None)
             elif dim_correction == "singleton":
                 output_type.delete_dimension(i - deleted_dims)
-                deleted_dims + 1
+                deleted_dims += 1
+            elif dim_correction == "preserved":
+                pass
             elif dim_correction is not None:
                 output_type.set_dimension(i - deleted_dims, dim_correction)
 
@@ -69,11 +73,12 @@ class DataSlicerValue(ExecutionComponentValueModel):
                     firstdim_idx = parts[0] if parts[0] else 0
                     lastdim_idx = parts[1] if parts[1] else -1
 
-                    if lastdim_idx < 0:
+                    if parts[0] is None and parts[1] is None:
+                        self.dim_corrections.append("preserved")
+                    elif lastdim_idx < 0:
                         self.dim_corrections.append("unknown")
                     else:
                         self.dim_corrections.append(lastdim_idx - firstdim_idx)
-
 
             self.slices = python_slices
 

@@ -81,6 +81,8 @@ class ListReaderValue(ExecutionComponentValueModel):
 
         if text == "":
             parts = []
+        elif this_separator == "(C)":
+            parts = text
         else:
             parts = text.split(this_separator)
 

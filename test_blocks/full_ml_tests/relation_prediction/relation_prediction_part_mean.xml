@@ -31,6 +31,12 @@
             <soft_dimensions>1</soft_dimensions>
         </component>
 
+        <component name="part_reader" type="ListReader">
+            <file_path>$data_folder/$mode_folder/all_relations.txt</file_path>
+            <separators>\n\n|\n|\t|.</separators>
+            <soft_dimensions>1,3</soft_dimensions>
+        </component>
+
         <component name="batch_generator" type="BatchGenerator">
             <batch_size>10</batch_size>
         </component>
@@ -38,12 +44,12 @@
                 <source socket="count">sentence_reader</source>
                 <target socket="count">batch_generator</target>
         </edge>
-        <component name="sentence_batcher" type="Batcher">
-            <lazy>True</lazy>
+
+        <component name="sentence_batcher" type="Subsampler">
         </component>
         <edge>
                 <source socket="output">sentence_reader</source>
-                <target socket="data">sentence_batcher</target>
+                <target socket="tensor">sentence_batcher</target>
         </edge>
         <edge>
                 <source socket="batch">batch_generator</source>
@@ -59,6 +65,25 @@
         <edge>
                 <source socket="batch">batch_generator</source>
                 <target socket="indexes">relation_batcher</target>
+        </edge>
+
+        <component name="part_batcher" type="Subsampler">
+        </component>
+        <edge>
+                <source socket="output">part_reader</source>
+                <target socket="tensor">part_batcher</target>
+        </edge>
+        <edge>
+                <source socket="batch">batch_generator</source>
+                <target socket="indexes">part_batcher</target>
+        </edge>
+
+        <component name="part_slicer" type="DataSlicer" language="python">
+            <slice>:,:,2,:</slice>
+        </component>
+        <edge>
+                <source socket="output">part_batcher</source>
+                <target socket="input">part_slicer</target>
         </edge>
 
         <component name="ns_slicer" type="DataSlicer" language="python">
@@ -87,6 +112,33 @@
         <edge>
             <source socket="output">relation_batcher</source>
             <target socket="tensor">ns_chooser</target>
+        </edge>
+
+        <component name="part_ns_chooser" type="Subsampler" language="python">
+        </component>
+        <edge>
+            <source socket="output">negative_sampler</source>
+            <target socket="indexes">part_ns_chooser</target>
+        </edge>
+        <edge>
+            <source socket="output">part_slicer</source>
+            <target socket="tensor">part_ns_chooser</target>
+        </edge>
+
+
+        <component name="part_ns_split" type="ModeSplitter" language="python">
+        </component>
+        <edge>
+                <source socket="output">part_ns_chooser</source>
+                <target socket="train">part_ns_split</target>
+        </edge>
+        <edge>
+                <source socket="output">part_slicer</source>
+                <target socket="validate">part_ns_split</target>
+        </edge>
+        <edge>
+                <source socket="output">part_slicer</source>
+                <target socket="test">part_ns_split</target>
         </edge>
 
         <component name="ns_split" type="ModeSplitter" language="python">
@@ -164,6 +216,23 @@
                 <target socket="index">relation_indexer</target>
         </edge>
 
+        <component name="part_index" type="VectorIndex">
+            <width>80</width>
+            <length>4000</length>
+            <trainable>True</trainable>
+        </component>
+        <component name="part_indexer" type="Indexer">
+            <input_type>list</input_type>
+        </component>
+        <edge>
+                <source socket="output">part_ns_split</source>
+                <target socket="input">part_indexer</target>
+        </edge>
+        <edge>
+                <source socket="index">part_index</source>
+                <target socket="index">part_indexer</target>
+        </edge>
+
         <component name="relation_embedding_lookup" type="EmbeddingLookup" language="tensorflow">
         </component>
         <edge>
@@ -173,6 +242,17 @@
         <edge>
                 <source socket="vectors">relation_index</source>
                 <target socket="vectors">relation_embedding_lookup</target>
+        </edge>
+
+        <component name="part_embedding_lookup" type="EmbeddingLookup" language="tensorflow">
+        </component>
+        <edge>
+                <source socket="output">part_indexer</source>
+                <target socket="indexes">part_embedding_lookup</target>
+        </edge>
+        <edge>
+                <source socket="vectors">part_index</source>
+                <target socket="vectors">part_embedding_lookup</target>
         </edge>
 
         <component name="score_dim_expander" type="AddDimensions" language="tensorflow">
@@ -199,6 +279,25 @@
         <edge>
                 <source socket="output">score_log</source>
                 <target socket="right">rel_concat</target>
+        </edge>
+
+        <component name="part_mean" type="Mean" language="tensorflow">
+            <axis>2</axis>
+        </component>
+        <edge>
+                <source socket="output">part_embedding_lookup</source>
+                <target socket="input">part_mean</target>
+        </edge>
+
+        <component name="rel_concat_2" type="Concat" language="tensorflow">
+        </component>
+        <edge>
+                <source socket="output">rel_concat</source>
+                <target socket="left">rel_concat_2</target>
+        </edge>
+        <edge>
+                <source socket="output">part_mean</source>
+                <target socket="right">rel_concat_2</target>
         </edge>
 
         <component name="glove" type="FileEmbeddings">
@@ -252,7 +351,7 @@
         <component name="end_concat" type="Concat" language="tensorflow">
         </component>
         <edge>
-                <source socket="output">rel_concat</source>
+                <source socket="output">rel_concat_2</source>
                 <target socket="left">end_concat</target>
         </edge>
         <edge>
@@ -261,7 +360,7 @@
         </edge>
 
         <component name="mlp" type="MultilayerPerceptron" language="tensorflow">
-            <dimensions>181,200,1</dimensions>
+            <dimensions>261,200,1</dimensions>
             <dropout_rate>0.5</dropout_rate>
         </component>
         <edge>

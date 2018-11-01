@@ -3,7 +3,7 @@ from Mindblocks.model.execution_graph.execution_component_value_model import Exe
 import tensorflow_hub as tf_hub
 
 from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
-
+import tensorflow as tf
 
 class ElmoEmbedding(ComponentTypeModel):
 
@@ -19,13 +19,17 @@ class ElmoEmbedding(ComponentTypeModel):
         elmo = tf_hub.Module("https://tfhub.dev/google/elmo/2", trainable=True)
         all_lengths = input_dictionary["input"].get_lengths()
         lengths = all_lengths[1]
-        inputs = {"tokens": input_dictionary["input"].get_value(),
+
+        tokens = input_dictionary["input"].get_value()
+        inputs = {"tokens": tokens,
                   "sequence_len": lengths}
 
         embeddings = elmo(inputs=inputs, signature="tokens", as_dict=True)
 
+        sentence_embedding = embeddings["default"]
+
         output_models["word_embeddings"].assign(embeddings["elmo"], length_list=all_lengths + [None])
-        output_models["sentence_embedding"].assign(embeddings["default"], length_list=None)
+        output_models["sentence_embedding"].assign(sentence_embedding, length_list=None)
 
         return output_models
 

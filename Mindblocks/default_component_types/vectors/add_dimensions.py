@@ -35,7 +35,26 @@ class AddDimensions(ComponentTypeModel):
 
             for idx, dims_to_add in value.get_dim_changes():
                 v = tf.expand_dims(v, idx)
-                lengths.insert(idx, None)
+
+                if idx == -1:
+                    lengths.append(None)
+                elif idx < 0:
+                    lengths.insert(idx + 1, None)
+                else:
+                    lengths.insert(idx, None)
+
+                iter_point = idx if idx > 0 else len(lengths) - idx
+
+                for l in range(iter_point, len(lengths)):
+                    if lengths[idx] is not None:
+                        lengths[idx] = tf.expand_dims(lengths[idx], idx)
+
+                        if dims_to_add > 1:
+                            length_expansion = [1] * (idx + 1)
+                            length_expansion[idx] *= dims_to_add
+                            lengths[idx] = tf.tile(lengths[idx], length_expansion)
+
+
                 dim_update.insert(idx, dims_to_add)
 
                 if dims_to_add > 1:

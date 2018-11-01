@@ -10,9 +10,6 @@ class ExecutionHeadComponent(AbstractExecutionModel):
         self.run_output_sockets = []
 
     def add_in_socket(self, in_socket):
-        print("ADDING IN SOCKET")
-        print(self)
-        print(in_socket)
         self.run_output_sockets.append(in_socket)
 
     def clear_caches(self):
@@ -36,13 +33,6 @@ class ExecutionHeadComponent(AbstractExecutionModel):
         return "HEAD"
 
     def initialize_type_models(self, mode):
-        print("TYPE MODELS")
-        print(mode)
-        print(self.run_output_sockets)
-        print([x.edge.source.execution_component.get_name() for x in self.run_output_sockets])
-        print([socket.pull_type_model(mode) for socket in self.run_output_sockets])
-        print([socket.pull_type_model(mode).get_name() for socket in self.run_output_sockets])
-        print([socket.pull_type_model(mode).get_dimensions() for socket in self.run_output_sockets])
         return [socket.pull_type_model(mode) for socket in self.run_output_sockets]
 
     def describe_graph(self, indent=0):

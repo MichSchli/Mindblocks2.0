@@ -1,10 +1,10 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>200</default_value>
+            <default_value>100</default_value>
         </variable>
         <variable name="validate_every_n">
-            <default_value>50</default_value>
+            <default_value>20</default_value>
         </variable>
 
         <variable name="data_folder">
@@ -38,12 +38,11 @@
                 <source socket="count">sentence_reader</source>
                 <target socket="count">batch_generator</target>
         </edge>
-        <component name="sentence_batcher" type="Batcher">
-            <lazy>True</lazy>
+        <component name="sentence_batcher" type="Subsampler">
         </component>
         <edge>
                 <source socket="output">sentence_reader</source>
-                <target socket="data">sentence_batcher</target>
+                <target socket="tensor">sentence_batcher</target>
         </edge>
         <edge>
                 <source socket="batch">batch_generator</source>

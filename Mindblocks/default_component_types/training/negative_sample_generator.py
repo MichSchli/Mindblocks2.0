@@ -7,7 +7,7 @@ from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model i
 import numpy as np
 
 
-class ListNegativeSampler(ComponentTypeModel):
+class NegativeSampleGenerator(ComponentTypeModel):
 
     name = "NegativeSampleGenerator"
     in_sockets = ["tensor"]
@@ -15,7 +15,7 @@ class ListNegativeSampler(ComponentTypeModel):
     languages = ["python"]
 
     def initialize_value(self, value_dictionary, language):
-        value = ListNegativeSamplerValue()
+        value = NegativeSampleGeneratorValue()
 
         if "gold_column" in value_dictionary:
             value.set_gold_column(int(value_dictionary["gold_column"][0][0]))
@@ -91,47 +91,11 @@ class ListNegativeSampler(ComponentTypeModel):
         sth = SoftTensorHelper()
         replacement_tensor = np.ones_like(input_values)
         replaced = sth.python_replace_elements_outside_lengths(input_values, lengths, replacement_tensor)
-        print(np.logical_not(replaced))
         neg_sample = self.recursive_sample(np.logical_not(replaced), lengths, (), value.neg_sample_rate)
 
-        print(input_values)
-        print(pos_sample)
-
-        print(neg_sample)
-
         combined_samples = self.recursive_combine(pos_sample, neg_sample, lengths, (), len(input_values.shape)-1)
-        print(combined_samples)
-        exit()
+        output_models["output"].initial_assign(combined_samples)
 
-        sth = SoftTensorHelper()
-        replacement_tensor = np.ones_like(input_values)
-        replaced = sth.python_replace_elements_outside_lengths(input_values, lengths, replacement_tensor)
-        negative_indexes = np.nonzero(np.logical_not(replaced))
-
-        print(input_values)
-        #print(negative_indexes)
-        exit()
-
-        new_out = []
-
-        for batch in input_values:
-            positive_indexes = [i for i in range(len(batch)) if batch[i][value.gold_column] == "True"]
-            negative_indexes = [i for i in range(len(batch)) if batch[i][value.gold_column] != "True"]
-
-            random.shuffle(negative_indexes)
-            random.shuffle(positive_indexes)
-
-            negative_indexes = negative_indexes[:value.sample_rate]
-
-            if not value.use_all_golds:
-                positive_indexes = positive_indexes[:1]
-
-            new_negs = [batch[j] for j in negative_indexes]
-            new_pos = [batch[j] for j in positive_indexes]
-
-            new_out.append(new_pos + new_negs)
-
-        output_models["output"].assign(new_out)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -143,11 +107,11 @@ class ListNegativeSampler(ComponentTypeModel):
         output_dims = input_dims[:]
         output_soft = input_soft[:]
 
-        if value.gold_column is not None:
+        if value.gold_lookup_column is not None:
             output_dims = output_dims[:-1]
             output_soft = output_soft[:-1]
 
-        output_dims[-1] = sample_size
+        output_dims[-1] = None
         output_soft[-1] = True
 
         output_tensor = SoftTensorTypeModel(output_dims,
@@ -157,9 +121,9 @@ class ListNegativeSampler(ComponentTypeModel):
         return {"output": output_tensor}
 
 
-class ListNegativeSamplerValue(ExecutionComponentValueModel):
+class NegativeSampleGeneratorValue(ExecutionComponentValueModel):
 
-    gold_column = None
+    gold_lookup_column = None
     pos_sample_rate = 1
     neg_sample_rate = 1
 
@@ -169,10 +133,10 @@ class ListNegativeSamplerValue(ExecutionComponentValueModel):
         self.neg_sample_rate = 1
 
     def set_gold_column(self, idx):
-        self.gold_column = idx
+        self.gold_lookup_column = idx
 
     def set_neg_sample_rate(self, rate):
         self.neg_sample_rate = rate
 
     def set_pos_sample_rate(self, rate):
-        self.neg_sample_rate = rate
+        self.pos_sample_rate = rate

@@ -18,7 +18,7 @@ class SoftTensorHelper:
         local_old_representation = self.extract_local_subtensor(input_tensor, current_prefix)
 
         if len(current_prefix) == stop_dim or len(current_prefix) - len(input_tensor.shape) -1 == stop_dim:
-            output_tensor[current_prefix] = transform_fn(local_old_representation)
+            output_tensor[tuple(current_prefix)] = transform_fn(local_old_representation)
         else:
             local_length = length_tensor_list[len(current_prefix)]
             if local_length is not None:
@@ -69,7 +69,7 @@ class SoftTensorHelper:
         local_second_representation = self.extract_local_subtensor(second_tensor, current_prefix)
 
         if len(current_prefix) == stop_dim or len(current_prefix) - len(first_tensor.shape) -1 == stop_dim:
-            output_tensor[current_prefix] = transform_fn(local_first_representation, local_second_representation)
+            output_tensor[tuple(current_prefix)] = transform_fn(local_first_representation, local_second_representation)
         else:
             local_length = length_tensor_list[len(current_prefix)]
             if local_length is not None:

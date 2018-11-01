@@ -52,14 +52,11 @@ class MultilayerPerceptron(ComponentTypeModel):
 
     def build_value_type_model(self, input_types, value, mode):
         output_type = input_types["input"].copy()
-        print("MLP DIMS")
-        print(value.dims)
         if value.dims[-1] == 1:
             output_type.delete_dimension(-1)
         else:
             output_type.set_dimension(-1, value.dims[-1])
 
-        print(output_type.get_dimensions())
         return {"output": output_type}
 
 

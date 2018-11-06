@@ -94,7 +94,7 @@ class MlHelper:
         else:
             iteration_range = range(self.current_iteration, self.current_iteration + iterations)
 
-        if self.should_validate():
+        if self.should_validate() and self.current_iteration == 0:
             validation_performance = self.do_validate()
             message, context, field = "Validation before training: " + str(
                 validation_performance), "validation", "performance"

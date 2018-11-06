@@ -201,3 +201,73 @@ class SoftTensorHelper:
         self.recursive_transform(input_tensor, r, (), length_tensor_list, -1, lambda x: x)
 
         return r
+
+    def recursive_assign(self, python_representation, numpy_representation, current_prefix):
+        local_python_representation = python_representation
+        for idx in current_prefix:
+            local_python_representation = local_python_representation[idx]
+
+        if len(current_prefix) == len(numpy_representation.shape) - 1:
+            local_length = len(local_python_representation)
+            numpy_representation[tuple(current_prefix)][:local_length] = local_python_representation
+        else:
+            for inner_elem_idx in range(len(local_python_representation)):
+                self.recursive_assign(python_representation, numpy_representation, current_prefix + (inner_elem_idx, ))
+
+    def recursive_length_list_retrieval(self, python_representation, numpy_representation, current_prefix):
+        local_python_representation = python_representation
+        for idx in current_prefix:
+            local_python_representation = local_python_representation[idx]
+
+        if len(current_prefix) == len(numpy_representation.shape):
+            numpy_representation[tuple(current_prefix)] = len(local_python_representation)
+        else:
+            for inner_elem_idx in range(len(local_python_representation)):
+                self.recursive_length_list_retrieval(python_representation, numpy_representation, current_prefix + (inner_elem_idx, ))
+
+    def recursive_max_length_retrieval(self, python_representation, needed_depth):
+        if needed_depth == 0:
+            return len(python_representation)
+        else:
+            inner_max_lengths = [self.recursive_max_length_retrieval(x, needed_depth-1) for x in python_representation]
+            return max(inner_max_lengths) if len(inner_max_lengths) > 0 else 0
+
+    def to_soft_tensor(self, python_representation, max_lengths, soft_by_dimension, data_type):
+        if len(max_lengths) < 2:
+            tensor = np.array(python_representation, dtype=self.get_numpy_type(data_type))
+            soft_length_tensors = [None] * len(max_lengths)
+            return tensor, soft_length_tensors
+
+        shape_initializer = [None] * len(max_lengths)
+        for idx, mlen in enumerate(max_lengths):
+            shape_initializer[idx] = self.recursive_max_length_retrieval(python_representation, needed_depth=idx)
+            if mlen is not None:
+                shape_initializer[idx] = min(mlen, shape_initializer[idx])
+
+        numpy_representation = np.zeros(shape_initializer, dtype=self.get_numpy_type(data_type))
+        if data_type == "string":
+            numpy_representation.fill("")
+
+        self.recursive_assign(python_representation, numpy_representation, ())
+        tensor = numpy_representation
+
+        soft_length_tensors = [None] * len(max_lengths)
+
+        for dim_idx, dim_is_soft in enumerate(soft_by_dimension):
+            if dim_is_soft:
+                dim_shape = shape_initializer[:dim_idx]
+                numpy_representation = np.zeros(dim_shape, np.int32)
+                self.recursive_length_list_retrieval(python_representation, numpy_representation, ())
+                soft_length_tensors[dim_idx] = numpy_representation
+
+        return tensor, soft_length_tensors
+
+    def get_numpy_type(self, string_type):
+        np_type = None
+        if string_type == "int":
+            np_type = np.int32
+        elif string_type == "float":
+            np_type = np.float32
+        elif string_type == "string":
+            np_type = np.object
+        return np_type

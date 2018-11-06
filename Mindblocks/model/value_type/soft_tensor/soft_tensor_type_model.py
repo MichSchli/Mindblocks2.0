@@ -1,6 +1,7 @@
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_tf_input_manager import SoftTensorTfInputManager
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_tf_output_manager import SoftTensorTfOutputManager
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_value_model import SoftTensorValueModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_tf_output_manager import SoftTensorTfOutputManager
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_value_model import SoftTensorValueModel
+
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_tf_input_manager import SoftTensorTfInputManager
 
 
 class SoftTensorTypeModel:
@@ -14,7 +15,9 @@ class SoftTensorTypeModel:
 
     name = None
 
-    def __init__(self, dimensions, soft_by_dimensions=None, string_type="float"):
+    reference_name = None
+
+    def __init__(self, dimensions, soft_by_dimensions=None, string_type="float", reference_name="soft_tensor"):
         self.dimensions = dimensions[:]
 
         if soft_by_dimensions is not None:
@@ -24,11 +27,13 @@ class SoftTensorTypeModel:
 
         self.set_data_type(string_type)
         self.cached_casts = {}
+        self.reference_name = reference_name
 
     def initialize_value_model(self, language):
-        tensor_max_lengths = [None for _ in self.soft_by_dimensions]
+        tensor_dimensions = self.get_dimensions()[:]
+        tensor_max_lengths = self.get_dimensions()[:]
 
-        return SoftTensorValueModel(self.dimensions,
+        return SoftTensorValueModel(tensor_dimensions,
                                     self.string_type,
                                     tensor_max_lengths,
                                     self.soft_by_dimensions,
@@ -36,7 +41,7 @@ class SoftTensorTypeModel:
 
     def get_tensorflow_placeholder(self):
         if self.placeholder_manager is None:
-            self.placeholder_manager = SoftTensorTfInputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
+            self.placeholder_manager = SoftTensorTfInputManager(self.dimensions, self.soft_by_dimensions, self.string_type, self.reference_name)
 
         placeholder_value = self.initialize_value_model(language="tensorflow")
         self.placeholder_manager.assign_placeholders(placeholder_value)
@@ -45,13 +50,13 @@ class SoftTensorTypeModel:
 
     def get_cached_placeholders(self):
         if self.placeholder_manager is None:
-            self.placeholder_manager = SoftTensorTfInputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
+            self.placeholder_manager = SoftTensorTfInputManager(self.dimensions, self.soft_by_dimensions, self.string_type, self.reference_name)
 
         return self.placeholder_manager.get_placeholders()
 
     def format_for_tensorflow_input(self, value):
         if self.placeholder_manager is None:
-            self.placeholder_manager = SoftTensorTfInputManager(self.dimensions, self.soft_by_dimensions, self.string_type)
+            self.placeholder_manager = SoftTensorTfInputManager(self.dimensions, self.soft_by_dimensions, self.string_type, self.reference_name)
 
         return self.placeholder_manager.format_for_input(value)
 
@@ -69,10 +74,13 @@ class SoftTensorTypeModel:
 
         return self.tf_output_manager.format_for_output(tensorflow_value)
 
-    def copy(self):
+    def copy(self, reference_name=None):
+        if reference_name is None:
+            reference_name = self.reference_name + "_copy"
         return SoftTensorTypeModel(self.dimensions,
                                    soft_by_dimensions=self.soft_by_dimensions,
-                                   string_type=self.string_type)
+                                   string_type=self.string_type,
+                                   reference_name=reference_name)
 
     def get_subtype(self, keep_dims):
         new_dimensions = [self.dimensions[x] for x in keep_dims]

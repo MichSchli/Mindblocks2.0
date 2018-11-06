@@ -1,12 +1,10 @@
-from Mindblocks.helpers.logging.logger_factory import LoggerFactory
-from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
-from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import numpy as np
-
-from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
 import tensorflow as tf
 
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class VectorIndex(ComponentTypeModel):

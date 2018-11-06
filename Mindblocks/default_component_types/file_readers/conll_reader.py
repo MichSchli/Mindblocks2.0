@@ -1,6 +1,10 @@
+import numpy as np
+
+from Mindblocks.helpers.soft_tensors.soft_tensor_helper import SoftTensorHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+
 
 class ConllReader(ComponentTypeModel):
 
@@ -23,8 +27,13 @@ class ConllReader(ComponentTypeModel):
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        output_models["output"].initial_assign(value.read())
-        output_models["count"].initial_assign(value.count())
+        if not value.has_read():
+            value.read()
+
+        as_tensor, length_list = value.as_soft_tensor()
+        output_models["output"].assign(as_tensor, length_list)
+
+        output_models["count"].assign(np.array(value.count()), length_list=None)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
@@ -54,6 +63,9 @@ class ConllReaderValue(ExecutionComponentValueModel):
     stop_token = None
 
     read_column = None
+
+    full_list = None
+    tensor = None
 
     def __init__(self, filepath, column_info):
         self.filepath = filepath
@@ -133,4 +145,23 @@ class ConllReaderValue(ExecutionComponentValueModel):
 
         f.close()
 
+        self.full_list = lines
+
         return lines
+
+
+    def has_read(self):
+        return self.full_list is not None
+
+    def infer_dims(self):
+        innermost_dim = [self.count_columns()] if not self.reads_single_column() else []
+        num_examples = len(self.read())
+
+        return [num_examples, None] + innermost_dim
+
+    def as_soft_tensor(self):
+        if self.tensor is None:
+            sth = SoftTensorHelper()
+            self.tensor, self.length_list = sth.to_soft_tensor(self.full_list, self.infer_dims(), [False, True] + ([False] if not self.reads_single_column() else []), "string")
+
+        return self.tensor, self.length_list

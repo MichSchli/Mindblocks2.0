@@ -1,13 +1,12 @@
+import tensorflow as tf
 from tensorflow.python.framework import ops
-from tensorflow.python.ops import tensor_array_ops, array_ops
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import math_ops
 
 from Mindblocks.default_component_types.graph_referencing.rnn_helper.rnn_helper import RnnHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-import tensorflow as tf
-from tensorflow.python.ops import math_ops
-
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class BeamSearchDecoderComponent(ComponentTypeModel):

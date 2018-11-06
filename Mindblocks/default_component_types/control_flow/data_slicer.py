@@ -35,7 +35,7 @@ class DataSlicer(ComponentTypeModel):
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        output_type = input_types["input"].copy()
+        output_type = input_types["input"].copy(reference_name=value.get_name()+"_output")
         deleted_dims = 0
         for i, dim_correction in enumerate(value.get_dim_corrections()):
             if dim_correction == "unknown":

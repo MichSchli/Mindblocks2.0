@@ -1,7 +1,9 @@
+import numpy as np
+
+from Mindblocks.helpers.soft_tensors.soft_tensor_helper import SoftTensorHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
-import numpy as np
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class ListReader(ComponentTypeModel):
@@ -33,7 +35,12 @@ class ListReader(ComponentTypeModel):
         return dims
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        output_models["output"].initial_assign(value.read())
+        if not value.has_read():
+            value.read()
+
+        as_tensor, length_list = value.as_soft_tensor()
+        output_models["output"].assign(as_tensor, length_list)
+
         output_models["count"].assign(np.array(value.count()), length_list=None)
         return output_models
 
@@ -61,6 +68,8 @@ class ListReaderValue(ExecutionComponentValueModel):
     size = None
     separators = None
     full_list = None
+
+    tensor = None
 
     def __init__(self, filepath):
         self.filepath = filepath
@@ -131,3 +140,13 @@ class ListReaderValue(ExecutionComponentValueModel):
             self.full_list = processed
 
         return self.full_list
+
+    def has_read(self):
+        return self.full_list is not None
+
+    def as_soft_tensor(self):
+        if self.tensor is None:
+            sth = SoftTensorHelper()
+            self.tensor, self.length_list = sth.to_soft_tensor(self.full_list, self.infer_dims(), self.get_soft_by_dimensions(), "string")
+
+        return self.tensor, self.length_list

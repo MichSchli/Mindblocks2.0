@@ -31,7 +31,7 @@ class Indexer(ComponentTypeModel):
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
-        input_value_type = input_types["input"].copy()
+        input_value_type = input_types["input"].copy(reference_name=value.get_name()+"_output")
         input_value_type.set_data_type("int")
 
         if value.input_column is not None:

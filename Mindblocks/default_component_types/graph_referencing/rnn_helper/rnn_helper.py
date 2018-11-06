@@ -1,9 +1,8 @@
+import tensorflow as tf
 from tensorflow.python.ops import tensor_array_ops
 
 from Mindblocks.default_component_types.graph_referencing.rnn_helper.rnn_model import RnnModel
-import tensorflow as tf
-
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class RnnHelper:

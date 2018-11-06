@@ -1,7 +1,6 @@
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.index.index_type_model import IndexTypeModel
-from Mindblocks.model.value_type.old.index_type import IndexType
 
 
 class Index(ComponentTypeModel):

@@ -1,10 +1,9 @@
-from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
-from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 import tensorflow as tf
-
 import tensorflow_probability as tfp
 
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class VariationalGaussian(ComponentTypeModel):

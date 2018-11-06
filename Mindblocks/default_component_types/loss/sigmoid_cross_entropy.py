@@ -1,9 +1,9 @@
-from Mindblocks.helpers.soft_tensors.soft_tensor_helper import SoftTensorHelper
-from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 import tensorflow as tf
 
+from Mindblocks.helpers.soft_tensors.soft_tensor_helper import SoftTensorHelper
+from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class SigmoidCrossEntropy(ComponentTypeModel):

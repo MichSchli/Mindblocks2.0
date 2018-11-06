@@ -27,6 +27,11 @@ class MlpHelper:
             glorot_variance = np.sqrt(6) / np.sqrt(dim_1 + dim_2)
             weight_initializer = np.random.uniform(-glorot_variance, glorot_variance, size=(dim_1, dim_2)).astype(
                 np.float32)
+
+            #he_variance = np.sqrt(2) / np.sqrt(dim_1)
+            #weight_initializer = np.random.normal(0, 1, size=(dim_1, dim_2)).astype(
+            #    np.float32) * he_variance
+
             bias_initializer = np.zeros(dim_2, dtype=np.float32)
 
             self.weights[i] = tf.Variable(weight_initializer, name=self.variable_prefix + "_W" + str(i))

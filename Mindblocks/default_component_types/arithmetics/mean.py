@@ -18,20 +18,23 @@ class Mean(ComponentTypeModel):
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
         all_lengths = input_dictionary["input"].get_lengths()
-        axis_lengths = tf.cast(all_lengths[value.axis], tf.float32)
-
-        for _ in range(value.axis +1 , len(all_lengths)):
-            axis_lengths = tf.expand_dims(axis_lengths, -1)
-
         val = input_dictionary["input"].get_value()
-        replacement = tf.zeros_like(val)
 
-        sth = SoftTensorHelper()
-        zeroed_out = sth.replace_elements_outside_lengths(val, all_lengths, replacement)
+        if all_lengths[value.axis] is not None:
+            axis_lengths = tf.cast(all_lengths[value.axis], tf.float32)
 
-        summed_dim = tf.reduce_sum(zeroed_out, axis=value.axis)
+            for _ in range(value.axis +1 , len(all_lengths)):
+                axis_lengths = tf.expand_dims(axis_lengths, -1)
 
-        mean_dim = summed_dim / axis_lengths
+            replacement = tf.zeros_like(val)
+
+            sth = SoftTensorHelper()
+            zeroed_out = sth.replace_elements_outside_lengths(val, all_lengths, replacement)
+
+            summed_dim = tf.reduce_sum(zeroed_out, axis=value.axis)
+            mean_dim = summed_dim / (axis_lengths + 1e-8)
+        else:
+            mean_dim = tf.reduce_mean(val, axis=value.axis)
 
         old_lengths = input_dictionary["input"].get_lengths()
         previous_dim_idxs = list(range(len(old_lengths)))

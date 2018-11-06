@@ -1,7 +1,7 @@
 <block>
     <configuration>
         <variable name="max_iterations">
-            <default_value>100</default_value>
+            <default_value>2000</default_value>
         </variable>
         <variable name="validate_every_n">
             <default_value>20</default_value>

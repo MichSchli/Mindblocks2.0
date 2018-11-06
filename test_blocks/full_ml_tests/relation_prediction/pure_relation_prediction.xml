@@ -69,7 +69,7 @@
         </edge>
 
         <component name="negative_sampler" type="NegativeSampleGenerator">
-            <positive_sample_rate>1</positive_sample_rate>
+            <positive_sample_rate>5</positive_sample_rate>
             <negative_sample_rate>5</negative_sample_rate>
         </component>
         <edge cast="bool">

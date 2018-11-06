@@ -5,13 +5,12 @@ import tensorflow as tf
 
 class SoftTensorTfInputManager(AbstractTensorflowPlaceholderModel):
 
-    def __init__(self, dimensions, soft_by_dimensions, type, name=None):
-        AbstractTensorflowPlaceholderModel.__init__(self, type, name)
+    def __init__(self, dimensions, soft_by_dimensions, type, reference_name):
+        AbstractTensorflowPlaceholderModel.__init__(self, type, reference_name)
         self.type = type
         self.dimensions = dimensions
         self.soft_by_dimensions = soft_by_dimensions
-
-        self.name = "tmpplc"
+        self.name = reference_name
 
     def __initialize_placeholders__(self):
         feed_dims = self.dimensions

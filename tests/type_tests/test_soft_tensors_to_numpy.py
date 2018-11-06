@@ -1,6 +1,8 @@
 import unittest
+
 import numpy as np
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class TestSoftTensorsToNumpy(unittest.TestCase):
@@ -72,6 +74,21 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
         self.numpyAssertEqual(np.array([2,1,4], dtype=np.int32), lengths[1])
 
         self.assertEqual([3,4], tensor_value.get_dimensions())
+        self.assertEqual([3,4], tensor_value.get_max_lengths())
+
+    def testSoftArrayToNumpyChopsSize(self):
+        tensor_type = SoftTensorTypeModel([3,10], soft_by_dimensions=[False, True])
+        tensor_value = tensor_type.initialize_value_model(language="python")
+
+        tensor_value.initial_assign([[5,5],[2], [1,2,3,4]])
+
+        self.numpyAssertEqual(np.array([[5,5,0,0],[2,0,0,0], [1,2,3,4]], dtype=np.float32), tensor_value.get_value())
+
+        lengths = tensor_value.get_lengths()
+        self.assertIsNone(lengths[0])
+        self.numpyAssertEqual(np.array([2,1,4], dtype=np.int32), lengths[1])
+
+        self.assertEqual([3,10], tensor_value.get_dimensions())
         self.assertEqual([3,4], tensor_value.get_max_lengths())
 
     def testSoftArrayToNumpyInt(self):

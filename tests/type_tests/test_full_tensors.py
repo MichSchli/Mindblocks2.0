@@ -1,6 +1,6 @@
 import unittest
 
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
 
 
 class TestTypeUsage(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestTypeUsage(unittest.TestCase):
 
         self.assertListEqual(dimensions, [5,7])
         self.assertListEqual(lengths_by_dimension, [None,None])
-        self.assertListEqual(max_lengths_by_dimension, [None,None])
+        self.assertListEqual(max_lengths_by_dimension, [5,7])
 
     def testCreateValuePreservesDimensionsWithPlaceholder(self):
         tensor_type = SoftTensorTypeModel([5,None,3])
@@ -27,7 +27,7 @@ class TestTypeUsage(unittest.TestCase):
 
         self.assertListEqual(dimensions, [5,None,3])
         self.assertListEqual(lengths_by_dimension, [None,None,None])
-        self.assertListEqual(max_lengths_by_dimension, [None,None, None])
+        self.assertListEqual(max_lengths_by_dimension, [5,None, 3])
 
     def testCreateValuePreservesDimensionsScalar(self):
         tensor_type = SoftTensorTypeModel([])

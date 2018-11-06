@@ -1,9 +1,11 @@
-from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
-from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+import tensorflow as tf
 import tensorflow_hub as tf_hub
 
-from Mindblocks.model.value_type.refactored.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
-import tensorflow as tf
+from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
+from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
+from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
+
+import os
 
 class ElmoEmbedding(ComponentTypeModel):
 
@@ -13,10 +15,20 @@ class ElmoEmbedding(ComponentTypeModel):
     languages = ["tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return ElmoEmbeddingValue()
+        if "elmo_dir" in value_dictionary:
+            elmo_dir = value_dictionary["elmo_dir"][0][0]
+        else:
+            elmo_dir = None
+
+        return ElmoEmbeddingValue(elmo_dir)
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
+        print("loading elmo")
+        if value.elmo_dir is not None:
+            os.environ['TFHUB_CACHE_DIR'] = value.elmo_dir
+
         elmo = tf_hub.Module("https://tfhub.dev/google/elmo/2", trainable=True)
+        print("done loading elmo")
         all_lengths = input_dictionary["input"].get_lengths()
         lengths = all_lengths[1]
 
@@ -24,7 +36,13 @@ class ElmoEmbedding(ComponentTypeModel):
         inputs = {"tokens": tokens,
                   "sequence_len": lengths}
 
+        inputs["tokens"] = tf.Print(inputs["tokens"], [inputs["tokens"]], summarize=100, message="elmo input")
+
+        print("applying elmo")
         embeddings = elmo(inputs=inputs, signature="tokens", as_dict=True)
+        print("done applying elmo")
+
+        embeddings["default"] = tf.Print(embeddings["default"], [embeddings["default"]], summarize=100, message="elmo output")
 
         sentence_embedding = embeddings["default"]
 
@@ -46,6 +64,9 @@ class ElmoEmbedding(ComponentTypeModel):
 
 
 class ElmoEmbeddingValue(ExecutionComponentValueModel):
+
+    def __init__(self, elmo_dir):
+        self.elmo_dir = elmo_dir
 
     def count_parameters(self):
         return 4

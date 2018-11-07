@@ -98,6 +98,37 @@ class TestIrisBlocks(unittest.TestCase):
         self.assertEqual(50, len(result))
         self.assertFalse(run_graphs[0].has_batches("test"))
 
+    def testTileDuplicatesProperly(self):
+        #TODO: Move to separate file
+        filename = "iris_tests/batch_and_tile_iris.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "tile"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        target_socket_1 = adder.get_out_socket("output")
+
+        runs = [[target_socket_1]]
+
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        result = run_graphs[0].execute()[0]
+
+        self.assertEqual(100, len(result))
+        self.assertEqual(25, len(result[0]))
+
+        for i in range(50):
+            self.assertEqual(result[i*2], result[i*2+1])
+
+        for i in range(5):
+            for j in range(4):
+                self.assertEqual(result[0][i*5], result[0][i*5+j+1])
+
+
     def testAccuracyOnlyWithoutMlHelper(self):
         filename = "iris_tests/untrained_iris_accuracy.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)

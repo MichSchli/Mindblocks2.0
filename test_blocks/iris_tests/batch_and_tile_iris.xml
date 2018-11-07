@@ -25,5 +25,12 @@
                 <source socket="batch">batch_generator</source>
                 <target socket="indexes">data_batcher</target>
         </edge>
+        <component name="tile" type="Tile">
+            <dim_changes>0:2,1:5</dim_changes>
+        </component>
+        <edge>
+                <source socket="output">data_batcher</source>
+                <target socket="input">tile</target>
+        </edge>
     </canvas>
 </block>

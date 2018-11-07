@@ -23,10 +23,13 @@ class ElmoEmbedding(ComponentTypeModel):
         return ElmoEmbeddingValue(elmo_dir)
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        print("loading elmo")
         if value.elmo_dir is not None:
             os.environ['TFHUB_CACHE_DIR'] = value.elmo_dir
+        else:
+            print("elmo dir not specified")
+            exit()
 
+        print("loading elmo to location: " + os.environ['TFHUB_CACHE_DIR'])
         elmo = tf_hub.Module("https://tfhub.dev/google/elmo/2", trainable=True)
         print("done loading elmo")
         all_lengths = input_dictionary["input"].get_lengths()

@@ -1,3 +1,4 @@
+import sys
 import tensorflow as tf
 import tensorflow_hub as tf_hub
 
@@ -25,13 +26,11 @@ class ElmoEmbedding(ComponentTypeModel):
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
         if value.elmo_dir is not None:
             os.environ['TFHUB_CACHE_DIR'] = value.elmo_dir
+            print("loading elmo to location: " + os.environ['TFHUB_CACHE_DIR'], file=sys.stderr)
         else:
-            print("elmo dir not specified")
-            exit()
+            print("Warning: elmo dir not specified", file=sys.stderr)
 
-        print("loading elmo to location: " + os.environ['TFHUB_CACHE_DIR'])
         elmo = tf_hub.Module("https://tfhub.dev/google/elmo/2", trainable=True)
-        print("done loading elmo")
         all_lengths = input_dictionary["input"].get_lengths()
         lengths = all_lengths[1]
 
@@ -39,14 +38,7 @@ class ElmoEmbedding(ComponentTypeModel):
         inputs = {"tokens": tokens,
                   "sequence_len": lengths}
 
-        inputs["tokens"] = tf.Print(inputs["tokens"], [inputs["tokens"]], summarize=100, message="elmo input")
-
-        print("applying elmo")
         embeddings = elmo(inputs=inputs, signature="tokens", as_dict=True)
-        print("done applying elmo")
-
-        embeddings["default"] = tf.Print(embeddings["default"], [embeddings["default"]], summarize=100, message="elmo output")
-
         sentence_embedding = embeddings["default"]
 
         output_models["word_embeddings"].assign(embeddings["elmo"], length_list=all_lengths + [None])

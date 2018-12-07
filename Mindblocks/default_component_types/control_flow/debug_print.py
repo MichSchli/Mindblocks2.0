@@ -19,8 +19,9 @@ class DebugPrint(ComponentTypeModel):
             print(input_dictionary["input"].get_value())
         elif value.language == "tensorflow":
             v = input_dictionary["input"].get_value()
+            lengths = input_dictionary["input"].get_lengths()
             v = tf.Print(v, [v], message="debug", summarize=100)
-            input_dictionary["input"].assign(v, language="tensorflow")
+            input_dictionary["input"].assign(v, length_list=lengths)
         return {"output": input_dictionary["input"]}
 
     def build_value_type_model(self, input_types, value, mode):

@@ -335,22 +335,27 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         return lengths, lookup
 
     def get_selected_states(self, backpointers, lengths, max_length, mask):
-        #TODO: Decode end tokens properly
-        beam_range = tf.range(self.beam_width, dtype=tf.int32)
-        beam_states = tf.reshape(tf.tile(beam_range, [self.rnn_model.batch_size * max_length]),
-                                 [-1, self.rnn_model.batch_size, self.beam_width])
         batch_range = tf.expand_dims(tf.expand_dims(tf.range(self.rnn_model.batch_size, dtype=tf.int32), -1), 0)
         tiled_batch_range = tf.tile(batch_range, [max_length, 1, self.beam_width])
         time_range = tf.expand_dims(tf.expand_dims(tf.range(max_length, dtype=tf.int32), -1), -1)
         tiled_time_range = tf.tile(time_range, [1, self.rnn_model.batch_size, self.beam_width])
 
-        old_beam_states = beam_states
+        beam_ids = array_ops.expand_dims(
+            array_ops.expand_dims(math_ops.range(self.beam_width), 0), 0)
+        beam_ids = array_ops.tile(beam_ids, [self.maximum_iterations, self.rnn_model.batch_size, 1])
 
-        beam_states = (beam_states + 1) * mask
-        selected_beam_states = self.decode(beam_states, backpointers, tf.reshape(lengths, [-1, self.beam_width]), 0)
+        #beam_states = (beam_states + 1) * mask
+        selected_beam_states = self.decode(beam_ids, backpointers, tf.reshape(lengths, [-1, self.beam_width]), 4)
 
-        selected_beam_states -= 1
-        selected_beam_states = tf.where(tf.equal(selected_beam_states, tf.constant(-1, dtype=tf.int32)), old_beam_states, selected_beam_states)
+        # For anything beyond sentence boundaries, copy
+        in_bound_steps = array_ops.transpose(
+            array_ops.sequence_mask(tf.reshape(lengths, [-1, self.beam_width]), maxlen=self.maximum_iterations),
+            perm=[2, 0, 1])
+        selected_beam_states = array_ops.where(
+            in_bound_steps, x=selected_beam_states, y=beam_ids)
+
+        #selected_beam_states -= 1
+        #selected_beam_states = tf.where(tf.equal(selected_beam_states, tf.constant(-1, dtype=tf.int32)), old_beam_states, selected_beam_states)
 
         batch_beams = tiled_batch_range * self.beam_width + selected_beam_states
         batch_beams = batch_beams
@@ -359,7 +364,6 @@ class BeamSearchDecoderComponentValue(ExecutionComponentValueModel):
         return lookup
 
     def decode(self, predictions, backpointers, lengths, stop_symbol):
-        #TODO: Replace with own
         decoded_seqs = tf.contrib.seq2seq.gather_tree(predictions,
                                                       backpointers,
                                                       tf.reduce_max(lengths, axis=-1),

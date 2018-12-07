@@ -185,6 +185,53 @@ class TestSeqToSeqBlocks(unittest.TestCase):
             pred_sent = " ".join(predictions[i*3 + 2])
             self.assertNotEqual(s, pred_sent)
 
+    def testBeamSearchStopsCorrectly(self):
+        filename = "seq_to_seq_tests/basic_language_model_with_beam_search_top_3.xml"
+
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "conll_reader_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+        self.setup_holder.variable_repository.set_variable_value("data_file", "larger_test_conll_file.conll")
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        for i in range(2000):
+            ml_helper.train(1)
+            predictions = ml_helper.predict()
+            for prediction in predictions:
+                self.assertFalse(len(prediction) > 50)
+                if len(prediction) < 50:
+                    self.assertTrue(prediction[-1] == "_STOP_")
+
+    def testBeamSearchNoDuplicateStops(self):
+        filename = "seq_to_seq_tests/basic_language_model_with_beam_search_top_3.xml"
+
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "conll_reader_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+        self.setup_holder.variable_repository.set_variable_value("data_file", "larger_test_conll_file.conll")
+
+        component_spec = CreationComponentSpecifications()
+        c = self.setup_holder.component_repository.get(component_spec)[0]
+        graph = c.get_graph()
+        ml_helper = self.setup_holder.ml_helper_factory.build_ml_helper_from_graph(graph)
+
+        for i in range(2000):
+            ml_helper.train(1)
+            predictions = ml_helper.predict()
+            for prediction in predictions:
+                if len(prediction) < 50:
+                    self.assertEqual(prediction.count("_STOP_"), 1)
+
     def testBeamSearchSomeBeams(self):
         filename = "seq_to_seq_tests/basic_language_model_with_beam_search_top_some.xml"
 

@@ -1,5 +1,6 @@
 import numpy as np
 
+from Mindblocks.helpers.soft_tensors.soft_tensor_helper import SoftTensorHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
@@ -22,14 +23,17 @@ class SentenceReader(ComponentTypeModel):
         return value
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        output_models["output"].initial_assign(value.read())
+        if not value.has_read():
+            value.read()
+
+        as_tensor, length_list = value.as_soft_tensor()
+        output_models["output"].assign(as_tensor, length_list)
+
         output_models["count"].assign(np.array(value.count()), length_list=None)
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        num_examples = len(value.read())
-
-        output_dims = [num_examples, None]
+        output_dims = value.infer_dims()
         soft_dims = [False, True]
 
         output_type_model = SoftTensorTypeModel(output_dims, soft_by_dimensions=soft_dims, string_type="string")
@@ -51,6 +55,9 @@ class SentenceReaderValue(ExecutionComponentValueModel):
     start_token = None
     stop_token = None
 
+    full_list = None
+    tensor = None
+
     def __init__(self, filepath):
         self.filepath = filepath
         self.has_batch = True
@@ -71,6 +78,8 @@ class SentenceReaderValue(ExecutionComponentValueModel):
         self.has_batch = True
 
     def count(self):
+        if not self.has_read():
+            self.read()
         return self.size
 
     def count_columns(self):
@@ -103,4 +112,21 @@ class SentenceReaderValue(ExecutionComponentValueModel):
 
         f.close()
 
+        self.full_list = lines
+
         return lines
+
+    def has_read(self):
+        return self.full_list is not None
+
+    def infer_dims(self):
+        num_examples = self.count()
+
+        return [num_examples, None]
+
+    def as_soft_tensor(self):
+        if self.tensor is None:
+            sth = SoftTensorHelper()
+            self.tensor, self.length_list = sth.to_soft_tensor(self.full_list, self.infer_dims(), [False, True], "string")
+
+        return self.tensor, self.length_list

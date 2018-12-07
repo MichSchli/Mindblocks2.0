@@ -1,2883 +1,2851 @@
 {
     "traceEvents": [
         {
-            "ph": "M",
             "name": "process_name",
-            "pid": 0,
             "args": {
                 "name": "Allocators"
-            }
+            },
+            "pid": 0,
+            "ph": "M"
         },
         {
-            "ph": "M",
             "name": "process_name",
-            "pid": 1,
             "args": {
                 "name": "/job:localhost/replica:0/task:0/device:CPU:0 Compute"
-            }
+            },
+            "pid": 1,
+            "ph": "M"
         },
         {
-            "ph": "M",
             "name": "process_name",
-            "pid": 2,
             "args": {
                 "name": "/job:localhost/replica:0/task:0/device:CPU:0 Tensors"
-            }
+            },
+            "pid": 2,
+            "ph": "M"
         },
         {
-            "tid": 0,
             "dur": 5,
             "pid": 1,
-            "ts": 1541507730910050,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129041,
             "name": "NoOp",
+            "tid": 0,
             "args": {
                 "name": "_SOURCE",
                 "op": "NoOp"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 10,
+            "dur": 8,
             "pid": 1,
-            "ts": 1541507730910072,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129065,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "Adam/learning_rate",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 11,
+            "dur": 10,
             "pid": 1,
-            "ts": 1541507730910072,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129064,
             "name": "VariableV2",
+            "tid": 1,
             "args": {
                 "name": "None-None_W0/Adam",
                 "op": "VariableV2"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 3,
+            "dur": 4,
             "pid": 1,
-            "ts": 1541507730910083,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129074,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "Adam/beta1",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 2,
             "pid": 1,
-            "ts": 1541507730910087,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129079,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "Adam/beta2",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 5,
+            "dur": 4,
             "pid": 1,
-            "ts": 1541507730910085,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129077,
             "name": "VariableV2",
+            "tid": 1,
             "args": {
                 "name": "None-None_W0/Adam_1",
                 "op": "VariableV2"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910091,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129082,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "Adam/epsilon",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 5,
+            "dur": 4,
             "pid": 1,
-            "ts": 1541507730910091,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129083,
             "name": "VariableV2",
+            "tid": 1,
             "args": {
                 "name": "None-None_W1/Adam",
                 "op": "VariableV2"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910095,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129086,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "gradients/add_grad/Shape_1",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910098,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_W1/Adam_1",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910100,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129090,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "gradients/Mean_grad/Reshape",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 3,
+            "dur": 5,
             "pid": 1,
-            "ts": 1541507730910104,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129089,
+            "name": "VariableV2",
+            "tid": 1,
+            "args": {
+                "name": "None-None_W1/Adam_1",
+                "op": "VariableV2"
+            }
+        },
+        {
+            "dur": 2,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129094,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "global_norm/Const_1",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910104,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_b1/Adam",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
             "dur": 2,
             "pid": 1,
-            "ts": 1541507730910108,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129097,
             "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "clip_by_global_norm/mul/x",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
+            "dur": 4,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129095,
+            "name": "VariableV2",
             "tid": 1,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910109,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_b1/Adam_1",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910111,
-            "ph": "X",
-            "name": "Const",
-            "args": {
-                "name": "gradients/Mean_grad/Const",
-                "op": "Const"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 2,
-            "dur": 11,
-            "pid": 1,
-            "ts": 1541507730910104,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_b0/Adam",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910115,
-            "ph": "X",
-            "name": "Const",
-            "args": {
-                "name": "strided_slice/stack",
-                "op": "Const"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910120,
-            "ph": "X",
-            "name": "Const",
-            "args": {
-                "name": "strided_slice/stack_2",
-                "op": "Const"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 3,
-            "dur": 11,
-            "pid": 1,
-            "ts": 1541507730910104,
-            "ph": "X",
-            "name": "VariableV2",
             "args": {
                 "name": "None-None_b0/Adam_1",
                 "op": "VariableV2"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910124,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129100,
             "name": "Const",
+            "tid": 0,
             "args": {
-                "name": "gradients/add_1_grad/Shape_1",
+                "name": "gradients/Mean_grad/Const",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 5,
+            "dur": 10,
             "pid": 1,
-            "ts": 1541507730910124,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129094,
             "name": "VariableV2",
+            "tid": 2,
             "args": {
-                "name": "beta2_power",
+                "name": "None-None_b0/Adam",
                 "op": "VariableV2"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 4,
+            "dur": 2,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129104,
+            "name": "Const",
+            "tid": 0,
+            "args": {
+                "name": "strided_slice/stack",
+                "op": "Const"
+            }
+        },
+        {
             "dur": 4,
             "pid": 1,
-            "ts": 1541507730910113,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129101,
             "name": "VariableV2",
+            "tid": 1,
+            "args": {
+                "name": "None-None_b1/Adam",
+                "op": "VariableV2"
+            }
+        },
+        {
+            "dur": 2,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129108,
+            "name": "Const",
+            "tid": 0,
+            "args": {
+                "name": "strided_slice/stack_2",
+                "op": "Const"
+            }
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129109,
+            "name": "VariableV2",
+            "tid": 1,
+            "args": {
+                "name": "None-None_b1/Adam_1",
+                "op": "VariableV2"
+            }
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129109,
+            "name": "VariableV2",
+            "tid": 2,
             "args": {
                 "name": "beta1_power",
                 "op": "VariableV2"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910128,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129111,
             "name": "Const",
+            "tid": 0,
+            "args": {
+                "name": "gradients/add_1_grad/Shape_1",
+                "op": "Const"
+            }
+        },
+        {
+            "dur": 2,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129115,
+            "name": "Const",
+            "tid": 0,
             "args": {
                 "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
                 "op": "Const"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 2,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910129,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_W0",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910130,
-            "ph": "X",
-            "name": "Identity",
-            "args": {
-                "input0": "beta2_power",
-                "name": "beta2_power/read",
-                "op": "Identity"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910132,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129114,
+            "name": "VariableV2",
+            "tid": 1,
+            "args": {
+                "name": "beta2_power",
+                "op": "VariableV2"
+            }
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129114,
             "name": "Identity",
+            "tid": 2,
             "args": {
                 "input0": "beta1_power",
                 "name": "beta1_power/read",
                 "op": "Identity"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 4,
-            "id": 0,
+            "dur": 3,
             "pid": 1,
-            "ts": 1541507730910117,
-            "ph": "s",
-            "name": "beta1_power",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 0,
-            "pid": 1,
-            "ts": 1541507730910132,
-            "ph": "t",
-            "name": "beta1_power",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910132,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129118,
+            "name": "Identity",
+            "tid": 0,
+            "args": {
+                "input0": "beta2_power",
+                "name": "beta2_power/read",
+                "op": "Identity"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129117,
+            "name": "beta2_power",
+            "tid": 1,
+            "id": 0
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129118,
+            "name": "beta2_power",
+            "tid": 0,
+            "id": 0
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129118,
             "name": "_Arg",
+            "tid": 1,
             "args": {
                 "name": "_arg_indexer-train_output_0_0",
                 "op": "_Arg"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
+            "dur": 4,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129119,
+            "name": "VariableV2",
+            "tid": 2,
+            "args": {
+                "name": "None-None_W0",
+                "op": "VariableV2"
+            }
+        },
+        {
+            "dur": 2,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129122,
+            "name": "_Arg",
+            "tid": 0,
+            "args": {
+                "name": "_arg_soft_tensor_copy_copy_copy_0_1",
+                "op": "_Arg"
+            }
+        },
+        {
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910135,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129122,
+            "name": "VariableV2",
+            "tid": 1,
+            "args": {
+                "name": "None-None_b0",
+                "op": "VariableV2"
+            }
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129124,
             "name": "Identity",
+            "tid": 2,
             "args": {
                 "input0": "None-None_W0",
                 "name": "None-None_W0/read",
                 "op": "Identity"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 2,
-            "id": 1,
-            "pid": 1,
-            "ts": 1541507730910133,
-            "ph": "s",
-            "name": "None-None_W0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 1,
-            "pid": 1,
-            "ts": 1541507730910135,
-            "ph": "t",
-            "name": "None-None_W0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
             "dur": 2,
             "pid": 1,
-            "ts": 1541507730910137,
+            "cat": "Op",
             "ph": "X",
-            "name": "_Arg",
-            "args": {
-                "name": "_arg_soft_tensor_copy_copy_copy_0_1",
-                "op": "_Arg"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 2,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910136,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_b0",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 3,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910137,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_W1",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910140,
-            "ph": "X",
-            "name": "VariableV2",
-            "args": {
-                "name": "None-None_b1",
-                "op": "VariableV2"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "dur": 2,
-            "pid": 1,
-            "ts": 1541507730910141,
-            "ph": "X",
+            "ts": 1544120821129126,
             "name": "Identity",
+            "tid": 0,
             "args": {
                 "input0": "None-None_b0",
                 "name": "None-None_b0/read",
                 "op": "Identity"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 2,
-            "id": 2,
             "pid": 1,
-            "ts": 1541507730910140,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129125,
             "name": "None-None_b0",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 1,
-            "id": 2,
+            "id": 1
+        },
+        {
             "pid": 1,
-            "ts": 1541507730910141,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129126,
             "name": "None-None_b0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "dur": 8,
-            "pid": 1,
-            "ts": 1541507730910141,
-            "ph": "X",
-            "name": "Squeeze",
-            "args": {
-                "input0": "_arg_indexer-train_output_0_0",
-                "name": "Squeeze",
-                "op": "Squeeze"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 3,
-            "id": 3,
-            "pid": 1,
-            "ts": 1541507730910136,
-            "ph": "s",
-            "name": "_arg_indexer-train_output_0_0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 3,
-            "pid": 1,
-            "ts": 1541507730910141,
-            "ph": "t",
-            "name": "_arg_indexer-train_output_0_0",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 0,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910148,
-            "ph": "X",
-            "name": "Identity",
-            "args": {
-                "input0": "None-None_b1",
-                "name": "None-None_b1/read",
-                "op": "Identity"
-            },
-            "cat": "Op"
+            "id": 1
         },
         {
-            "tid": 3,
             "dur": 2,
             "pid": 1,
-            "ts": 1541507730910143,
+            "cat": "Op",
             "ph": "X",
-            "name": "Identity",
+            "ts": 1544120821129130,
+            "name": "VariableV2",
+            "tid": 0,
             "args": {
-                "input0": "None-None_W1",
-                "name": "None-None_W1/read",
-                "op": "Identity"
-            },
-            "cat": "Op"
+                "name": "None-None_b1",
+                "op": "VariableV2"
+            }
         },
         {
-            "tid": 1,
-            "dur": 8,
+            "dur": 4,
             "pid": 1,
-            "ts": 1541507730910151,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129129,
+            "name": "VariableV2",
+            "tid": 1,
+            "args": {
+                "name": "None-None_W1",
+                "op": "VariableV2"
+            }
+        },
+        {
+            "dur": 9,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129125,
             "name": "Shape",
+            "tid": 3,
             "args": {
                 "input0": "_arg_soft_tensor_copy_copy_copy_0_1",
                 "name": "Shape",
                 "op": "Shape"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "id": 4,
             "pid": 1,
-            "ts": 1541507730910139,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129124,
             "name": "_arg_soft_tensor_copy_copy_copy_0_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 4,
-            "pid": 1,
-            "ts": 1541507730910151,
-            "ph": "t",
-            "name": "_arg_soft_tensor_copy_copy_copy_0_1",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 0,
+            "id": 2
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129125,
+            "name": "_arg_soft_tensor_copy_copy_copy_0_1",
+            "tid": 3,
+            "id": 2
+        },
+        {
+            "dur": 2,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129134,
+            "name": "Identity",
+            "tid": 0,
+            "args": {
+                "input0": "None-None_b1",
+                "name": "None-None_b1/read",
+                "op": "Identity"
+            }
+        },
+        {
+            "dur": 2,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129134,
+            "name": "Identity",
+            "tid": 1,
+            "args": {
+                "input0": "None-None_W1",
+                "name": "None-None_W1/read",
+                "op": "Identity"
+            }
+        },
+        {
             "dur": 12,
             "pid": 1,
-            "ts": 1541507730910161,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129136,
             "name": "StridedSlice",
+            "tid": 2,
             "args": {
+                "input2": "strided_slice/stack",
                 "input3": "strided_slice/stack_2",
-                "input1": "strided_slice/stack",
                 "op": "StridedSlice",
                 "input0": "Shape",
-                "name": "strided_slice",
-                "input2": "gradients/Mean_grad/Const"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 5,
-            "pid": 1,
-            "ts": 1541507730910159,
-            "ph": "s",
-            "name": "Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 5,
-            "pid": 1,
-            "ts": 1541507730910161,
-            "ph": "t",
-            "name": "Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "dur": 11,
-            "pid": 1,
-            "ts": 1541507730910163,
-            "ph": "X",
-            "name": "StridedSlice",
-            "args": {
-                "input3": "strided_slice/stack_2",
                 "input1": "gradients/Mean_grad/Const",
+                "name": "strided_slice_1"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129134,
+            "name": "Shape",
+            "tid": 3,
+            "id": 3
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129136,
+            "name": "Shape",
+            "tid": 2,
+            "id": 3
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129103,
+            "name": "gradients/Mean_grad/Const",
+            "tid": 0,
+            "id": 4
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129136,
+            "name": "gradients/Mean_grad/Const",
+            "tid": 2,
+            "id": 4
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129106,
+            "name": "strided_slice/stack",
+            "tid": 0,
+            "id": 5
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129136,
+            "name": "strided_slice/stack",
+            "tid": 2,
+            "id": 5
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129110,
+            "name": "strided_slice/stack_2",
+            "tid": 0,
+            "id": 6
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129136,
+            "name": "strided_slice/stack_2",
+            "tid": 2,
+            "id": 6
+        },
+        {
+            "dur": 12,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129137,
+            "name": "StridedSlice",
+            "tid": 0,
+            "args": {
+                "input2": "gradients/Mean_grad/Const",
+                "input3": "strided_slice/stack_2",
                 "op": "StridedSlice",
                 "input0": "Shape",
-                "name": "strided_slice_1",
-                "input2": "strided_slice/stack"
-            },
-            "cat": "Op"
+                "input1": "strided_slice/stack",
+                "name": "strided_slice"
+            }
         },
         {
-            "tid": 0,
-            "id": 6,
             "pid": 1,
-            "ts": 1541507730910114,
+            "cat": "DataFlow",
             "ph": "s",
-            "name": "gradients/Mean_grad/Const",
-            "cat": "DataFlow"
+            "ts": 1544120821129134,
+            "name": "Shape",
+            "tid": 3,
+            "id": 7
         },
         {
-            "tid": 1,
-            "id": 6,
             "pid": 1,
-            "ts": 1541507730910163,
+            "cat": "DataFlow",
             "ph": "t",
-            "name": "gradients/Mean_grad/Const",
-            "cat": "DataFlow"
-        },
-        {
+            "ts": 1544120821129137,
+            "name": "Shape",
             "tid": 0,
-            "id": 7,
-            "pid": 1,
-            "ts": 1541507730910118,
-            "ph": "s",
-            "name": "strided_slice/stack",
-            "cat": "DataFlow"
+            "id": 7
         },
         {
-            "tid": 1,
-            "id": 7,
+            "dur": 6,
             "pid": 1,
-            "ts": 1541507730910163,
-            "ph": "t",
-            "name": "strided_slice/stack",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 8,
-            "pid": 1,
-            "ts": 1541507730910123,
-            "ph": "s",
-            "name": "strided_slice/stack_2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 8,
-            "pid": 1,
-            "ts": 1541507730910163,
-            "ph": "t",
-            "name": "strided_slice/stack_2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "dur": 7,
-            "pid": 1,
-            "ts": 1541507730910175,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129152,
             "name": "Pack",
+            "tid": 0,
             "args": {
                 "input0": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
-                "name": "Reshape/shape",
                 "input1": "strided_slice",
+                "name": "Reshape/shape",
                 "op": "Pack"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
             "dur": 8,
             "pid": 1,
-            "ts": 1541507730910177,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129151,
             "name": "ConcatV2",
+            "tid": 1,
             "args": {
                 "input0": "strided_slice_1",
-                "name": "concat",
                 "input1": "gradients/add_1_grad/Shape_1",
-                "op": "ConcatV2",
-                "input2": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim"
-            },
-            "cat": "Op"
+                "name": "concat",
+                "input2": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
+                "op": "ConcatV2"
+            }
         },
         {
-            "tid": 0,
-            "id": 9,
             "pid": 1,
-            "ts": 1541507730910127,
+            "cat": "DataFlow",
             "ph": "s",
-            "name": "gradients/add_1_grad/Shape_1",
-            "cat": "DataFlow"
+            "ts": 1544120821129148,
+            "name": "strided_slice_1",
+            "tid": 2,
+            "id": 8
         },
         {
-            "tid": 1,
-            "id": 9,
             "pid": 1,
-            "ts": 1541507730910177,
+            "cat": "DataFlow",
             "ph": "t",
-            "name": "gradients/add_1_grad/Shape_1",
-            "cat": "DataFlow"
+            "ts": 1544120821129151,
+            "name": "strided_slice_1",
+            "tid": 1,
+            "id": 8
         },
         {
-            "tid": 0,
-            "id": 10,
             "pid": 1,
-            "ts": 1541507730910131,
+            "cat": "DataFlow",
             "ph": "s",
-            "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 10,
-            "pid": 1,
-            "ts": 1541507730910177,
-            "ph": "t",
-            "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
-            "cat": "DataFlow"
-        },
-        {
+            "ts": 1544120821129114,
+            "name": "gradients/add_1_grad/Shape_1",
             "tid": 0,
+            "id": 9
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129151,
+            "name": "gradients/add_1_grad/Shape_1",
+            "tid": 1,
+            "id": 9
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129117,
+            "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
+            "tid": 0,
+            "id": 10
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129151,
+            "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
+            "tid": 1,
+            "id": 10
+        },
+        {
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910184,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129160,
             "name": "Reshape",
+            "tid": 0,
             "args": {
                 "input0": "_arg_soft_tensor_copy_copy_copy_0_1",
-                "name": "Reshape",
                 "input1": "Reshape/shape",
+                "name": "Reshape",
                 "op": "Reshape"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 10,
+            "dur": 9,
             "pid": 1,
-            "ts": 1541507730910188,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129165,
             "name": "MatMul",
+            "tid": 0,
             "args": {
                 "input0": "Reshape",
-                "name": "MatMul",
                 "input1": "None-None_W0/read",
+                "name": "MatMul",
                 "op": "MatMul"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "id": 11,
             "pid": 1,
-            "ts": 1541507730910138,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129127,
             "name": "None-None_W0/read",
-            "cat": "DataFlow"
+            "tid": 2,
+            "id": 11
         },
         {
-            "tid": 0,
-            "id": 11,
             "pid": 1,
-            "ts": 1541507730910188,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129165,
             "name": "None-None_W0/read",
-            "cat": "DataFlow"
+            "tid": 0,
+            "id": 11
         },
         {
-            "tid": 0,
-            "dur": 3,
+            "dur": 4,
             "pid": 1,
-            "ts": 1541507730910202,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129180,
             "name": "Shape",
+            "tid": 0,
             "args": {
                 "input0": "MatMul",
                 "name": "gradients/add_grad/Shape",
                 "op": "Shape"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 4,
+            "dur": 6,
             "pid": 1,
-            "ts": 1541507730910206,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129185,
             "name": "BroadcastGradientArgs",
+            "tid": 0,
             "args": {
                 "input0": "gradients/add_grad/Shape",
-                "name": "gradients/add_grad/BroadcastGradientArgs",
                 "input1": "gradients/add_grad/Shape_1",
+                "name": "gradients/add_grad/BroadcastGradientArgs",
                 "op": "BroadcastGradientArgs"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 12,
+            "dur": 15,
             "pid": 1,
-            "ts": 1541507730910201,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129178,
             "name": "Add",
+            "tid": 1,
             "args": {
                 "input0": "MatMul",
-                "name": "add",
                 "input1": "None-None_b0/read",
+                "name": "add",
                 "op": "Add"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "id": 12,
             "pid": 1,
-            "ts": 1541507730910198,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129174,
             "name": "MatMul",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 12,
-            "pid": 1,
-            "ts": 1541507730910201,
-            "ph": "t",
-            "name": "MatMul",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 0,
-            "dur": 4,
+            "id": 12
+        },
+        {
             "pid": 1,
-            "ts": 1541507730910215,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129178,
+            "name": "MatMul",
+            "tid": 1,
+            "id": 12
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129128,
+            "name": "None-None_b0/read",
+            "tid": 0,
+            "id": 13
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129178,
+            "name": "None-None_b0/read",
+            "tid": 1,
+            "id": 13
+        },
+        {
+            "dur": 5,
+            "pid": 1,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129195,
             "name": "Relu",
+            "tid": 0,
             "args": {
                 "input0": "add",
                 "name": "Relu",
                 "op": "Relu"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "id": 13,
             "pid": 1,
-            "ts": 1541507730910213,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129193,
             "name": "add",
-            "cat": "DataFlow"
+            "tid": 1,
+            "id": 14
         },
         {
-            "tid": 0,
-            "id": 13,
             "pid": 1,
-            "ts": 1541507730910215,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129195,
             "name": "add",
-            "cat": "DataFlow"
+            "tid": 0,
+            "id": 14
         },
         {
-            "tid": 0,
             "dur": 9,
             "pid": 1,
-            "ts": 1541507730910221,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129202,
             "name": "MatMul",
+            "tid": 0,
             "args": {
                 "input0": "Relu",
-                "name": "MatMul_1",
                 "input1": "None-None_W1/read",
+                "name": "MatMul_1",
                 "op": "MatMul"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 3,
-            "id": 14,
             "pid": 1,
-            "ts": 1541507730910145,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129136,
             "name": "None-None_W1/read",
-            "cat": "DataFlow"
+            "tid": 1,
+            "id": 15
         },
         {
-            "tid": 0,
-            "id": 14,
             "pid": 1,
-            "ts": 1541507730910221,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129202,
             "name": "None-None_W1/read",
-            "cat": "DataFlow"
+            "tid": 0,
+            "id": 15
         },
         {
-            "tid": 0,
             "dur": 4,
             "pid": 1,
-            "ts": 1541507730910235,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129216,
             "name": "Shape",
+            "tid": 0,
             "args": {
                 "input0": "MatMul_1",
                 "name": "gradients/add_1_grad/Shape",
                 "op": "Shape"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 8,
+            "dur": 10,
             "pid": 1,
-            "ts": 1541507730910233,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129215,
             "name": "Add",
+            "tid": 1,
             "args": {
                 "input0": "MatMul_1",
-                "name": "add_1",
                 "input1": "None-None_b1/read",
+                "name": "add_1",
                 "op": "Add"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "id": 15,
             "pid": 1,
-            "ts": 1541507730910230,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129211,
             "name": "MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 15,
-            "pid": 1,
-            "ts": 1541507730910233,
-            "ph": "t",
-            "name": "MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 0,
-            "id": 16,
+            "id": 16
+        },
+        {
             "pid": 1,
-            "ts": 1541507730910151,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129215,
+            "name": "MatMul_1",
+            "tid": 1,
+            "id": 16
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129136,
             "name": "None-None_b1/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 16,
-            "pid": 1,
-            "ts": 1541507730910233,
-            "ph": "t",
-            "name": "None-None_b1/read",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 0,
-            "dur": 6,
+            "id": 17
+        },
+        {
             "pid": 1,
-            "ts": 1541507730910240,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129215,
+            "name": "None-None_b1/read",
+            "tid": 1,
+            "id": 17
+        },
+        {
+            "dur": 5,
+            "pid": 1,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129221,
             "name": "BroadcastGradientArgs",
+            "tid": 0,
             "args": {
                 "input0": "gradients/add_1_grad/Shape",
-                "name": "gradients/add_1_grad/BroadcastGradientArgs",
                 "input1": "gradients/add_1_grad/Shape_1",
+                "name": "gradients/add_1_grad/BroadcastGradientArgs",
                 "op": "BroadcastGradientArgs"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 3,
+            "dur": 4,
             "pid": 1,
-            "ts": 1541507730910243,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129227,
             "name": "Shape",
+            "tid": 0,
             "args": {
                 "input0": "add_1",
                 "name": "gradients/Reshape_1_grad/Shape",
                 "op": "Shape"
-            },
-            "cat": "Op"
+            }
         },
         {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129225,
+            "name": "add_1",
+            "tid": 1,
+            "id": 18
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129227,
+            "name": "add_1",
             "tid": 0,
+            "id": 18
+        },
+        {
             "dur": 4,
             "pid": 1,
-            "ts": 1541507730910248,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129233,
             "name": "Reshape",
+            "tid": 0,
             "args": {
                 "input0": "add_1",
-                "name": "Reshape_1",
                 "input1": "concat",
+                "name": "Reshape_1",
                 "op": "Reshape"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "id": 17,
             "pid": 1,
-            "ts": 1541507730910241,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129225,
             "name": "add_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 17,
-            "pid": 1,
-            "ts": 1541507730910248,
-            "ph": "t",
-            "name": "add_1",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 1,
-            "id": 18,
-            "pid": 1,
-            "ts": 1541507730910185,
-            "ph": "s",
-            "name": "concat",
-            "cat": "DataFlow"
+            "id": 19
         },
         {
-            "tid": 0,
-            "id": 18,
             "pid": 1,
-            "ts": 1541507730910248,
+            "cat": "DataFlow",
             "ph": "t",
-            "name": "concat",
-            "cat": "DataFlow"
+            "ts": 1544120821129233,
+            "name": "add_1",
+            "tid": 0,
+            "id": 19
         },
         {
-            "tid": 0,
-            "dur": 15,
             "pid": 1,
-            "ts": 1541507730910253,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129159,
+            "name": "concat",
+            "tid": 1,
+            "id": 20
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129233,
+            "name": "concat",
+            "tid": 0,
+            "id": 20
+        },
+        {
+            "dur": 21,
+            "pid": 1,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129238,
             "name": "SparseSoftmaxCrossEntropyWithLogits",
+            "tid": 0,
             "args": {
                 "input0": "Reshape_1",
+                "input1": "_arg_indexer-train_output_0_0",
                 "name": "SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits",
-                "input1": "Squeeze",
                 "op": "SparseSoftmaxCrossEntropyWithLogits"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 2,
-            "id": 19,
             "pid": 1,
-            "ts": 1541507730910149,
+            "cat": "DataFlow",
             "ph": "s",
-            "name": "Squeeze",
-            "cat": "DataFlow"
+            "ts": 1544120821129121,
+            "name": "_arg_indexer-train_output_0_0",
+            "tid": 1,
+            "id": 21
         },
         {
-            "tid": 0,
-            "id": 19,
             "pid": 1,
-            "ts": 1541507730910253,
+            "cat": "DataFlow",
             "ph": "t",
-            "name": "Squeeze",
-            "cat": "DataFlow"
+            "ts": 1544120821129238,
+            "name": "_arg_indexer-train_output_0_0",
+            "tid": 0,
+            "id": 21
         },
         {
-            "tid": 0,
-            "dur": 3,
+            "dur": 4,
             "pid": 1,
-            "ts": 1541507730910269,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129261,
             "name": "Shape",
+            "tid": 0,
             "args": {
                 "input0": "SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits",
                 "name": "gradients/Mean_grad/Shape",
                 "op": "Shape"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 1,
+            "dur": 2,
             "pid": 1,
-            "ts": 1541507730910276,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129269,
             "name": "_Retval",
+            "tid": 0,
             "args": {
                 "input0": "SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits",
                 "name": "_retval_SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_0_0",
                 "op": "_Retval"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 7,
+            "dur": 8,
             "pid": 1,
-            "ts": 1541507730910275,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129267,
             "name": "Tile",
+            "tid": 1,
             "args": {
                 "input0": "gradients/Mean_grad/Reshape",
-                "name": "gradients/Mean_grad/Tile",
                 "input1": "gradients/Mean_grad/Shape",
+                "name": "gradients/Mean_grad/Tile",
                 "op": "Tile"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "id": 20,
             "pid": 1,
-            "ts": 1541507730910103,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129093,
             "name": "gradients/Mean_grad/Reshape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 20,
-            "pid": 1,
-            "ts": 1541507730910275,
-            "ph": "t",
-            "name": "gradients/Mean_grad/Reshape",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 0,
-            "id": 21,
+            "id": 22
+        },
+        {
             "pid": 1,
-            "ts": 1541507730910272,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129267,
+            "name": "gradients/Mean_grad/Reshape",
+            "tid": 1,
+            "id": 22
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129265,
             "name": "gradients/Mean_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 21,
-            "pid": 1,
-            "ts": 1541507730910275,
-            "ph": "t",
-            "name": "gradients/Mean_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
             "tid": 0,
+            "id": 23
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129267,
+            "name": "gradients/Mean_grad/Shape",
+            "tid": 1,
+            "id": 23
+        },
+        {
             "dur": 5,
             "pid": 1,
-            "ts": 1541507730910278,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129272,
             "name": "Size",
+            "tid": 0,
             "args": {
                 "input0": "SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits",
-                "name": "gradients/Mean_grad/Prod",
                 "input1": "^gradients/Mean_grad/Shape",
+                "name": "gradients/Mean_grad/Prod",
                 "op": "Size"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910285,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129278,
             "name": "Snapshot",
+            "tid": 0,
             "args": {
                 "input0": "gradients/Mean_grad/Prod",
                 "name": "gradients/Mean_grad/floordiv",
                 "op": "Snapshot"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 5,
             "pid": 1,
-            "ts": 1541507730910289,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129282,
             "name": "Cast",
+            "tid": 0,
             "args": {
                 "input0": "gradients/Mean_grad/floordiv",
                 "name": "gradients/Mean_grad/Cast",
                 "op": "Cast"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 5,
             "pid": 1,
-            "ts": 1541507730910296,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129289,
             "name": "RealDiv",
+            "tid": 0,
             "args": {
                 "input0": "gradients/Mean_grad/Tile",
-                "name": "gradients/Mean_grad/truediv",
                 "input1": "gradients/Mean_grad/Cast",
+                "name": "gradients/Mean_grad/truediv",
                 "op": "RealDiv"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "id": 22,
             "pid": 1,
-            "ts": 1541507730910282,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129275,
             "name": "gradients/Mean_grad/Tile",
-            "cat": "DataFlow"
+            "tid": 1,
+            "id": 24
         },
         {
-            "tid": 0,
-            "id": 22,
             "pid": 1,
-            "ts": 1541507730910296,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129289,
             "name": "gradients/Mean_grad/Tile",
-            "cat": "DataFlow"
+            "tid": 0,
+            "id": 24
         },
         {
-            "tid": 0,
-            "dur": 4,
+            "dur": 5,
             "pid": 1,
-            "ts": 1541507730910303,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129295,
             "name": "ExpandDims",
+            "tid": 0,
             "args": {
                 "input0": "gradients/Mean_grad/truediv",
-                "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims",
                 "input1": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims/dim",
+                "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims",
                 "op": "ExpandDims"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 7,
-            "pid": 1,
-            "ts": 1541507730910308,
-            "ph": "X",
-            "name": "Mul",
-            "args": {
-                "input0": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims",
-                "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/mul",
-                "input1": "SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits:1",
-                "op": "Mul"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910317,
-            "ph": "X",
-            "name": "Reshape",
-            "args": {
-                "input0": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/mul",
-                "name": "gradients/Reshape_1_grad/Reshape",
-                "input1": "gradients/Reshape_1_grad/Shape",
-                "op": "Reshape"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 23,
-            "pid": 1,
-            "ts": 1541507730910246,
-            "ph": "s",
-            "name": "gradients/Reshape_1_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 23,
-            "pid": 1,
-            "ts": 1541507730910317,
-            "ph": "t",
-            "name": "gradients/Reshape_1_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "dur": 5,
-            "pid": 1,
-            "ts": 1541507730910378,
-            "ph": "X",
-            "name": "Sum",
-            "args": {
-                "input0": "gradients/Reshape_1_grad/Reshape",
-                "name": "gradients/add_1_grad/Sum",
-                "input1": "gradients/add_1_grad/BroadcastGradientArgs",
-                "op": "Sum"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "dur": 9,
-            "pid": 1,
-            "ts": 1541507730910375,
-            "ph": "X",
-            "name": "Sum",
-            "args": {
-                "input0": "gradients/Reshape_1_grad/Reshape",
-                "name": "gradients/add_1_grad/Sum_1",
-                "input1": "gradients/add_1_grad/BroadcastGradientArgs:1",
-                "op": "Sum"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "id": 24,
-            "pid": 1,
-            "ts": 1541507730910320,
-            "ph": "s",
-            "name": "gradients/Reshape_1_grad/Reshape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 24,
-            "pid": 1,
-            "ts": 1541507730910375,
-            "ph": "t",
-            "name": "gradients/Reshape_1_grad/Reshape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 25,
-            "pid": 1,
-            "ts": 1541507730910246,
-            "ph": "s",
-            "name": "gradients/add_1_grad/BroadcastGradientArgs:1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 25,
-            "pid": 1,
-            "ts": 1541507730910375,
-            "ph": "t",
-            "name": "gradients/add_1_grad/BroadcastGradientArgs:1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910386,
-            "ph": "X",
-            "name": "Reshape",
-            "args": {
-                "input0": "gradients/add_1_grad/Sum_1",
-                "name": "gradients/add_1_grad/Reshape_1",
-                "input1": "gradients/add_1_grad/Shape_1",
-                "op": "Reshape"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 26,
-            "pid": 1,
-            "ts": 1541507730910384,
-            "ph": "s",
-            "name": "gradients/add_1_grad/Sum_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 26,
-            "pid": 1,
-            "ts": 1541507730910386,
-            "ph": "t",
-            "name": "gradients/add_1_grad/Sum_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910386,
-            "ph": "X",
-            "name": "Reshape",
-            "args": {
-                "input0": "gradients/add_1_grad/Sum",
-                "name": "gradients/add_1_grad/Reshape",
-                "input1": "gradients/add_1_grad/Shape",
-                "op": "Reshape"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "id": 27,
-            "pid": 1,
-            "ts": 1541507730910383,
-            "ph": "s",
-            "name": "gradients/add_1_grad/Sum",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 27,
-            "pid": 1,
-            "ts": 1541507730910386,
-            "ph": "t",
-            "name": "gradients/add_1_grad/Sum",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 28,
-            "pid": 1,
-            "ts": 1541507730910239,
-            "ph": "s",
-            "name": "gradients/add_1_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 28,
-            "pid": 1,
-            "ts": 1541507730910386,
-            "ph": "t",
-            "name": "gradients/add_1_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "dur": 1,
-            "pid": 1,
-            "ts": 1541507730910391,
-            "ph": "X",
-            "name": "NoOp",
-            "args": {
-                "input0": "^gradients/add_1_grad/Reshape",
-                "name": "gradients/add_1_grad/tuple/group_deps",
-                "input1": "^gradients/add_1_grad/Reshape_1",
-                "op": "NoOp"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "dur": 5,
-            "pid": 1,
-            "ts": 1541507730910398,
-            "ph": "X",
-            "name": "L2Loss",
-            "args": {
-                "input0": "gradients/add_1_grad/Reshape_1",
-                "name": "global_norm/L2Loss_3",
-                "input1": "^gradients/add_1_grad/tuple/group_deps",
-                "op": "L2Loss"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "dur": 11,
-            "pid": 1,
-            "ts": 1541507730910394,
-            "ph": "X",
-            "name": "MatMul",
-            "args": {
-                "input0": "Relu",
-                "name": "gradients/MatMul_1_grad/MatMul_1",
-                "input1": "gradients/add_1_grad/Reshape",
-                "op": "MatMul",
-                "input2": "^gradients/add_1_grad/tuple/group_deps"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "id": 29,
-            "pid": 1,
-            "ts": 1541507730910219,
-            "ph": "s",
-            "name": "Relu",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 29,
-            "pid": 1,
-            "ts": 1541507730910394,
-            "ph": "t",
-            "name": "Relu",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "dur": 10,
-            "pid": 1,
-            "ts": 1541507730910400,
-            "ph": "X",
-            "name": "MatMul",
-            "args": {
-                "input0": "gradients/add_1_grad/Reshape",
-                "name": "gradients/MatMul_1_grad/MatMul",
-                "input1": "None-None_W1/read",
-                "op": "MatMul",
-                "input2": "^gradients/add_1_grad/tuple/group_deps"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 30,
-            "pid": 1,
-            "ts": 1541507730910389,
-            "ph": "s",
-            "name": "gradients/add_1_grad/Reshape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 30,
-            "pid": 1,
-            "ts": 1541507730910400,
-            "ph": "t",
-            "name": "gradients/add_1_grad/Reshape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 31,
-            "pid": 1,
-            "ts": 1541507730910145,
-            "ph": "s",
-            "name": "None-None_W1/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 31,
-            "pid": 1,
-            "ts": 1541507730910400,
-            "ph": "t",
-            "name": "None-None_W1/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910415,
-            "ph": "X",
-            "name": "L2Loss",
-            "args": {
-                "input0": "gradients/MatMul_1_grad/MatMul_1",
-                "name": "global_norm/L2Loss_2",
-                "input1": "^gradients/MatMul_1_grad/MatMul",
-                "op": "L2Loss"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 32,
-            "pid": 1,
-            "ts": 1541507730910405,
-            "ph": "s",
-            "name": "gradients/MatMul_1_grad/MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 32,
-            "pid": 1,
-            "ts": 1541507730910415,
-            "ph": "t",
-            "name": "gradients/MatMul_1_grad/MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "dur": 7,
-            "pid": 1,
-            "ts": 1541507730910413,
-            "ph": "X",
-            "name": "ReluGrad",
-            "args": {
-                "input0": "gradients/MatMul_1_grad/MatMul",
-                "name": "gradients/Relu_grad/ReluGrad",
-                "input1": "Relu",
-                "op": "ReluGrad",
-                "input2": "^gradients/MatMul_1_grad/MatMul_1"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 2,
-            "id": 33,
-            "pid": 1,
-            "ts": 1541507730910410,
-            "ph": "s",
-            "name": "gradients/MatMul_1_grad/MatMul",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 33,
-            "pid": 1,
-            "ts": 1541507730910413,
-            "ph": "t",
-            "name": "gradients/MatMul_1_grad/MatMul",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 34,
-            "pid": 1,
-            "ts": 1541507730910219,
-            "ph": "s",
-            "name": "Relu",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 34,
-            "pid": 1,
-            "ts": 1541507730910413,
-            "ph": "t",
-            "name": "Relu",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
             "dur": 6,
             "pid": 1,
-            "ts": 1541507730910424,
+            "cat": "Op",
             "ph": "X",
-            "name": "Sum",
-            "args": {
-                "input0": "gradients/Relu_grad/ReluGrad",
-                "name": "gradients/add_grad/Sum_1",
-                "input1": "gradients/add_grad/BroadcastGradientArgs:1",
-                "op": "Sum"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 35,
-            "pid": 1,
-            "ts": 1541507730910420,
-            "ph": "s",
-            "name": "gradients/Relu_grad/ReluGrad",
-            "cat": "DataFlow"
-        },
-        {
+            "ts": 1544120821129302,
+            "name": "Mul",
             "tid": 0,
-            "id": 35,
-            "pid": 1,
-            "ts": 1541507730910424,
-            "ph": "t",
-            "name": "gradients/Relu_grad/ReluGrad",
-            "cat": "DataFlow"
+            "args": {
+                "input0": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/ExpandDims",
+                "input1": "SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits:1",
+                "name": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/mul",
+                "op": "Mul"
+            }
         },
         {
-            "tid": 1,
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129310,
+            "name": "Reshape",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits_grad/mul",
+                "input1": "gradients/Reshape_1_grad/Shape",
+                "name": "gradients/Reshape_1_grad/Reshape",
+                "op": "Reshape"
+            }
+        },
+        {
             "dur": 5,
             "pid": 1,
-            "ts": 1541507730910425,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129316,
             "name": "Sum",
+            "tid": 0,
             "args": {
-                "input0": "gradients/Relu_grad/ReluGrad",
-                "name": "gradients/add_grad/Sum",
-                "input1": "gradients/add_grad/BroadcastGradientArgs",
+                "input0": "gradients/Reshape_1_grad/Reshape",
+                "input1": "gradients/add_1_grad/BroadcastGradientArgs",
+                "name": "gradients/add_1_grad/Sum",
                 "op": "Sum"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "id": 36,
+            "dur": 8,
             "pid": 1,
-            "ts": 1541507730910210,
-            "ph": "s",
-            "name": "gradients/add_grad/BroadcastGradientArgs",
-            "cat": "DataFlow"
-        },
-        {
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129317,
+            "name": "Sum",
             "tid": 1,
-            "id": 36,
-            "pid": 1,
-            "ts": 1541507730910425,
-            "ph": "t",
-            "name": "gradients/add_grad/BroadcastGradientArgs",
-            "cat": "DataFlow"
+            "args": {
+                "input0": "gradients/Reshape_1_grad/Reshape",
+                "input1": "gradients/add_1_grad/BroadcastGradientArgs:1",
+                "name": "gradients/add_1_grad/Sum_1",
+                "op": "Sum"
+            }
         },
         {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129313,
+            "name": "gradients/Reshape_1_grad/Reshape",
             "tid": 0,
+            "id": 25
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129317,
+            "name": "gradients/Reshape_1_grad/Reshape",
+            "tid": 1,
+            "id": 25
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129226,
+            "name": "gradients/add_1_grad/BroadcastGradientArgs:1",
+            "tid": 0,
+            "id": 26
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129317,
+            "name": "gradients/add_1_grad/BroadcastGradientArgs:1",
+            "tid": 1,
+            "id": 26
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129384,
+            "name": "Reshape",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/add_1_grad/Sum",
+                "input1": "gradients/add_1_grad/Shape",
+                "name": "gradients/add_1_grad/Reshape",
+                "op": "Reshape"
+            }
+        },
+        {
+            "dur": 4,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129387,
+            "name": "Reshape",
+            "tid": 1,
+            "args": {
+                "input0": "gradients/add_1_grad/Sum_1",
+                "input1": "gradients/add_1_grad/Shape_1",
+                "name": "gradients/add_1_grad/Reshape_1",
+                "op": "Reshape"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129114,
+            "name": "gradients/add_1_grad/Shape_1",
+            "tid": 0,
+            "id": 27
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129387,
+            "name": "gradients/add_1_grad/Shape_1",
+            "tid": 1,
+            "id": 27
+        },
+        {
             "dur": 1,
             "pid": 1,
-            "ts": 1541507730910432,
+            "cat": "Op",
             "ph": "X",
-            "name": "Reshape",
+            "ts": 1544120821129392,
+            "name": "NoOp",
+            "tid": 0,
             "args": {
-                "input0": "gradients/add_grad/Sum_1",
-                "name": "gradients/add_grad/Reshape_1",
-                "input1": "gradients/add_grad/Shape_1",
-                "op": "Reshape"
-            },
-            "cat": "Op"
+                "input0": "^gradients/add_1_grad/Reshape",
+                "input1": "^gradients/add_1_grad/Reshape_1",
+                "name": "gradients/add_1_grad/tuple/group_deps",
+                "op": "NoOp"
+            }
         },
         {
-            "tid": 1,
+            "dur": 8,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129396,
+            "name": "MatMul",
+            "tid": 0,
+            "args": {
+                "input0": "Relu",
+                "input1": "gradients/add_1_grad/Reshape",
+                "name": "gradients/MatMul_1_grad/MatMul_1",
+                "input2": "^gradients/add_1_grad/tuple/group_deps",
+                "op": "MatMul"
+            }
+        },
+        {
             "dur": 4,
             "pid": 1,
-            "ts": 1541507730910432,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129400,
+            "name": "L2Loss",
+            "tid": 1,
+            "args": {
+                "input0": "gradients/add_1_grad/Reshape_1",
+                "input1": "^gradients/add_1_grad/tuple/group_deps",
+                "name": "global_norm/L2Loss_3",
+                "op": "L2Loss"
+            }
+        },
+        {
+            "dur": 7,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129406,
+            "name": "MatMul",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/add_1_grad/Reshape",
+                "input1": "None-None_W1/read",
+                "name": "gradients/MatMul_1_grad/MatMul",
+                "input2": "^gradients/add_1_grad/tuple/group_deps",
+                "op": "MatMul"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129136,
+            "name": "None-None_W1/read",
+            "tid": 1,
+            "id": 28
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129406,
+            "name": "None-None_W1/read",
+            "tid": 0,
+            "id": 28
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129416,
+            "name": "L2Loss",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/MatMul_1_grad/MatMul_1",
+                "input1": "^gradients/MatMul_1_grad/MatMul",
+                "name": "global_norm/L2Loss_2",
+                "op": "L2Loss"
+            }
+        },
+        {
+            "dur": 5,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129416,
+            "name": "ReluGrad",
+            "tid": 1,
+            "args": {
+                "input0": "gradients/MatMul_1_grad/MatMul",
+                "input1": "Relu",
+                "name": "gradients/Relu_grad/ReluGrad",
+                "input2": "^gradients/MatMul_1_grad/MatMul_1",
+                "op": "ReluGrad"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129413,
+            "name": "gradients/MatMul_1_grad/MatMul",
+            "tid": 0,
+            "id": 29
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129416,
+            "name": "gradients/MatMul_1_grad/MatMul",
+            "tid": 1,
+            "id": 29
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129200,
+            "name": "Relu",
+            "tid": 0,
+            "id": 30
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129416,
+            "name": "Relu",
+            "tid": 1,
+            "id": 30
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129424,
+            "name": "Sum",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/Relu_grad/ReluGrad",
+                "input1": "gradients/add_grad/BroadcastGradientArgs",
+                "name": "gradients/add_grad/Sum",
+                "op": "Sum"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129421,
+            "name": "gradients/Relu_grad/ReluGrad",
+            "tid": 1,
+            "id": 31
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129424,
+            "name": "gradients/Relu_grad/ReluGrad",
+            "tid": 0,
+            "id": 31
+        },
+        {
+            "dur": 6,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129424,
+            "name": "Sum",
+            "tid": 1,
+            "args": {
+                "input0": "gradients/Relu_grad/ReluGrad",
+                "input1": "gradients/add_grad/BroadcastGradientArgs:1",
+                "name": "gradients/add_grad/Sum_1",
+                "op": "Sum"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129191,
+            "name": "gradients/add_grad/BroadcastGradientArgs:1",
+            "tid": 0,
+            "id": 32
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129424,
+            "name": "gradients/add_grad/BroadcastGradientArgs:1",
+            "tid": 1,
+            "id": 32
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129429,
             "name": "Reshape",
+            "tid": 0,
             "args": {
                 "input0": "gradients/add_grad/Sum",
-                "name": "gradients/add_grad/Reshape",
                 "input1": "gradients/add_grad/Shape",
+                "name": "gradients/add_grad/Reshape",
                 "op": "Reshape"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "id": 37,
-            "pid": 1,
-            "ts": 1541507730910205,
-            "ph": "s",
-            "name": "gradients/add_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 37,
-            "pid": 1,
-            "ts": 1541507730910432,
-            "ph": "t",
-            "name": "gradients/add_grad/Shape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "dur": 4,
-            "pid": 1,
-            "ts": 1541507730910440,
-            "ph": "X",
-            "name": "L2Loss",
-            "args": {
-                "input0": "gradients/add_grad/Reshape_1",
-                "name": "global_norm/L2Loss_1",
-                "input1": "^gradients/add_grad/Reshape",
-                "op": "L2Loss"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "dur": 12,
-            "pid": 1,
-            "ts": 1541507730910438,
-            "ph": "X",
-            "name": "MatMul",
-            "args": {
-                "input0": "Reshape",
-                "name": "gradients/MatMul_grad/MatMul_1",
-                "input1": "gradients/add_grad/Reshape",
-                "op": "MatMul",
-                "input2": "^gradients/add_grad/Reshape_1"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "id": 38,
-            "pid": 1,
-            "ts": 1541507730910187,
-            "ph": "s",
-            "name": "Reshape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 38,
-            "pid": 1,
-            "ts": 1541507730910438,
-            "ph": "t",
-            "name": "Reshape",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
             "dur": 2,
             "pid": 1,
-            "ts": 1541507730910452,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129432,
+            "name": "Reshape",
+            "tid": 1,
+            "args": {
+                "input0": "gradients/add_grad/Sum_1",
+                "input1": "gradients/add_grad/Shape_1",
+                "name": "gradients/add_grad/Reshape_1",
+                "op": "Reshape"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129089,
+            "name": "gradients/add_grad/Shape_1",
+            "tid": 0,
+            "id": 33
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129432,
+            "name": "gradients/add_grad/Shape_1",
+            "tid": 1,
+            "id": 33
+        },
+        {
+            "dur": 4,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129438,
             "name": "L2Loss",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/add_grad/Reshape_1",
+                "input1": "^gradients/add_grad/Reshape",
+                "name": "global_norm/L2Loss_1",
+                "op": "L2Loss"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129434,
+            "name": "gradients/add_grad/Reshape_1",
+            "tid": 1,
+            "id": 34
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129438,
+            "name": "gradients/add_grad/Reshape_1",
+            "tid": 0,
+            "id": 34
+        },
+        {
+            "dur": 15,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129439,
+            "name": "MatMul",
+            "tid": 1,
+            "args": {
+                "input0": "Reshape",
+                "input1": "gradients/add_grad/Reshape",
+                "name": "gradients/MatMul_grad/MatMul_1",
+                "input2": "^gradients/add_grad/Reshape_1",
+                "op": "MatMul"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129163,
+            "name": "Reshape",
+            "tid": 0,
+            "id": 35
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129439,
+            "name": "Reshape",
+            "tid": 1,
+            "id": 35
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129432,
+            "name": "gradients/add_grad/Reshape",
+            "tid": 0,
+            "id": 36
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129439,
+            "name": "gradients/add_grad/Reshape",
+            "tid": 1,
+            "id": 36
+        },
+        {
+            "dur": 3,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129458,
+            "name": "L2Loss",
+            "tid": 0,
             "args": {
                 "input0": "gradients/MatMul_grad/MatMul_1",
                 "name": "global_norm/L2Loss",
                 "op": "L2Loss"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "id": 39,
             "pid": 1,
-            "ts": 1541507730910450,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129454,
             "name": "gradients/MatMul_grad/MatMul_1",
-            "cat": "DataFlow"
+            "tid": 1,
+            "id": 37
         },
         {
-            "tid": 0,
-            "id": 39,
             "pid": 1,
-            "ts": 1541507730910452,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129458,
             "name": "gradients/MatMul_grad/MatMul_1",
-            "cat": "DataFlow"
+            "tid": 0,
+            "id": 37
         },
         {
-            "tid": 0,
             "dur": 7,
             "pid": 1,
-            "ts": 1541507730910455,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129462,
             "name": "Pack",
+            "tid": 0,
             "args": {
+                "input2": "global_norm/L2Loss_2",
                 "input3": "global_norm/L2Loss_3",
-                "input1": "global_norm/L2Loss_1",
                 "op": "Pack",
                 "input0": "global_norm/L2Loss",
-                "name": "global_norm/stack",
-                "input2": "global_norm/L2Loss_2"
-            },
-            "cat": "Op"
+                "input1": "global_norm/L2Loss_1",
+                "name": "global_norm/stack"
+            }
         },
         {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129404,
+            "name": "global_norm/L2Loss_3",
+            "tid": 1,
+            "id": 38
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129462,
+            "name": "global_norm/L2Loss_3",
             "tid": 0,
+            "id": 38
+        },
+        {
             "dur": 6,
             "pid": 1,
-            "ts": 1541507730910463,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129471,
             "name": "Sum",
+            "tid": 0,
             "args": {
                 "input0": "global_norm/stack",
-                "name": "global_norm/Sum",
                 "input1": "gradients/Mean_grad/Const",
+                "name": "global_norm/Sum",
                 "op": "Sum"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 4,
             "pid": 1,
-            "ts": 1541507730910470,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129478,
             "name": "Mul",
+            "tid": 0,
             "args": {
                 "input0": "global_norm/Sum",
-                "name": "global_norm/mul",
                 "input1": "global_norm/Const_1",
+                "name": "global_norm/mul",
                 "op": "Mul"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 2,
             "pid": 1,
-            "ts": 1541507730910475,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129483,
             "name": "_UnaryOpsComposition",
+            "tid": 0,
             "args": {
                 "input0": "global_norm/mul",
                 "name": "clip_by_global_norm/truediv/unary_ops_composition",
                 "op": "_UnaryOpsComposition"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
             "dur": 3,
             "pid": 1,
-            "ts": 1541507730910478,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129486,
             "name": "Minimum",
+            "tid": 0,
             "args": {
                 "input0": "clip_by_global_norm/truediv/unary_ops_composition",
-                "name": "clip_by_global_norm/Minimum",
                 "input1": "clip_by_global_norm/mul/x",
+                "name": "clip_by_global_norm/Minimum",
                 "op": "Minimum"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 1,
+            "dur": 2,
             "pid": 1,
-            "ts": 1541507730910482,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129491,
             "name": "Snapshot",
+            "tid": 0,
             "args": {
                 "input0": "clip_by_global_norm/Minimum",
                 "name": "clip_by_global_norm/mul",
                 "op": "Snapshot"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 5,
-            "pid": 1,
-            "ts": 1541507730910486,
-            "ph": "X",
-            "name": "Mul",
-            "args": {
-                "input0": "gradients/MatMul_grad/MatMul_1",
-                "name": "clip_by_global_norm/mul_1",
-                "input1": "clip_by_global_norm/mul",
-                "op": "Mul"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 40,
-            "pid": 1,
-            "ts": 1541507730910450,
-            "ph": "s",
-            "name": "gradients/MatMul_grad/MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 40,
-            "pid": 1,
-            "ts": 1541507730910486,
-            "ph": "t",
-            "name": "gradients/MatMul_grad/MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "dur": 3,
-            "pid": 1,
-            "ts": 1541507730910490,
-            "ph": "X",
-            "name": "Mul",
-            "args": {
-                "input0": "gradients/add_1_grad/Reshape_1",
-                "name": "clip_by_global_norm/mul_4",
-                "input1": "clip_by_global_norm/mul",
-                "op": "Mul"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "id": 41,
-            "pid": 1,
-            "ts": 1541507730910389,
-            "ph": "s",
-            "name": "gradients/add_1_grad/Reshape_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 41,
-            "pid": 1,
-            "ts": 1541507730910490,
-            "ph": "t",
-            "name": "gradients/add_1_grad/Reshape_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 42,
-            "pid": 1,
-            "ts": 1541507730910483,
-            "ph": "s",
-            "name": "clip_by_global_norm/mul",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 42,
-            "pid": 1,
-            "ts": 1541507730910490,
-            "ph": "t",
-            "name": "clip_by_global_norm/mul",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
             "dur": 4,
             "pid": 1,
-            "ts": 1541507730910492,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129495,
             "name": "Mul",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/MatMul_grad/MatMul_1",
+                "input1": "clip_by_global_norm/mul",
+                "name": "clip_by_global_norm/mul_1",
+                "op": "Mul"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129454,
+            "name": "gradients/MatMul_grad/MatMul_1",
+            "tid": 1,
+            "id": 39
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129495,
+            "name": "gradients/MatMul_grad/MatMul_1",
+            "tid": 0,
+            "id": 39
+        },
+        {
+            "dur": 4,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129502,
+            "name": "Mul",
+            "tid": 0,
+            "args": {
+                "input0": "gradients/add_1_grad/Reshape_1",
+                "input1": "clip_by_global_norm/mul",
+                "name": "clip_by_global_norm/mul_4",
+                "op": "Mul"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129391,
+            "name": "gradients/add_1_grad/Reshape_1",
+            "tid": 1,
+            "id": 40
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129502,
+            "name": "gradients/add_1_grad/Reshape_1",
+            "tid": 0,
+            "id": 40
+        },
+        {
+            "dur": 5,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129506,
+            "name": "Mul",
+            "tid": 1,
             "args": {
                 "input0": "gradients/add_grad/Reshape_1",
+                "input1": "clip_by_global_norm/mul",
                 "name": "clip_by_global_norm/mul_2",
-                "input1": "clip_by_global_norm/mul",
                 "op": "Mul"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 2,
-            "dur": 6,
             "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "X",
-            "name": "Mul",
-            "args": {
-                "input0": "gradients/MatMul_1_grad/MatMul_1",
-                "name": "clip_by_global_norm/mul_3",
-                "input1": "clip_by_global_norm/mul",
-                "op": "Mul"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 1,
-            "id": 43,
-            "pid": 1,
-            "ts": 1541507730910405,
+            "cat": "DataFlow",
             "ph": "s",
-            "name": "gradients/MatMul_1_grad/MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 43,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "gradients/MatMul_1_grad/MatMul_1",
-            "cat": "DataFlow"
-        },
-        {
+            "ts": 1544120821129493,
+            "name": "clip_by_global_norm/mul",
             "tid": 0,
-            "id": 44,
-            "pid": 1,
-            "ts": 1541507730910483,
-            "ph": "s",
-            "name": "clip_by_global_norm/mul",
-            "cat": "DataFlow"
+            "id": 41
         },
         {
-            "tid": 2,
-            "id": 44,
             "pid": 1,
-            "ts": 1541507730910492,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129506,
             "name": "clip_by_global_norm/mul",
-            "cat": "DataFlow"
+            "tid": 1,
+            "id": 41
         },
         {
-            "tid": 1,
-            "dur": 8,
+            "dur": 11,
             "pid": 1,
-            "ts": 1541507730910495,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129501,
             "name": "ApplyAdam",
+            "tid": 2,
             "args": {
-                "input7": "Adam/beta2",
-                "op": "ApplyAdam",
-                "input9": "clip_by_global_norm/mul_4",
-                "input6": "Adam/beta1",
-                "input1": "None-None_b1/Adam",
-                "input5": "Adam/learning_rate",
-                "name": "Adam/update_None-None_b1/ApplyAdam",
-                "input3": "beta1_power/read",
+                "input2": "None-None_W0/Adam_1",
                 "input8": "Adam/epsilon",
-                "input0": "None-None_b1",
-                "input4": "beta2_power/read",
-                "input2": "None-None_b1/Adam_1"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 0,
-            "id": 45,
-            "pid": 1,
-            "ts": 1541507730910144,
-            "ph": "s",
-            "name": "None-None_b1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 45,
-            "pid": 1,
-            "ts": 1541507730910495,
-            "ph": "t",
-            "name": "None-None_b1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 46,
-            "pid": 1,
-            "ts": 1541507730910135,
-            "ph": "s",
-            "name": "beta1_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 46,
-            "pid": 1,
-            "ts": 1541507730910495,
-            "ph": "t",
-            "name": "beta1_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 47,
-            "pid": 1,
-            "ts": 1541507730910082,
-            "ph": "s",
-            "name": "Adam/learning_rate",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 47,
-            "pid": 1,
-            "ts": 1541507730910495,
-            "ph": "t",
-            "name": "Adam/learning_rate",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 48,
-            "pid": 1,
-            "ts": 1541507730910086,
-            "ph": "s",
-            "name": "Adam/beta1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 48,
-            "pid": 1,
-            "ts": 1541507730910495,
-            "ph": "t",
-            "name": "Adam/beta1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 49,
-            "pid": 1,
-            "ts": 1541507730910089,
-            "ph": "s",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 49,
-            "pid": 1,
-            "ts": 1541507730910495,
-            "ph": "t",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 50,
-            "pid": 1,
-            "ts": 1541507730910094,
-            "ph": "s",
-            "name": "Adam/epsilon",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 50,
-            "pid": 1,
-            "ts": 1541507730910495,
-            "ph": "t",
-            "name": "Adam/epsilon",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "dur": 12,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "X",
-            "name": "ApplyAdam",
-            "args": {
-                "input7": "Adam/beta2",
-                "op": "ApplyAdam",
+                "input3": "beta1_power/read",
+                "input5": "Adam/learning_rate",
+                "input0": "None-None_W0",
+                "input1": "None-None_W0/Adam",
                 "input9": "clip_by_global_norm/mul_1",
                 "input6": "Adam/beta1",
-                "input1": "None-None_W0/Adam",
-                "input5": "Adam/learning_rate",
-                "name": "Adam/update_None-None_W0/ApplyAdam",
-                "input3": "beta1_power/read",
-                "input8": "Adam/epsilon",
-                "input0": "None-None_W0",
                 "input4": "beta2_power/read",
-                "input2": "None-None_W0/Adam_1"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 2,
-            "id": 51,
-            "pid": 1,
-            "ts": 1541507730910133,
-            "ph": "s",
-            "name": "None-None_W0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 51,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "None-None_W0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 52,
-            "pid": 1,
-            "ts": 1541507730910083,
-            "ph": "s",
-            "name": "None-None_W0/Adam",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 52,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "None-None_W0/Adam",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 53,
-            "pid": 1,
-            "ts": 1541507730910090,
-            "ph": "s",
-            "name": "None-None_W0/Adam_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 53,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "None-None_W0/Adam_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 54,
-            "pid": 1,
-            "ts": 1541507730910135,
-            "ph": "s",
-            "name": "beta1_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 54,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "beta1_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 55,
-            "pid": 1,
-            "ts": 1541507730910134,
-            "ph": "s",
-            "name": "beta2_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 55,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "beta2_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 56,
-            "pid": 1,
-            "ts": 1541507730910082,
-            "ph": "s",
-            "name": "Adam/learning_rate",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 56,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "Adam/learning_rate",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 57,
-            "pid": 1,
-            "ts": 1541507730910086,
-            "ph": "s",
-            "name": "Adam/beta1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 57,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "Adam/beta1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 58,
-            "pid": 1,
-            "ts": 1541507730910089,
-            "ph": "s",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 58,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 59,
-            "pid": 1,
-            "ts": 1541507730910094,
-            "ph": "s",
-            "name": "Adam/epsilon",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 59,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "Adam/epsilon",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 60,
-            "pid": 1,
-            "ts": 1541507730910491,
-            "ph": "s",
-            "name": "clip_by_global_norm/mul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 60,
-            "pid": 1,
-            "ts": 1541507730910492,
-            "ph": "t",
-            "name": "clip_by_global_norm/mul_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "dur": 7,
-            "pid": 1,
-            "ts": 1541507730910498,
-            "ph": "X",
-            "name": "ApplyAdam",
-            "args": {
-                "input7": "Adam/beta2",
                 "op": "ApplyAdam",
+                "name": "Adam/update_None-None_W0/ApplyAdam",
+                "input7": "Adam/beta2"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129074,
+            "name": "None-None_W0/Adam",
+            "tid": 1,
+            "id": 42
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "None-None_W0/Adam",
+            "tid": 2,
+            "id": 42
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129081,
+            "name": "None-None_W0/Adam_1",
+            "tid": 1,
+            "id": 43
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "None-None_W0/Adam_1",
+            "tid": 2,
+            "id": 43
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129121,
+            "name": "beta2_power/read",
+            "tid": 0,
+            "id": 44
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "beta2_power/read",
+            "tid": 2,
+            "id": 44
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129073,
+            "name": "Adam/learning_rate",
+            "tid": 0,
+            "id": 45
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "Adam/learning_rate",
+            "tid": 2,
+            "id": 45
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129078,
+            "name": "Adam/beta1",
+            "tid": 0,
+            "id": 46
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "Adam/beta1",
+            "tid": 2,
+            "id": 46
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129081,
+            "name": "Adam/beta2",
+            "tid": 0,
+            "id": 47
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "Adam/beta2",
+            "tid": 2,
+            "id": 47
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129085,
+            "name": "Adam/epsilon",
+            "tid": 0,
+            "id": 48
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "Adam/epsilon",
+            "tid": 2,
+            "id": 48
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129499,
+            "name": "clip_by_global_norm/mul_1",
+            "tid": 0,
+            "id": 49
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129501,
+            "name": "clip_by_global_norm/mul_1",
+            "tid": 2,
+            "id": 49
+        },
+        {
+            "dur": 9,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129505,
+            "name": "Mul",
+            "tid": 3,
+            "args": {
+                "input0": "gradients/MatMul_1_grad/MatMul_1",
+                "input1": "clip_by_global_norm/mul",
+                "name": "clip_by_global_norm/mul_3",
+                "op": "Mul"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129404,
+            "name": "gradients/MatMul_1_grad/MatMul_1",
+            "tid": 0,
+            "id": 50
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129505,
+            "name": "gradients/MatMul_1_grad/MatMul_1",
+            "tid": 3,
+            "id": 50
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129493,
+            "name": "clip_by_global_norm/mul",
+            "tid": 0,
+            "id": 51
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129505,
+            "name": "clip_by_global_norm/mul",
+            "tid": 3,
+            "id": 51
+        },
+        {
+            "dur": 11,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129507,
+            "name": "ApplyAdam",
+            "tid": 0,
+            "args": {
+                "input2": "None-None_b1/Adam_1",
+                "input8": "Adam/epsilon",
+                "input3": "beta1_power/read",
+                "input5": "Adam/learning_rate",
+                "input0": "None-None_b1",
+                "input1": "None-None_b1/Adam",
+                "input9": "clip_by_global_norm/mul_4",
+                "input6": "Adam/beta1",
+                "input4": "beta2_power/read",
+                "op": "ApplyAdam",
+                "name": "Adam/update_None-None_b1/ApplyAdam",
+                "input7": "Adam/beta2"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129105,
+            "name": "None-None_b1/Adam",
+            "tid": 1,
+            "id": 52
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129507,
+            "name": "None-None_b1/Adam",
+            "tid": 0,
+            "id": 52
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129112,
+            "name": "None-None_b1/Adam_1",
+            "tid": 1,
+            "id": 53
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129507,
+            "name": "None-None_b1/Adam_1",
+            "tid": 0,
+            "id": 53
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129117,
+            "name": "beta1_power/read",
+            "tid": 2,
+            "id": 54
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129507,
+            "name": "beta1_power/read",
+            "tid": 0,
+            "id": 54
+        },
+        {
+            "dur": 8,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129512,
+            "name": "ApplyAdam",
+            "tid": 1,
+            "args": {
+                "input2": "None-None_b0/Adam_1",
+                "input8": "Adam/epsilon",
+                "input3": "beta1_power/read",
+                "input5": "Adam/learning_rate",
+                "input0": "None-None_b0",
+                "input1": "None-None_b0/Adam",
                 "input9": "clip_by_global_norm/mul_2",
                 "input6": "Adam/beta1",
-                "input1": "None-None_b0/Adam",
-                "input5": "Adam/learning_rate",
-                "name": "Adam/update_None-None_b0/ApplyAdam",
-                "input3": "beta1_power/read",
-                "input8": "Adam/epsilon",
-                "input0": "None-None_b0",
                 "input4": "beta2_power/read",
-                "input2": "None-None_b0/Adam_1"
-            },
-            "cat": "Op"
-        },
-        {
-            "tid": 2,
-            "id": 61,
-            "pid": 1,
-            "ts": 1541507730910140,
-            "ph": "s",
-            "name": "None-None_b0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 61,
-            "pid": 1,
-            "ts": 1541507730910498,
-            "ph": "t",
-            "name": "None-None_b0",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 62,
-            "pid": 1,
-            "ts": 1541507730910115,
-            "ph": "s",
-            "name": "None-None_b0/Adam",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 62,
-            "pid": 1,
-            "ts": 1541507730910498,
-            "ph": "t",
-            "name": "None-None_b0/Adam",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 3,
-            "id": 63,
-            "pid": 1,
-            "ts": 1541507730910115,
-            "ph": "s",
-            "name": "None-None_b0/Adam_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 63,
-            "pid": 1,
-            "ts": 1541507730910498,
-            "ph": "t",
-            "name": "None-None_b0/Adam_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 64,
-            "pid": 1,
-            "ts": 1541507730910134,
-            "ph": "s",
-            "name": "beta2_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 64,
-            "pid": 1,
-            "ts": 1541507730910498,
-            "ph": "t",
-            "name": "beta2_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "dur": 7,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "X",
-            "name": "ApplyAdam",
-            "args": {
-                "input7": "Adam/beta2",
                 "op": "ApplyAdam",
+                "name": "Adam/update_None-None_b0/ApplyAdam",
+                "input7": "Adam/beta2"
+            }
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129104,
+            "name": "None-None_b0/Adam",
+            "tid": 2,
+            "id": 55
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129512,
+            "name": "None-None_b0/Adam",
+            "tid": 1,
+            "id": 55
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129117,
+            "name": "beta1_power/read",
+            "tid": 2,
+            "id": 56
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129512,
+            "name": "beta1_power/read",
+            "tid": 1,
+            "id": 56
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129121,
+            "name": "beta2_power/read",
+            "tid": 0,
+            "id": 57
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129512,
+            "name": "beta2_power/read",
+            "tid": 1,
+            "id": 57
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129073,
+            "name": "Adam/learning_rate",
+            "tid": 0,
+            "id": 58
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129512,
+            "name": "Adam/learning_rate",
+            "tid": 1,
+            "id": 58
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129078,
+            "name": "Adam/beta1",
+            "tid": 0,
+            "id": 59
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129512,
+            "name": "Adam/beta1",
+            "tid": 1,
+            "id": 59
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129081,
+            "name": "Adam/beta2",
+            "tid": 0,
+            "id": 60
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129512,
+            "name": "Adam/beta2",
+            "tid": 1,
+            "id": 60
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129085,
+            "name": "Adam/epsilon",
+            "tid": 0,
+            "id": 61
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129512,
+            "name": "Adam/epsilon",
+            "tid": 1,
+            "id": 61
+        },
+        {
+            "dur": 6,
+            "pid": 1,
+            "cat": "Op",
+            "ph": "X",
+            "ts": 1544120821129517,
+            "name": "ApplyAdam",
+            "tid": 2,
+            "args": {
+                "input2": "None-None_W1/Adam_1",
+                "input8": "Adam/epsilon",
+                "input3": "beta1_power/read",
+                "input5": "Adam/learning_rate",
+                "input0": "None-None_W1",
+                "input1": "None-None_W1/Adam",
                 "input9": "clip_by_global_norm/mul_3",
                 "input6": "Adam/beta1",
-                "input1": "None-None_W1/Adam",
-                "input5": "Adam/learning_rate",
-                "name": "Adam/update_None-None_W1/ApplyAdam",
-                "input3": "beta1_power/read",
-                "input8": "Adam/epsilon",
-                "input0": "None-None_W1",
                 "input4": "beta2_power/read",
-                "input2": "None-None_W1/Adam_1"
-            },
-            "cat": "Op"
+                "op": "ApplyAdam",
+                "name": "Adam/update_None-None_W1/ApplyAdam",
+                "input7": "Adam/beta2"
+            }
         },
         {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129133,
+            "name": "None-None_W1",
+            "tid": 1,
+            "id": 62
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "None-None_W1",
+            "tid": 2,
+            "id": 62
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129087,
+            "name": "None-None_W1/Adam",
+            "tid": 1,
+            "id": 63
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "None-None_W1/Adam",
+            "tid": 2,
+            "id": 63
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129094,
+            "name": "None-None_W1/Adam_1",
+            "tid": 1,
+            "id": 64
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "None-None_W1/Adam_1",
+            "tid": 2,
+            "id": 64
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129121,
+            "name": "beta2_power/read",
+            "tid": 0,
+            "id": 65
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "beta2_power/read",
+            "tid": 2,
+            "id": 65
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129073,
+            "name": "Adam/learning_rate",
+            "tid": 0,
+            "id": 66
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "Adam/learning_rate",
+            "tid": 2,
+            "id": 66
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129078,
+            "name": "Adam/beta1",
+            "tid": 0,
+            "id": 67
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "Adam/beta1",
+            "tid": 2,
+            "id": 67
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129081,
+            "name": "Adam/beta2",
+            "tid": 0,
+            "id": 68
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "Adam/beta2",
+            "tid": 2,
+            "id": 68
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129085,
+            "name": "Adam/epsilon",
+            "tid": 0,
+            "id": 69
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129517,
+            "name": "Adam/epsilon",
+            "tid": 2,
+            "id": 69
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129514,
+            "name": "clip_by_global_norm/mul_3",
             "tid": 3,
-            "id": 65,
-            "pid": 1,
-            "ts": 1541507730910141,
-            "ph": "s",
-            "name": "None-None_W1",
-            "cat": "DataFlow"
+            "id": 70
         },
         {
-            "tid": 2,
-            "id": 65,
             "pid": 1,
-            "ts": 1541507730910500,
+            "cat": "DataFlow",
             "ph": "t",
-            "name": "None-None_W1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 66,
-            "pid": 1,
-            "ts": 1541507730910096,
-            "ph": "s",
-            "name": "None-None_W1/Adam",
-            "cat": "DataFlow"
-        },
-        {
+            "ts": 1544120821129517,
+            "name": "clip_by_global_norm/mul_3",
             "tid": 2,
-            "id": 66,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "None-None_W1/Adam",
-            "cat": "DataFlow"
+            "id": 70
         },
         {
-            "tid": 1,
-            "id": 67,
-            "pid": 1,
-            "ts": 1541507730910102,
-            "ph": "s",
-            "name": "None-None_W1/Adam_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 67,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "None-None_W1/Adam_1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 68,
-            "pid": 1,
-            "ts": 1541507730910135,
-            "ph": "s",
-            "name": "beta1_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 68,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "beta1_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 69,
-            "pid": 1,
-            "ts": 1541507730910134,
-            "ph": "s",
-            "name": "beta2_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 69,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "beta2_power/read",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 70,
-            "pid": 1,
-            "ts": 1541507730910082,
-            "ph": "s",
-            "name": "Adam/learning_rate",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 70,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "Adam/learning_rate",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 71,
-            "pid": 1,
-            "ts": 1541507730910086,
-            "ph": "s",
-            "name": "Adam/beta1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 71,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "Adam/beta1",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 72,
-            "pid": 1,
-            "ts": 1541507730910089,
-            "ph": "s",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 72,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
-            "id": 73,
-            "pid": 1,
-            "ts": 1541507730910094,
-            "ph": "s",
-            "name": "Adam/epsilon",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 2,
-            "id": 73,
-            "pid": 1,
-            "ts": 1541507730910500,
-            "ph": "t",
-            "name": "Adam/epsilon",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 0,
             "dur": 5,
             "pid": 1,
-            "ts": 1541507730910510,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129527,
             "name": "Mul",
+            "tid": 0,
             "args": {
+                "input2": "^Adam/update_None-None_W0/ApplyAdam",
+                "input4": "^Adam/update_None-None_b0/ApplyAdam",
                 "input3": "^Adam/update_None-None_W1/ApplyAdam",
-                "input1": "Adam/beta1",
                 "op": "Mul",
                 "input0": "beta1_power/read",
+                "input1": "Adam/beta1",
                 "name": "Adam/mul",
-                "input4": "^Adam/update_None-None_b0/ApplyAdam",
-                "input2": "^Adam/update_None-None_W0/ApplyAdam",
                 "input5": "^Adam/update_None-None_b1/ApplyAdam"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 1,
-            "dur": 5,
             "pid": 1,
-            "ts": 1541507730910512,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129117,
+            "name": "beta1_power/read",
+            "tid": 2,
+            "id": 71
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129527,
+            "name": "beta1_power/read",
+            "tid": 0,
+            "id": 71
+        },
+        {
+            "dur": 6,
+            "pid": 1,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129530,
             "name": "Mul",
+            "tid": 1,
             "args": {
+                "input2": "^Adam/update_None-None_W0/ApplyAdam",
+                "input4": "^Adam/update_None-None_b0/ApplyAdam",
                 "input3": "^Adam/update_None-None_W1/ApplyAdam",
-                "input1": "Adam/beta2",
                 "op": "Mul",
                 "input0": "beta2_power/read",
+                "input1": "Adam/beta2",
                 "name": "Adam/mul_1",
-                "input4": "^Adam/update_None-None_b0/ApplyAdam",
-                "input2": "^Adam/update_None-None_W0/ApplyAdam",
                 "input5": "^Adam/update_None-None_b1/ApplyAdam"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "id": 74,
             "pid": 1,
-            "ts": 1541507730910089,
+            "cat": "DataFlow",
             "ph": "s",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
-            "tid": 1,
-            "id": 74,
-            "pid": 1,
-            "ts": 1541507730910512,
-            "ph": "t",
-            "name": "Adam/beta2",
-            "cat": "DataFlow"
-        },
-        {
+            "ts": 1544120821129121,
+            "name": "beta2_power/read",
             "tid": 0,
-            "dur": 3,
+            "id": 72
+        },
+        {
             "pid": 1,
-            "ts": 1541507730910518,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129530,
+            "name": "beta2_power/read",
+            "tid": 1,
+            "id": 72
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "s",
+            "ts": 1544120821129081,
+            "name": "Adam/beta2",
+            "tid": 0,
+            "id": 73
+        },
+        {
+            "pid": 1,
+            "cat": "DataFlow",
+            "ph": "t",
+            "ts": 1544120821129530,
+            "name": "Adam/beta2",
+            "tid": 1,
+            "id": 73
+        },
+        {
+            "dur": 4,
+            "pid": 1,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129535,
             "name": "Assign",
+            "tid": 0,
             "args": {
                 "input0": "beta1_power",
-                "name": "Adam/Assign",
                 "input1": "Adam/mul",
+                "name": "Adam/Assign",
                 "op": "Assign"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 4,
-            "id": 75,
             "pid": 1,
-            "ts": 1541507730910117,
+            "cat": "DataFlow",
             "ph": "s",
+            "ts": 1544120821129112,
             "name": "beta1_power",
-            "cat": "DataFlow"
+            "tid": 2,
+            "id": 74
         },
         {
-            "tid": 0,
-            "id": 75,
             "pid": 1,
-            "ts": 1541507730910518,
+            "cat": "DataFlow",
             "ph": "t",
+            "ts": 1544120821129535,
             "name": "beta1_power",
-            "cat": "DataFlow"
+            "tid": 0,
+            "id": 74
         },
         {
-            "tid": 1,
-            "dur": 3,
+            "dur": 2,
             "pid": 1,
-            "ts": 1541507730910519,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129538,
             "name": "Assign",
+            "tid": 1,
             "args": {
                 "input0": "beta2_power",
-                "name": "Adam/Assign_1",
                 "input1": "Adam/mul_1",
+                "name": "Adam/Assign_1",
                 "op": "Assign"
-            },
-            "cat": "Op"
+            }
         },
         {
-            "tid": 0,
-            "dur": 3,
+            "dur": 2,
             "pid": 1,
-            "ts": 1541507730910523,
+            "cat": "Op",
             "ph": "X",
+            "ts": 1544120821129542,
             "name": "NoOp",
+            "tid": 0,
             "args": {
                 "input0": "^Adam/Assign",
-                "name": "Adam",
                 "input1": "^Adam/Assign_1",
+                "name": "Adam",
                 "op": "NoOp"
-            },
-            "cat": "Op"
+            }
         }
     ]
 }

@@ -51,6 +51,7 @@ class AttentionComponent(ComponentTypeModel):
     def attend(self, key, sequence_tensor, lengths, value, input_dimension, mode):
         if value.scoring_type == "bilinear":
             transformed_key = value.key_transform.transform(key, mode)
+
             transformed_key = tf.expand_dims(transformed_key, 1)
             scores = transformed_key * sequence_tensor
 
@@ -66,6 +67,7 @@ class AttentionComponent(ComponentTypeModel):
         attention_weights = tf.expand_dims(attention_weights, -1)
 
         exp_seq_tensor = tf.expand_dims(sequence_tensor, 2)
+
         attention_weighted_matrix = exp_seq_tensor * attention_weights
         weighted_sums = tf.reduce_sum(attention_weighted_matrix, 1)
 

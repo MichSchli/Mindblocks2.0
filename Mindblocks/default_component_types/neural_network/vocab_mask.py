@@ -26,7 +26,7 @@ class VocabMask(ComponentTypeModel):
         elif value.language == "tensorflow":
             v = input_dictionary["input"].get_value()
 
-            v = tf.nn.relu(v)
+            v = tf.nn.softplus(v)
             all_lengths = input_dictionary["input"].get_lengths()
 
             mask_shape = [1]*(len(all_lengths)-1) + [value.vocab_size]

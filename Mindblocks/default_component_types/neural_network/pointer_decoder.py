@@ -41,8 +41,6 @@ class PointerDecoder(ComponentTypeModel):
         output_lengths = l[:]
         output_lengths[-1] = None
 
-        output_tensor = tf.ones([tf.shape(v)[0],54]) + output_tensor
-
         output_models["output"].assign(output_tensor, output_lengths)
 
         return output_models

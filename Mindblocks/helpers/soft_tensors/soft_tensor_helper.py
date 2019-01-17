@@ -159,6 +159,20 @@ class SoftTensorHelper:
 
         return rec_build
 
+    def retrieve_boolean_length_mask(self, input_tensor, length_tensor_list):
+        """
+        Retrieves a mask tensor containing "true" inside the specified lengths and "false" outside.
+
+        :param input_tensor: The tensor to be masked in the form of a tensorflow tensor
+        :param length_tensor_list: The list of length tensors associated with the input tensor
+        :return: A mask of dtype bool.
+        """
+
+        true_tensor = tf.ones_like(input_tensor, dtype=tf.bool)
+        false_tensor = tf.zeros_like(input_tensor, dtype=tf.bool)
+
+        return self.replace_elements_outside_lengths(true_tensor, length_tensor_list, false_tensor)
+
     def replace_elements_outside_lengths(self, input_tensor, length_tensor_list, replacement_tensor):
         """
         Fill the margins of a soft tensor with a specified value (requires tensorflow):

@@ -32,16 +32,31 @@ class ElmoEmbedding(ComponentTypeModel):
 
         elmo = tf_hub.Module("https://tfhub.dev/google/elmo/2", trainable=True)
         all_lengths = input_dictionary["input"].get_lengths()
-        lengths = all_lengths[1]
+        lengths = all_lengths[-1]
 
         tokens = input_dictionary["input"].get_value()
+
+        if len(all_lengths) > 2:
+            tokens_shape = tf.shape(tokens)
+            tokens = tf.reshape(tokens, [-1, tokens_shape[-1]])
+            lengths = tf.reshape(lengths, [-1])
+
         inputs = {"tokens": tokens,
                   "sequence_len": lengths}
 
         embeddings = elmo(inputs=inputs, signature="tokens", as_dict=True)
+
+        word_embeddings = embeddings["elmo"]
         sentence_embedding = embeddings["default"]
 
-        output_models["word_embeddings"].assign(embeddings["elmo"], length_list=all_lengths + [None])
+        if len(all_lengths) > 2:
+            word_embedding_shape = tf.concat([tokens_shape, [1024]], axis=0)
+            sentence_embedding_shape = tf.concat([tokens_shape[:-1], [1024]], axis=0)
+
+            word_embeddings = tf.reshape(word_embeddings, word_embedding_shape)
+            sentence_embedding = tf.reshape(sentence_embedding, sentence_embedding_shape)
+
+        output_models["word_embeddings"].assign(word_embeddings, length_list=all_lengths + [None])
         output_models["sentence_embedding"].assign(sentence_embedding, length_list=None)
 
         return output_models
@@ -50,10 +65,19 @@ class ElmoEmbedding(ComponentTypeModel):
         dim = 1024
         input_seq = input_types["input"]
 
-        output_seq = SoftTensorTypeModel([input_seq.get_dimension(0), None, dim],
+        input_word_dimensions = input_seq.get_dimensions()[:]
+        input_sentence_dimensions = input_word_dimensions[:-1]
+
+        input_word_soft_by_dimension = input_seq.get_soft_by_dimensions()[:]
+        input_sentence_soft_by_dimension = input_word_soft_by_dimension[:-1]
+
+        output_seq = SoftTensorTypeModel(input_word_dimensions + [dim],
                                          string_type="float",
-                                         soft_by_dimensions=[False, True, False])
-        output_sent = SoftTensorTypeModel([input_seq.get_dimension(0), dim], string_type="float")
+                                         soft_by_dimensions=input_word_soft_by_dimension + [False])
+
+        output_sent = SoftTensorTypeModel(input_sentence_dimensions + [dim],
+                                         string_type="float",
+                                         soft_by_dimensions=input_sentence_soft_by_dimension + [False])
 
         return {"word_embeddings": output_seq, "sentence_embedding": output_sent}
 

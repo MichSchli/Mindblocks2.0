@@ -46,14 +46,13 @@ class AddDimensions(ComponentTypeModel):
                 iter_point = idx if idx > 0 else len(lengths) - idx
 
                 for l in range(iter_point, len(lengths)):
-                    if lengths[idx] is not None:
-                        lengths[idx] = tf.expand_dims(lengths[idx], idx)
+                    if lengths[l] is not None:
+                        lengths[l] = tf.expand_dims(lengths[l], idx)
 
                         if dims_to_add > 1:
                             length_expansion = [1] * (idx + 1)
-                            length_expansion[idx] *= dims_to_add
-                            lengths[idx] = tf.tile(lengths[idx], length_expansion)
-
+                            length_expansion[l] *= dims_to_add
+                            lengths[l] = tf.tile(lengths[l], length_expansion)
 
                 dim_update.insert(idx, dims_to_add)
 

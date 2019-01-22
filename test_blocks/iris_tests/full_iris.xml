@@ -70,7 +70,7 @@
                 <source socket="output">mlp</source>
                 <target socket="input">softmax</target>
         </edge>
-        <component name="argmax" type="Argmax" language="python">
+        <component name="argmax" type="Argmax" language="tensorflow">
         </component>
         <edge>
                 <source socket="output">softmax</source>

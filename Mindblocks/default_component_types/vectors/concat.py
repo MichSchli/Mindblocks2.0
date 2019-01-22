@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 from Mindblocks.error_handling.types.dimension_mismatch_exception import DimensionMismatchException
+from Mindblocks.helpers.soft_tensors.soft_tensor_binary_operator_helper import SoftTensorBinaryOperatorHelper
 from Mindblocks.model.component_type.component_type_model import ComponentTypeModel
 from Mindblocks.model.execution_graph.execution_component_value_model import ExecutionComponentValueModel
 from Mindblocks.model.value_type.soft_tensor.soft_tensor_type_model import SoftTensorTypeModel
@@ -97,35 +98,45 @@ class Concat(ComponentTypeModel):
         left_type = input_types["left"]
         right_type = input_types["right"]
 
+        output_dimensions, soft_by_dimension = self.get_combine_type_dimensions(left_type, right_type, value)
+
+        # Get string data type:
+        data_type = input_types["left"].get_data_type()
+
+        output_type = SoftTensorTypeModel(output_dimensions,
+                                          soft_by_dimensions=soft_by_dimension,
+                                          string_type=data_type)
+
+        return {"output": output_type}
+
+    def get_combine_type_dimensions(self, left_type, right_type, value):
         left_dimensions = left_type.get_dimensions()
         right_dimensions = right_type.get_dimensions()
-
         left_soft = left_type.get_soft_by_dimensions()
         right_soft = right_type.get_soft_by_dimensions()
-
         left_dim_string = left_type.get_dimension_string()
         right_dim_string = right_type.get_dimension_string()
 
         # Extend scalars to 1-dimensional tensors:
-        left_dimensions = [1] if input_types["left"].is_scalar() else left_dimensions
-        left_soft = [False] if input_types["left"].is_scalar() else left_soft
-        right_dimensions = [1] if input_types["right"].is_scalar() else right_dimensions
-        right_soft = [1] if input_types["right"].is_scalar() else right_soft
+        left_dimensions = [1] if left_type.is_scalar() else left_dimensions
+        left_soft = [False] if left_type.is_scalar() else left_soft
+        right_dimensions = [1] if right_type.is_scalar() else right_dimensions
+        right_soft = [1] if right_type.is_scalar() else right_soft
 
         # Verify the number of dimensions matches:
         if len(left_dimensions) != len(right_dimensions):
             raise DimensionMismatchException("Mismatched dimension shape in component "
-                                             + value.get_name()+": "
+                                             + value.get_name() + ": "
                                              + left_dim_string
                                              + " does not match "
                                              + right_dim_string
                                              + ".")
-
         if value.axis < 0:
             value.axis += len(left_dimensions)
-
-        left_is_hard = [(left_dimensions[idx] is not None and left_dimensions[idx] != 1) or left_soft[idx] for idx in range(len(left_dimensions))]
-        right_is_hard = [(right_dimensions[idx] is not None and right_dimensions[idx] != 1) or right_soft[idx] for idx in range(len(left_dimensions))]
+        left_is_hard = [(left_dimensions[idx] is not None and left_dimensions[idx] != 1) or left_soft[idx] for idx in
+                        range(len(left_dimensions))]
+        right_is_hard = [(right_dimensions[idx] is not None and right_dimensions[idx] != 1) or right_soft[idx] for idx
+                         in range(len(left_dimensions))]
 
         # Verify there is no hard dimension mismatch:
         for i in range(len(left_dimensions)):
@@ -146,7 +157,6 @@ class Concat(ComponentTypeModel):
                 retrieve_lengths[i] = "left"
             elif right_soft[i]:
                 retrieve_lengths[i] = "right"
-
         value.set_retrieve_lengths(retrieve_lengths)
         soft_by_dimension = [d is not None for d in retrieve_lengths]
 
@@ -159,7 +169,6 @@ class Concat(ComponentTypeModel):
                 expand_dims[i] = "right"
             elif right_is_hard[i] and left_dimensions[i] == 1:
                 expand_dims[i] = "left"
-
         value.set_expand_dims(expand_dims)
 
         # Determine final dimensionality:
@@ -175,14 +184,7 @@ class Concat(ComponentTypeModel):
             elif right_is_hard[i]:
                 output_dimensions[i] = right_dimensions[i]
 
-        # Get string data type:
-        data_type = input_types["left"].get_data_type()
-
-        output_type = SoftTensorTypeModel(output_dimensions,
-                                          soft_by_dimensions=soft_by_dimension,
-                                          string_type=data_type)
-
-        return {"output": output_type}
+        return output_dimensions, soft_by_dimension
 
 
 class ConcatValue(ExecutionComponentValueModel):

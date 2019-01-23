@@ -12,27 +12,27 @@ class Add(ComponentTypeModel):
     languages = ["python", "tensorflow"]
 
     def initialize_value(self, value_dictionary, language):
-        return AddValue()
+        value = AddValue()
+        value.language = language
+        return value
 
     def execute(self, execution_component, input_dictionary, value, output_value_models, mode):
-        result = input_dictionary["left"].get_value() + input_dictionary["right"].get_value()
-        lengths = input_dictionary["left"].get_lengths()
-        output_value_models["output"].assign(result, length_list=lengths)
+        left = input_dictionary["left"]
+        right = input_dictionary["right"]
+
+        op = lambda x,y: x + y
+
+        helper = SoftTensorBinaryOperatorHelper()
+        helper.process(left, right, op, output_value_models["output"], language=value.language)
+
         return output_value_models
 
     def build_value_type_model(self, input_types, value, mode):
         left_type = input_types["left"]
         right_type = input_types["right"]
 
-        binary_op_helper = SoftTensorBinaryOperatorHelper()
-        output_dimensions, soft_by_dimension = binary_op_helper.get_combine_type_dimensions(left_type, right_type, -1, value.get_name())
-
-        # Get string data type:
-        data_type = input_types["left"].get_data_type()
-
-        output_type = SoftTensorTypeModel(output_dimensions,
-                                          soft_by_dimensions=soft_by_dimension,
-                                          string_type=data_type)
+        helper = SoftTensorBinaryOperatorHelper()
+        output_type = helper.create_output_type(left_type, right_type, left_type.get_data_type(), value.get_name())
 
         return {"output": output_type}
 

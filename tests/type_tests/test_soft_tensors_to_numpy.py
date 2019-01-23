@@ -151,7 +151,6 @@ class TestSoftTensorsToNumpy(unittest.TestCase):
         self.assertEqual([None,10], tensor_value.get_dimensions())
         self.assertEqual([3,4], tensor_value.get_max_lengths())
 
-
     def numpyAssertEqual(self, reference, test):
         reference = reference.flatten()
         test = test.flatten()

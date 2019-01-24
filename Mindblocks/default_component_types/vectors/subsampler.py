@@ -112,7 +112,7 @@ class Subsampler(ComponentTypeModel):
         output_type = SoftTensorTypeModel(out_dimensions,
                                           soft_by_dimensions=out_softness,
                                           string_type=out_data_type)
-        print(out_dimensions)
+
         return {"output": output_type}
 
 

@@ -249,8 +249,6 @@ class FileEmbeddingsValue(ExecutionComponentValueModel):
 
         self.loaded = True
 
-        print(self.index)
-
         if self.should_output_tensorflow():
             self.format_output_to_tensorflow()
 

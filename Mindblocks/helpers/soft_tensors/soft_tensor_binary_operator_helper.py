@@ -219,11 +219,6 @@ class SoftTensorBinaryOperatorHelper:
                         length_expansion[i] *= dims_to_add
                         new_lengths[l] = tf.tile(new_lengths[l], length_expansion)
 
-        print("LENS")
-        print(left_lengths)
-        print(right_lengths)
-        print(new_lengths)
-
         new_value = op(left_value, right_value)
 
         if language=="tensorflow":

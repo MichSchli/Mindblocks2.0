@@ -28,8 +28,8 @@ class LogSumExpLoss(ComponentTypeModel):
         labels = sth.replace_elements_outside_lengths(labels, lengths, replacement_tensor)
 
         if value.aggregation == "flatten":
-            logits = tf.reshape(logits, [logits.shape[0], -1])
-            labels = tf.reshape(labels, [labels.shape[0], -1])
+            logits = tf.reshape(logits, tf.stack([tf.shape(logits)[0], -1]))
+            labels = tf.reshape(labels, tf.stack([tf.shape(labels)[0], -1]))
 
             VERY_NEGATIVE_NUMBER = -1e20
             log_scores_for_positive_labels = tf.reduce_logsumexp(logits + VERY_NEGATIVE_NUMBER * (1 - labels), axis=-1)

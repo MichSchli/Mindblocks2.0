@@ -1,0 +1,19 @@
+<block>
+    <configuration>
+        <variable name="data_folder">
+        </variable>
+    </configuration>
+    <canvas name="main">
+        <component name="reader" type="ListReader">
+            <file_path>$data_folder/iris.data.txt</file_path>
+            <separators>\n|,</separators>
+        </component>
+        <component name="data_splitter" type="DataSplitter">
+            <pivot>3</pivot>
+        </component>
+        <edge>
+                <source socket="output">reader</source>
+                <target socket="input">data_splitter</target>
+        </edge>
+    </canvas>
+</block>

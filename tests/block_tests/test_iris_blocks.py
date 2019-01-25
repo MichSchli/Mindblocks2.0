@@ -34,6 +34,29 @@ class TestIrisBlocks(unittest.TestCase):
         self.assertEqual("0.2", result[0][0][-1])
         self.assertEqual("Iris-setosa", result[1][0][0])
 
+    def testReadsDataListReader(self):
+        filename = "iris_tests/read_iris_data_list_reader.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "data_splitter"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        target_socket_1 = adder.get_out_socket("left")
+        target_socket_2 = adder.get_out_socket("right")
+
+        runs = [[target_socket_1, target_socket_2]]
+
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        result = run_graphs[0].execute()
+
+        self.assertEqual("0.2", result[0][0][-1])
+        self.assertEqual("Iris-setosa", result[1][0][0])
+
     def testIndexesNames(self):
         filename = "iris_tests/read_and_index_iris_data.xml"
         filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
@@ -96,6 +119,53 @@ class TestIrisBlocks(unittest.TestCase):
         self.assertEqual(50, len(result))
         result = run_graphs[0].execute()[0]
         self.assertEqual(50, len(result))
+        self.assertFalse(run_graphs[0].has_batches("test"))
+
+    def testIntegratedBatches(self):
+        filename = "iris_tests/integrated_batch_iris.xml"
+        filepath = self.setup_holder.filepath_handler.get_test_block_path(filename)
+        self.setup_holder.block_loader.load(filepath)
+
+        data_filepath = self.setup_holder.filepath_handler.get_test_block_path(
+            "iris_tests")
+        self.setup_holder.variable_repository.set_variable_value("data_folder", data_filepath)
+
+        component_spec = CreationComponentSpecifications()
+        component_spec.name = "data_splitter"
+        adder = self.setup_holder.component_repository.get(component_spec)[0]
+        target_socket_1 = adder.get_out_socket("left")
+
+        runs = [[target_socket_1]]
+
+        run_graphs = self.setup_holder.graph_converter.to_executable(runs)
+        run_graphs[0].init_batches()
+
+        result = run_graphs[0].execute()[0]
+        self.assertTrue(run_graphs[0].has_batches("test"))
+        self.assertEqual(40, len(result))
+        result = run_graphs[0].execute()[0]
+        self.assertTrue(run_graphs[0].has_batches("test"))
+        self.assertEqual(40, len(result))
+        result = run_graphs[0].execute()[0]
+        self.assertTrue(run_graphs[0].has_batches("test"))
+        self.assertEqual(40, len(result))
+        result = run_graphs[0].execute()[0]
+        self.assertEqual(30, len(result))
+        self.assertFalse(run_graphs[0].has_batches("test"))
+
+        run_graphs[0].init_batches()
+
+        result = run_graphs[0].execute()[0]
+        self.assertTrue(run_graphs[0].has_batches("test"))
+        self.assertEqual(40, len(result))
+        result = run_graphs[0].execute()[0]
+        self.assertTrue(run_graphs[0].has_batches("test"))
+        self.assertEqual(40, len(result))
+        result = run_graphs[0].execute()[0]
+        self.assertTrue(run_graphs[0].has_batches("test"))
+        self.assertEqual(40, len(result))
+        result = run_graphs[0].execute()[0]
+        self.assertEqual(30, len(result))
         self.assertFalse(run_graphs[0].has_batches("test"))
 
     def testTileDuplicatesProperly(self):

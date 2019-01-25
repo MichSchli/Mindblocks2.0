@@ -51,18 +51,20 @@ class Argmax(ComponentTypeModel):
             argmax = tf.argmax(flattened_val, axis=-1, output_type=tf.int32)
 
             # Initialize produce of all inner reduce dimensions:
-            inner_dim_product = 1
-            for d in true_reduce_dimensions[1:]:
-                inner_dim_product *= val_shape[d]
+            inner_dim_products = [None] * (len(true_reduce_dimensions) - 1)
+            inner_dim_products[-1] = val_shape[true_reduce_dimensions[-1]]
+            pointer = -2
+            for d in reversed(true_reduce_dimensions[1:-1]):
+                inner_dim_products[pointer] = val_shape[d] * inner_dim_products[pointer + 1]
+                pointer -= 1
 
             # Get all argmaxes by dims:
             argmaxes = []
             remainder = argmax
-            for d in true_reduce_dimensions[1:]:
-                argmax_this_dim = tf.floordiv(remainder, inner_dim_product)
+            for i in range(len(true_reduce_dimensions[1:])):
+                argmax_this_dim = tf.floordiv(remainder, inner_dim_products[i])
                 argmaxes.append(argmax_this_dim)
-                remainder = remainder % inner_dim_product
-                inner_dim_product /= val_shape[d]
+                remainder = remainder % inner_dim_products[i]
             argmaxes.append(remainder)
 
             # Compute final output :

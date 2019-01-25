@@ -15,12 +15,17 @@ class ListReader(ComponentTypeModel):
     def initialize_value(self, value_dictionary, language):
         value = ListReaderValue(value_dictionary["file_path"][0][0])
 
+        if "batch_size" in value_dictionary:
+            value.set_read_batches(int(value_dictionary["batch_size"][0][0]))
+
         separators = value_dictionary["separators"][0][0].split("|")
         value.set_separators(separators)
 
         soft_dim_symbol = "soft_dimensions"
         soft_dims = self.parse_dim_info(separators, soft_dim_symbol, value_dictionary)
         value.set_soft_dimensions(soft_dims)
+
+        value.init_batches()
 
         return value
 
@@ -35,7 +40,9 @@ class ListReader(ComponentTypeModel):
         return dims
 
     def execute(self, execution_component, input_dictionary, value, output_models, mode):
-        if not value.has_read():
+        if value.use_read_batches():
+            value.read_next_batch(serve=True)
+        elif not value.has_read():
             value.read()
 
         as_tensor, length_list = value.as_soft_tensor()
@@ -45,8 +52,6 @@ class ListReader(ComponentTypeModel):
         return output_models
 
     def build_value_type_model(self, input_types, value, mode):
-        num_examples = len(value.read())
-
         soft_dims = value.get_soft_by_dimensions()
         output_dims = value.infer_dims()
 
@@ -58,7 +63,8 @@ class ListReader(ComponentTypeModel):
 
     def has_batches(self, value, previous_values, mode):
         has_batch = value.has_batch
-        value.has_batch = False
+        if not value.use_read_batches():
+            value.has_batch = False
         return has_batch
 
 
@@ -68,18 +74,33 @@ class ListReaderValue(ExecutionComponentValueModel):
     size = None
     separators = None
     full_list = None
+    read_batches = None
+    should_read_next_batch = True
 
     tensor = None
 
+    f = None
+
     def __init__(self, filepath):
         self.filepath = filepath
-        self.has_batch = True
 
     def init_batches(self):
         self.has_batch = True
+        if self.use_read_batches():
+            self.full_list = None
+            self.should_read_next_batch = True
+            if self.f is not None:
+                self.f.close()
+            self.f = open(self.filepath, 'r')
 
     def set_separators(self, separators):
         self.separators = separators
+
+    def set_read_batches(self, batch_size):
+        self.read_batches = batch_size
+
+    def use_read_batches(self):
+        return self.read_batches is not None
 
     def count(self):
         return self.size
@@ -123,8 +144,48 @@ class ListReaderValue(ExecutionComponentValueModel):
 
             return this_level_dim + largest
 
+    def read_next_batch(self, serve=True):
+        if self.should_read_next_batch:
+            full_text = ""
+
+            counter = 0
+            next_line = self.f.readline()
+
+            while counter < self.read_batches and next_line:
+                full_text += next_line
+                if full_text.endswith(self.separators[0]):
+                    counter += 1
+
+                if counter < self.read_batches:
+                    next_line = self.f.readline()
+
+            # If we stopped because of the batch, delete a trailing separator:
+            if counter == self.read_batches:
+                full_text = full_text[:-len(self.separators[0])]
+            else:
+                self.has_batch = False
+                self.f.close()
+                self.f = None
+
+            processed = self.process_recursively(full_text, self.separators)
+            self.full_list = processed
+
+        self.should_read_next_batch = serve
+
     def infer_dims(self):
-        return self.recursively_get_max_dim(self.full_list, 0)
+        if self.use_read_batches() and self.full_list is None:
+            self.read_next_batch(serve=False)
+        elif not self.has_read():
+            self.read()
+
+        dims = self.recursively_get_max_dim(self.full_list, 0)
+
+        if self.use_read_batches():
+            dims[0] = None
+            for d in self.soft_dims:
+                dims[d] = None
+
+        return dims
 
     def read(self):
         if self.full_list is None:
@@ -145,7 +206,7 @@ class ListReaderValue(ExecutionComponentValueModel):
         return self.full_list is not None
 
     def as_soft_tensor(self):
-        if self.tensor is None:
+        if self.tensor is None or self.use_read_batches():
             sth = SoftTensorHelper()
             self.tensor, self.length_list = sth.to_soft_tensor(self.full_list, self.infer_dims(), self.get_soft_by_dimensions(), "string")
 

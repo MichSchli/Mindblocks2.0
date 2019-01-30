@@ -27,7 +27,8 @@ class DataSlicer(ComponentTypeModel):
                     del lengths[i - deleted_dims]
                     deleted_dims += 1
                 elif i > 0:
-                    lengths[i - deleted_dims] = lengths[i - deleted_dims][tuple(value.slices[:i])]
+                    if lengths[i - deleted_dims] is not None:
+                        lengths[i - deleted_dims] = lengths[i - deleted_dims][tuple(value.slices[:i])]
 
             output_value_models["output"].assign(val, length_list = lengths)
         else:

@@ -15,6 +15,9 @@ class IndexConverter(ComponentTypeModel):
 
     def initialize_value(self, value_dictionary, language):
         value = IndexConverterValue()
+
+        if "keep_last_dimension" in value_dictionary:
+            value.set_keep_last_dimension(value_dictionary["keep_last_dimension"][0][0] == "True")
         value.language = language
 
         return value
@@ -29,16 +32,23 @@ class IndexConverter(ComponentTypeModel):
 
             # Retrieve boolean length mask
             sth = SoftTensorHelper()
-            length_mask = sth.retrieve_boolean_length_mask(v, lengths)
+            if value.keep_last_dimension:
+                length_mask = sth.retrieve_boolean_length_mask(tf.zeros(tf.shape(v)[:-1], dtype=tf.int32), lengths[:-1])
+            else:
+                length_mask = sth.retrieve_boolean_length_mask(v, lengths)
 
             # Use length mask to compute prefixes:
             prefixes = tf.cast(tf.where(length_mask), dtype=tf.int32)
 
             # Retrieve indexes and append to prefixes:
-            final_indexes = tf.expand_dims(tf.gather_nd(v, prefixes), -1)
+            final_indexes = tf.gather_nd(v, prefixes)
+            if not value.keep_last_dimension:
+                final_indexes = tf.expand_dims(final_indexes, -1)
+
             a_vecs = tf.unstack(prefixes, axis=-1)
-            del a_vecs[1]
+            del a_vecs[-1]
             prefixes = tf.stack(a_vecs, -1)
+
             output = tf.concat([prefixes, final_indexes], axis=-1)
 
             output_models["output"].assign(output, length_list=[None, None])
@@ -54,5 +64,8 @@ class IndexConverter(ComponentTypeModel):
 
 
 class IndexConverterValue(ExecutionComponentValueModel):
+    def __init__(self):
+        self.keep_last_dimension = False
 
-    pass
+    def set_keep_last_dimension(self, keep_last_dimension):
+        self.keep_last_dimension = keep_last_dimension

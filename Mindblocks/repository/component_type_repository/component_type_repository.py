@@ -14,7 +14,20 @@ class ComponentTypeRepository(AbstractRepository):
 
         return model
 
-    def create_from_class(self, component_type_class):
+    def create_from_class(self, component_type_class, module_name=""):
         model = component_type_class()
+        model.module_name = module_name
         self.__fill__(model)
         self.add(model)
+
+    def get_module_dictionary(self):
+        modules = {}
+
+        for component_type in self.get_all():
+            module_name = component_type.module_name
+            if module_name not in modules:
+                modules[module_name] = [component_type]
+            else:
+                modules[module_name].append(component_type)
+
+        return modules

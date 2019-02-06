@@ -9,6 +9,7 @@ from Mindblocks.controller.component_type_loader.component_type_loader import Co
 from Mindblocks.controller.graph_converter.graph_converter import GraphConverter
 from Mindblocks.controller.ml_helper.ml_helper_factory import MlHelperFactory
 from Mindblocks.controller.parameter_searcher.parameter_searcher import ParameterSearcher
+from Mindblocks.graphic_interface.graphic_interface import GraphicInterface
 from Mindblocks.helpers.files.FilepathHandler import FilepathHandler
 from Mindblocks.helpers.logging.logger_factory import LoggerFactory
 from Mindblocks.helpers.logging.logger_manager import LoggerManager
@@ -144,3 +145,11 @@ class BasicInterface:
         spec = self.execution_component_repository.get_specifications()
         spec.name = name
         return self.execution_component_repository.get(spec)[0]
+
+    def get_component_type_repository(self):
+        return self.type_repository
+
+    def make_gui(self):
+        gui = GraphicInterface(self)
+        gui.initialize_view()
+        gui.mainloop()

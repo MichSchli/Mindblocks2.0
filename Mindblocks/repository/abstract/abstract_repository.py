@@ -1,4 +1,7 @@
-class AbstractRepository:
+from Mindblocks.observables.observable import Observable
+
+
+class AbstractRepository(Observable):
 
     elements = None
     timestamps = None
@@ -8,6 +11,8 @@ class AbstractRepository:
         self.logger_manager = logger_manager
         self.elements = {}
         self.timestamps = {}
+
+        Observable.__init__(self)
 
     def __fill__(self, model):
         model.logger_manager = self.logger_manager
@@ -27,6 +32,8 @@ class AbstractRepository:
         model.identifier = identifier
         self.elements[identifier] = model
         self.timestamps[identifier] = len(self.timestamps)
+
+        self.notify_observers()
 
         return model
 
@@ -62,6 +69,8 @@ class AbstractRepository:
 
         if identifier is not None:
             del self.elements[identifier]
+
+        self.notify_observers()
 
     def print_elements(self):
         print("Printing elements:")

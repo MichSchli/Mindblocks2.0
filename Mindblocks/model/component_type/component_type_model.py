@@ -44,3 +44,6 @@ class ComponentTypeModel(AbstractModel):
 
     def has_referenced_graphs(self, value_model, mode):
         return False
+
+    def get_name(self):
+        return self.name

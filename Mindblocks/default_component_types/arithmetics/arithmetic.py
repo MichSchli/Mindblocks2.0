@@ -24,6 +24,8 @@ class Arithmetic(ComponentTypeModel):
             op = tf.add
         elif value.operation == "mul":
             op = tf.multiply
+        elif value.operation == "div":
+            op = tf.div
 
         helper = SoftTensorBinaryOperatorHelper()
         helper.process(left, right, op, output_value_models["output"], language="tensorflow")
